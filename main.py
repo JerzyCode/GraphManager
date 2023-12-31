@@ -10,20 +10,16 @@ canvas = Canvas(root)
 canvas.pack(fill=BOTH, expand=True)
 
 
-vertex = Vertex("1", 50, 55, canvas)
-vertex2 = Vertex("2", 12, 54, canvas)
-vertex3 = Vertex("3", 124, 122, canvas)
-vertex4 = Vertex("4", 452, 321, canvas)
-vertex5 = Vertex("5", 244, 444, canvas)
+vertex1 = Vertex("A", canvas)
+vertex2 = Vertex("B", canvas)
+vertex3 = Vertex("C", canvas)
+vertex4 = Vertex("D", canvas)
+vertex5 = Vertex("E", canvas)
+vertex6 = Vertex("F", canvas)
+vertex1.add_edge(vertex2)
+vertex6.add_edge(vertex2)
 
 
-
-vertex.add_edge(vertex2)
-vertex.add_edge(vertex3)
-vertex3.add_edge(vertex2)
-vertex4.add_edge(vertex5)
-vertex4.add_edge(vertex3)
-vertex5.add_edge(vertex)
 
 # create_vertex(canvas, vertex)
 
