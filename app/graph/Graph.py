@@ -1,3 +1,5 @@
+import random
+
 from app.graph.Edge import Edge
 from app.graph.Vertex import Vertex
 
@@ -11,13 +13,6 @@ class Graph:
         self.create_vertexes()
         self.create_edges()
 
-        for i in range(len(self.V)):
-            print(self.V[i])
-        for edge in self.E:
-            print(edge)
-
-
-
     def create_vertexes(self):
         size = len(self.matrix)
         for i in range(size):
@@ -26,14 +21,31 @@ class Graph:
     def create_edges(self):
         size = len(self.matrix)
         for i in range(size):
-            for j in range(i,size):
+            for j in range(i, size):
                 if i != j and self.matrix[i][j] == 1:
                     self.V[i].add_edge(self.V[j])
                     self.E.add(Edge(self.V[i], self.V[j]))
-        # for edge in self.E:
-        #     print(edge)
-        #
-        # for i in range(size):
-        #     print(self.V[i].label)
-        #     for edge in self.V[i].edges:
-        #         print(edge)
+
+    def find_edge(self, edge_label):
+        for edge in self.E:
+            if edge_label == edge.label:
+                return edge
+        return None
+
+
+def generate_graph(n, canvas):
+    A = generate_2d_array(n)
+    for i in range(n):
+        for j in range(i + 1, n):
+            if i != j:
+                rand = random.choice([0, 1])
+                A[i][j] = rand
+                A[j][i] = rand
+    return Graph(A, canvas)
+
+
+def generate_2d_array(n):
+    return [[0] * n for _ in range(n)]
+
+
+

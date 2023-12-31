@@ -5,6 +5,7 @@ class Edge:
     def __init__(self, vertex1, vertex2):
         self.vertex1 = vertex1
         self.vertex2 = vertex2
+        self.label = vertex1.label+vertex2.label
         vertex1.edges.add(self)
         vertex2.edges.add(self)
 
