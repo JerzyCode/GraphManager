@@ -31,15 +31,17 @@ class Drawer:
             self.draw_vertex(V[i], VERTEX_BG_COLOR, VERTEX_FG_COLOR)
 
     def draw_edge(self, edge, color, width):
-        vertex1 = edge.vertex1
-        vertex2 = edge.vertex2
+        self.draw_edge_by_vertexes(edge.vertex1, edge.vertex2, color, width)
+
+    def draw_edge_by_vertexes(self, vertex1, vertex2, color, width):
+        label = vertex1.label + '_' + vertex2.label
         self.canvas.create_line(
             vertex1.x,
             vertex1.y,
             vertex2.x,
             vertex2.y,
             fill=color, width=width,
-            tags=f"edge_{edge.label}")
+            tags=f"edge_{label}")
         self.raise_vertexes()
 
     def raise_vertexes(self):
@@ -82,20 +84,26 @@ class Drawer:
 
     def color_edge(self, edge_label):
         edge = self.graph.find_edge(edge_label)
+        print('color_edge:'+str(edge))
         if edge is not None:
             self.canvas.delete(f"edge_{edge.label}")
-            self.draw_edge(edge, 'blue', EDGE_WIDTH + 1.5)
+            self.canvas.tag_raise(f"edge_{edge.label}")
+            self.draw_edge(edge, EDGE_COLOR_CHANGE_BG, EDGE_WIDTH + 1.5)
+            self.canvas.update_idletasks()
 
     def color_vert(self, vert_label):
         vert = self.graph.find_vertex(vert_label)
         if vert is not None:
             self.canvas.delete(f"vertex_{vert.label}")
-            self.draw_vertex(vert, 'cyan', 'black')
+            self.canvas.delete(f"text_{vert.label}")
+            self.draw_vertex(vert, VERTEX_COLOR_CHANGE_BG, VERTEX_COLOR_CHANGE_FG)
             self.canvas.update_idletasks()
 
     def refresh_all(self):
         for vertex in self.graph.V:
             self.canvas.delete(f"vertex_{vertex.label}")
+            self.canvas.delete(f"text_{vertex.label}")
+
         for edge in self.graph.E:
             self.canvas.delete(f"edge_{edge.label}")
         self.draw_all_edges()

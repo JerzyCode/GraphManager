@@ -1,6 +1,7 @@
 import random
 import threading
 import time
+from queue import Queue, PriorityQueue
 
 from app.graph.Edge import Edge
 from app.graph.Vertex import Vertex
@@ -32,8 +33,13 @@ class Graph:
 
     def find_edge(self, edge_label):
         for edge in self.E:
-            if edge_label == edge.label or edge_label[::-1] == edge.label:
+            v1 = edge.vertex1.label
+            v2 = edge.vertex2.label
+            splited = edge_label.split('_')
+            if (v1 == splited[0] and v2 == splited[1]) or (v2 == splited[0] and v1 == splited[1]):
                 return edge
+            # if edge_label == edge.label or edge_label[::-1] == edge.label:
+            #     return edge
         return None
 
     def find_vertex(self, vertex_label):
@@ -43,14 +49,26 @@ class Graph:
         return None
 
 
-def generate_graph(n, canvas):
+def generate_graph(n, canvas, probability):
+    if probability < 0 or probability > 1:
+        probability = 0.5
     A = generate_2d_array(n)
+    probability = int(probability * 100)
+    ed = 0
+    print('probability=' + str(probability))
     for i in range(n):
         for j in range(i + 1, n):
             if i != j:
-                rand = random.choice([0, 1])
-                A[i][j] = rand
-                A[j][i] = rand
+                rand = random.randint(1, 100)
+                if rand <= probability:
+                    # print(rand)
+                    A[i][j] = 1
+                    A[j][i] = 1
+                    ed = ed + 1
+                else:
+                    A[i][j] = 0
+                    A[j][i] = 0
+    # print('num of edges=' + str(ed))
     return Graph(A, canvas)
 
 
@@ -72,5 +90,27 @@ def dfs(graph, vertex, visited, drawer):
     drawer.canvas.after(500, drawer.color_vert(vertex + 1))
     for i in range(len(matrix)):
         if not visited[i] and matrix[vertex][i] == 1:
-            drawer.color_edge(str((vertex + 1)) + str(i + 1))
+            drawer.color_edge(str((vertex + 1)) + '_' + str(i + 1))
             dfs(graph, i, visited, drawer)
+
+
+def binary_search(graph, drawer):
+    visited = [False] * len(graph.V)
+    queue = Queue()
+    for i in range(len(graph.V)):
+        if not visited[i]:
+            bfs(graph, queue, drawer, visited, i)
+
+
+def bfs(graph, queue, drawer, visited, vertex):
+    visited[vertex] = True
+    queue.put(vertex)
+    drawer.canvas.after(500, drawer.color_vert(vertex + 1))
+    while not queue.empty():
+        v = queue.get()
+        for i in range(len(graph.V)):
+            if not visited[i] and graph.matrix[v][i] == 1:
+                drawer.color_edge(str((v + 1)) + '_' + str(i + 1))
+                drawer.canvas.after(500, drawer.color_vert(i + 1))
+                queue.put(i)
+                visited[i] = True
