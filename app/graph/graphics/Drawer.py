@@ -1,5 +1,4 @@
-from app.graph.Edge import Edge
-from app.utils.const import RADIUS
+from app.utils.const import *
 
 
 class Drawer:
@@ -12,11 +11,11 @@ class Drawer:
     def draw_vertex(self, vertex, back_color, font_color):
         self.canvas.create_oval(vertex.x - RADIUS, vertex.y - RADIUS, vertex.x + RADIUS, vertex.y + RADIUS,
                                 fill=back_color,
-                                outline=font_color, width=4,
+                                outline=font_color, width=2,
                                 tags=f"vertex_{vertex.label}")
 
         self.canvas.create_text(vertex.x, vertex.y, text=vertex.label,
-                                font=("Arial", 18), fill=font_color,
+                                font=("Arial", VERTEX_FONT_SIZE), fill=font_color,
                                 tags=f"text_{vertex.label}")
 
         self.canvas.tag_bind(f"vertex_{vertex.label}", "<ButtonPress-1>",
@@ -29,9 +28,9 @@ class Drawer:
     def draw_all_vertexes(self):
         V = self.graph.V
         for i in range(len(V)):
-            self.draw_vertex(V[i], "black", "yellow")
+            self.draw_vertex(V[i], VERTEX_BG_COLOR, VERTEX_FG_COLOR)
 
-    def draw_edge(self, edge, color):
+    def draw_edge(self, edge, color, width):
         vertex1 = edge.vertex1
         vertex2 = edge.vertex2
         self.canvas.create_line(
@@ -39,7 +38,7 @@ class Drawer:
             vertex1.y,
             vertex2.x,
             vertex2.y,
-            fill=color, width=3,
+            fill=color, width=width,
             tags=f"edge_{edge.label}")
         self.raise_vertexes()
 
@@ -53,7 +52,7 @@ class Drawer:
     def draw_all_edges(self):
         edges = self.graph.E
         for edge in edges:
-            self.draw_edge(edge, "black")
+            self.draw_edge(edge, VERTEX_FG_COLOR, EDGE_WIDTH)
 
     def erase_edges(self):
         edges = self.graph.E
@@ -61,11 +60,17 @@ class Drawer:
             self.canvas.delete(f"edge_{edge.label}")
 
     def start_move(self, event, vertex):
+        if (event.x <= RADIUS or event.x >= self.canvas.winfo_width() - RADIUS
+                or event.y <= RADIUS or event.y >= self.canvas.winfo_height() - RADIUS):
+            return
         vertex.x = event.x
         vertex.y = event.y
         print(vertex)
 
     def move(self, event, vertex):
+        if (event.x <= RADIUS or event.x >= self.canvas.winfo_width() - RADIUS
+                or event.y <= RADIUS or event.y >= self.canvas.winfo_height() - RADIUS):
+            return
         deltax = event.x - vertex.x
         deltay = event.y - vertex.y
         vertex.x = event.x
@@ -79,7 +84,7 @@ class Drawer:
         edge = self.graph.find_edge(edge_label)
         if edge is not None:
             self.canvas.delete(f"edge_{edge.label}")
-            self.draw_edge(edge, 'blue')
+            self.draw_edge(edge, 'blue', EDGE_WIDTH + 1.5)
 
     def color_vert(self, vert_label):
         vert = self.graph.find_vertex(vert_label)

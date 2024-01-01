@@ -1,10 +1,9 @@
-import tkinter
-from turtle import ScrolledCanvas
+from tkinter import Frame, Canvas
 
 
-class GraphView(tkinter.Frame):
-    def __init__(self, canvas, master=None):
+class GraphView(Frame):
+    def __init__(self, master=None):
         super().__init__(master)
         self.master = master
-        self.canvas = canvas
+        self.canvas = Canvas(master)
         self.pack()

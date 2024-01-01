@@ -1,4 +1,5 @@
 import random
+import threading
 import time
 
 from app.graph.Edge import Edge
@@ -68,9 +69,7 @@ def depth_search(graph, drawer):
 def dfs(graph, vertex, visited, drawer):
     matrix = graph.matrix
     visited[vertex] = True
-    drawer.canvas.after(1000,drawer.color_vert(vertex+1))
-    # drawer.color_vert(vertex + 1)
-    # time.sleep(1)
+    drawer.canvas.after(500, drawer.color_vert(vertex + 1))
     for i in range(len(matrix)):
         if not visited[i] and matrix[vertex][i] == 1:
             drawer.color_edge(str((vertex + 1)) + str(i + 1))
