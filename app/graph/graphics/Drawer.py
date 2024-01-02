@@ -34,15 +34,19 @@ class Drawer:
         self.draw_edge_by_vertexes(edge.vertex1, edge.vertex2, color, width)
 
     def draw_edge_by_vertexes(self, vertex1, vertex2, color, width):
-        label = vertex1.label + '_' + vertex2.label
-        self.canvas.create_line(
-            vertex1.x,
-            vertex1.y,
-            vertex2.x,
-            vertex2.y,
-            fill=color, width=width,
-            tags=f"edge_{label}")
-        self.raise_vertexes()
+        if not self.graph.is_digraph:
+            label = vertex1.label + '_' + vertex2.label
+            self.canvas.create_line(
+                vertex1.x,
+                vertex1.y,
+                vertex2.x,
+                vertex2.y,
+                fill=color, width=width,
+                tags=f"edge_{label}")
+            self.raise_vertexes()
+        else:
+            print('digraph edge drawing')
+
 
     def raise_vertexes(self):
         V = self.graph.V
