@@ -55,20 +55,17 @@ def generate_graph(n, canvas, probability):
     A = generate_2d_array(n)
     probability = int(probability * 100)
     ed = 0
-    print('probability=' + str(probability))
     for i in range(n):
         for j in range(i + 1, n):
             if i != j:
                 rand = random.randint(1, 100)
                 if rand <= probability:
-                    # print(rand)
                     A[i][j] = 1
                     A[j][i] = 1
                     ed = ed + 1
                 else:
                     A[i][j] = 0
                     A[j][i] = 0
-    # print('num of edges=' + str(ed))
     return Graph(A, canvas)
 
 
