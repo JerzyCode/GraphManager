@@ -8,11 +8,11 @@ from app.graph.Vertex import Vertex
 
 
 class Graph:
-    def __init__(self, matrix, canvas, is_digraph):
+    def __init__(self, matrix, canvas, is_directed):
         self.matrix = matrix
         self.V = set()
         self.E = set()
-        self.is_digraph = is_digraph
+        self.is_directed = is_directed
         self.canvas = canvas
         self.create_vertexes()
         self.create_edges()
@@ -28,9 +28,9 @@ class Graph:
         for i in range(size):
             for j in range(i, size):
                 if i != j and self.matrix[i][j] == 1:
-                    self.V[i].add_edge(self.V[j])
+                    # self.V[i].add_edge(self.V[j])
                     self.V[i].add_neighbor(self.V[j])
-                    self.E.add(Edge(self.V[i], self.V[j]))
+                    self.E.add(Edge(self.V[i], self.V[j], self.is_directed))
 
     def find_edge(self, edge_label):
         for edge in self.E:
@@ -50,7 +50,7 @@ class Graph:
         return None
 
 
-def generate_graph(n, canvas, probability):
+def generate_graph(n, canvas, probability, is_directed):
     if probability < 0 or probability > 1:
         probability = 0.5
     A = generate_2d_array(n)
@@ -59,33 +59,18 @@ def generate_graph(n, canvas, probability):
         for j in range(i + 1, n):
             if i != j:
                 rand = random.randint(1, 100)
-                if rand <= probability:
-                    A[i][j] = 1
-                    A[j][i] = 1
+                if not is_directed:
+                    if rand <= probability:
+                        A[i][j] = 1
+                        A[j][i] = 1
                 else:
-                    A[i][j] = 0
-                    A[j][i] = 0
-    return Graph(A, canvas, False)
-
-def generate_digraph(n, canvas, probability):
-    if probability < 0 or probability > 1:
-        probability = 0.5
-    A = generate_2d_array(n)
-    probability = int(probability * 100)
-    for i in range(n):
-        for j in range(i + 1, n):
-            if i != j:
-                rand = random.randint(1, 100)
-                if rand <= probability:
-                    A[i][j] = 1
-                else:
-                    A[i][j] = 0
-                rand = random.randint(1, 100)
-                if rand <= probability:
-                    A[j][i] = 1
-                else:
-                    A[j][i] = 0
-    return Graph(A, canvas, True)
+                    if rand <= probability:
+                        A[i][j] = 1
+                        A[j][i] = 0
+                    # rand = random.randint(1, 100)
+                    # if rand <= probability:
+                    #     A[j][i] = 1
+    return Graph(A, canvas, is_directed)
 
 
 def generate_2d_array(n):

@@ -4,10 +4,13 @@ from app.graph.graphics.Drawer import Drawer
 from app.utils.const import *
 
 
+is_directed = True
+
 def create_button(parent, image, text, command):
     button = tk.Button(parent, image=image, text=text, command=command, font=FONT,
                        width=BUTTONS_VIEW_WIDTH, bg=BUTTON_BG_COLOR, fg=BUTTON_FG_COLOR, bd=0.5, compound="c")
     button.pack()
+    return button
 
 
 def create_input(parent, text, input_width):
@@ -32,16 +35,17 @@ class App:
         self._create_gui()
 
     def _create_gui(self):
+        pixel_virtual = tk.PhotoImage(width=1, height=1)
         # BUTTONS PANEL
         buttons_panel = tk.Frame(self.root, padx=5, pady=5, bg=BUTTONS_PANEL_BG_COLOR)
         buttons_panel.pack(side=tk.LEFT, fill=tk.BOTH)
 
         size_window = tk.PanedWindow(buttons_panel, orient=tk.HORIZONTAL)
         self.create_all_inputs(size_window)
+
         size_window.add(self.input_p)
         size_window.pack()
 
-        pixel_virtual = tk.PhotoImage(width=1, height=1)
 
         ## GRAPH PANEL
         graph_panel = tk.PanedWindow(orient='horizontal', width=GRAPH_VIEW_WIDTH, height=GRAPH_VIEW_HEIGHT, bd=0)
@@ -68,6 +72,7 @@ class App:
         if self.drawer:
             self.drawer.refresh_all()
 
+
     def generate_and_draw_graph(self):
         size = self.input_size.get()
         p = self.input_p.get()
@@ -76,7 +81,7 @@ class App:
         if size and size.isdigit() and int(size) <= 100:
             self.canvas.delete('all')
             graph_size = int(self.input_size.get())
-            self.graph = generate_graph(graph_size, self.canvas, float(p))
+            self.graph = generate_graph(graph_size, self.canvas, float(p), is_directed)
             self.drawer = Drawer(self.graph, self.canvas)
 
     def create_all_buttons(self, parent, image):
