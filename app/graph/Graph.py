@@ -8,10 +8,11 @@ from app.graph.Vertex import Vertex
 
 
 class Graph:
-    def __init__(self, matrix, canvas):
+    def __init__(self, matrix, canvas, is_digraph):
         self.matrix = matrix
         self.V = set()
         self.E = set()
+        self.is_digraph = is_digraph
         self.canvas = canvas
         self.create_vertexes()
         self.create_edges()
@@ -54,22 +55,37 @@ def generate_graph(n, canvas, probability):
         probability = 0.5
     A = generate_2d_array(n)
     probability = int(probability * 100)
-    ed = 0
-    print('probability=' + str(probability))
     for i in range(n):
         for j in range(i + 1, n):
             if i != j:
                 rand = random.randint(1, 100)
                 if rand <= probability:
-                    # print(rand)
                     A[i][j] = 1
                     A[j][i] = 1
-                    ed = ed + 1
                 else:
                     A[i][j] = 0
                     A[j][i] = 0
-    # print('num of edges=' + str(ed))
-    return Graph(A, canvas)
+    return Graph(A, canvas, False)
+
+def generate_digraph(n, canvas, probability):
+    if probability < 0 or probability > 1:
+        probability = 0.5
+    A = generate_2d_array(n)
+    probability = int(probability * 100)
+    for i in range(n):
+        for j in range(i + 1, n):
+            if i != j:
+                rand = random.randint(1, 100)
+                if rand <= probability:
+                    A[i][j] = 1
+                else:
+                    A[i][j] = 0
+                rand = random.randint(1, 100)
+                if rand <= probability:
+                    A[j][i] = 1
+                else:
+                    A[j][i] = 0
+    return Graph(A, canvas, True)
 
 
 def generate_2d_array(n):

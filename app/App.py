@@ -1,49 +1,94 @@
 import tkinter as tk
-from tkinter import Tk
-
+from app.graph.Graph import generate_graph, depth_search, binary_search
+from app.graph.graphics.Drawer import Drawer
 from app.utils.const import *
-from app.views.GraphView import GraphView
+
+
+def create_button(parent, image, text, command):
+    button = tk.Button(parent, image=image, text=text, command=command, font=FONT,
+                       width=BUTTONS_VIEW_WIDTH, bg=BUTTON_BG_COLOR, fg=BUTTON_FG_COLOR, bd=0.5, compound="c")
+    button.pack()
+
+
+def create_input(parent, text, input_width):
+    label = tk.Label(parent, text=text, font=FONT, bg=BUTTONS_PANEL_SIZE_BG_COLOR, bd=0,
+                     fg=BUTTONS_PANEL_SIZE_FG_COLOR)
+    entry = tk.Entry(parent, width=input_width, bg=BUTTONS_PANEL_BG_COLOR, fg=BUTTON_FG_COLOR, font=FONT)
+    parent.add(label)
+    parent.add(entry)
+    return entry
 
 
 class App:
     def __init__(self):
-        self.createGraphButton = None
-        self.root = Tk()
-        self.canvas = tk.Canvas(self.root)
-        self.graph_view = None
-        self.graph_view = GraphView(self.root, self.canvas)
-        self.frame = tk.Frame(self.root, padx=10, pady=10)
+        self.root = tk.Tk()
+        self.root.geometry(f'{WINDOW_WIDTH}x{WINDOW_HEIGHT}')
+        self.root.resizable(True, True)
+        self.root.title('Graph Manager')
+        self.graph = None
+        self.drawer = None
+        self.input_size = None
+        self.input_p = None
+        self._create_gui()
 
-    def set_frame(self):
-        self.root.wm_geometry(f'{WINDOW_WIDTH}x{WINDOW_HEIGHT}')
-        self.root.configure(bg='black')
-        
+    def _create_gui(self):
+        # BUTTONS PANEL
+        buttons_panel = tk.Frame(self.root, padx=5, pady=5, bg=BUTTONS_PANEL_BG_COLOR)
+        buttons_panel.pack(side=tk.LEFT, fill=tk.BOTH)
 
-    def create_buttons(self):
-        self.createGraphButton = tk.Button(
-            self.root,
-            text='Create Graph',
-            command=self.show_graph_view,
-            width=BUTTON_WIDTH,
-            height=BUTTON_HEIGHT)
-        self.createGraphButton.pack(pady=(self.root.winfo_reqheight() / 2))
+        size_window = tk.PanedWindow(buttons_panel, orient=tk.HORIZONTAL)
+        self.create_all_inputs(size_window)
+        size_window.add(self.input_p)
+        size_window.pack()
 
-    def show_graph_view(self):
-        self.hide_buttons()
-        self.graph_view.set_graph_view_visible()
-        self.canvas.pack(expand=True, fill="both", )
-        print('view create graph')
+        pixel_virtual = tk.PhotoImage(width=1, height=1)
 
-    def hide_graph_view(self):
-        self.canvas.pack_forget()
+        ## GRAPH PANEL
+        graph_panel = tk.PanedWindow(orient='horizontal', width=GRAPH_VIEW_WIDTH, height=GRAPH_VIEW_HEIGHT, bd=0)
+        graph_panel.pack(fill=tk.BOTH, expand=True)
+        self.canvas = tk.Canvas(graph_panel, bg=GRAPH_BG_COLOR)
+        self.canvas.pack(fill=tk.BOTH, expand=True)
 
-        print("hide graph view")
-
-    def hide_buttons(self):
-        self.createGraphButton.pack_forget()
-
-    def start(self):
-        # self.set_canvas()
-        self.create_buttons()
-        self.set_frame()
+        self.create_all_buttons(buttons_panel, pixel_virtual)
         self.root.mainloop()
+
+    def run_dfs(self):
+        if self.graph and self.drawer:
+            depth_search(self.graph, self.drawer)
+
+    def run_bfs(self):
+        try:
+            if self.graph and self.drawer and len(self.graph.V) > 0:
+                binary_search(self.graph, self.drawer)
+        except (NameError, AttributeError, TypeError):
+            print('graph is not defined')
+            pass
+
+    def refresh_graph(self):
+        if self.drawer:
+            self.drawer.refresh_all()
+
+    def generate_and_draw_graph(self):
+        size = self.input_size.get()
+        p = self.input_p.get()
+        if len(p) == 0:
+            p = 0.5
+        if size and size.isdigit() and int(size) <= 100:
+            self.canvas.delete('all')
+            graph_size = int(self.input_size.get())
+            self.graph = generate_graph(graph_size, self.canvas, float(p))
+            self.drawer = Drawer(self.graph, self.canvas)
+
+    def create_all_buttons(self, parent, image):
+        create_button(parent, image, "Generate Graph", self.generate_and_draw_graph)
+        create_button(parent, image, "Add Your Graph", lambda: self.create_add_graph_view(1))
+        create_button(parent, image, "Refresh Graph", self.refresh_graph)
+        create_button(parent, image, "DFS", self.run_dfs)
+        create_button(parent, image, "BFS", self.run_bfs)
+
+    def create_all_inputs(self, parent):
+        self.input_size = create_input(parent, 'size:', 7)
+        self.input_p = create_input(parent, 'p:', 7)
+
+    def create_add_graph_view(self, size):
+        self.canvas.delete('all')
