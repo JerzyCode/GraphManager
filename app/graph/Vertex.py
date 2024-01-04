@@ -14,8 +14,8 @@ class Vertex:
         self.canvas = canvas
         self.neighbors = set()
 
-    def add_edge(self, vertex):
-        edge = Edge(self, vertex)
+    # def add_edge(self, vertex):
+    #     edge = Edge(self, vertex)
 
     def set_coords(self, canvas):
         if canvas.winfo_width() < 2 * RADIUS or canvas.winfo_height() < 2 * RADIUS:
@@ -35,4 +35,4 @@ class Vertex:
         self.neighbors.add(vertex)
 
     def __str__(self):
-        return self.label + ', (' + str(self.x) + ', ' + str(self.y) + ')'
+        return self.label
