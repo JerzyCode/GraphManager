@@ -1,10 +1,11 @@
 import tkinter as tk
-from app.graph.Graph import generate_graph, depth_search, binary_search
+from app.graph.Graph import generate_graph, depth_search, binary_search, Graph
 from app.graph.graphics.Drawer import Drawer
 from app.utils.const import *
 
-
 is_directed = True
+is_weighted = True
+
 
 def create_button(parent, image, text, command):
     button = tk.Button(parent, image=image, text=text, command=command, font=FONT,
@@ -34,6 +35,15 @@ class App:
         self.input_p = None
         self._create_gui()
 
+    def custom_graph(self):
+        A = [[0, 1, 1],
+             [1, 0, 0],
+             [1, 1, 0]]
+
+
+        self.graph = Graph(A, self.canvas, is_directed, [])
+        self.drawer = Drawer(self.graph, self.canvas)
+
     def _create_gui(self):
         pixel_virtual = tk.PhotoImage(width=1, height=1)
         # BUTTONS PANEL
@@ -46,7 +56,6 @@ class App:
         size_window.add(self.input_p)
         size_window.pack()
 
-
         ## GRAPH PANEL
         graph_panel = tk.PanedWindow(orient='horizontal', width=GRAPH_VIEW_WIDTH, height=GRAPH_VIEW_HEIGHT, bd=0)
         graph_panel.pack(fill=tk.BOTH, expand=True)
@@ -54,6 +63,8 @@ class App:
         self.canvas.pack(fill=tk.BOTH, expand=True)
 
         self.create_all_buttons(buttons_panel, pixel_virtual)
+        self.custom_graph()
+
         self.root.mainloop()
 
     def run_dfs(self):
@@ -72,7 +83,6 @@ class App:
         if self.drawer:
             self.drawer.refresh_all()
 
-
     def generate_and_draw_graph(self):
         size = self.input_size.get()
         p = self.input_p.get()
@@ -81,7 +91,7 @@ class App:
         if size and size.isdigit() and int(size) <= 100:
             self.canvas.delete('all')
             graph_size = int(self.input_size.get())
-            self.graph = generate_graph(graph_size, self.canvas, float(p), is_directed)
+            self.graph = generate_graph(graph_size, self.canvas, float(p), is_weighted, is_directed)
             self.drawer = Drawer(self.graph, self.canvas)
 
     def create_all_buttons(self, parent, image):

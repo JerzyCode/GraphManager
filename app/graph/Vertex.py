@@ -35,4 +35,4 @@ class Vertex:
         self.neighbors.add(vertex)
 
     def __str__(self):
-        return self.label + ', (' + str(self.x) + ', ' + str(self.y) + ')'
+        return self.label

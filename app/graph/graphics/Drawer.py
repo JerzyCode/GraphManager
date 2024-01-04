@@ -3,6 +3,45 @@ import tkinter
 from app.utils.const import *
 
 
+def end_line_point(vertex1, vertex2):
+    import math
+    delta_x = 0
+    delta_y = 0
+    if vertex1.x == vertex2.x:
+        delta_x = 0
+        delta_y = RADIUS
+    if vertex1.y == vertex2.y:
+        delta_x = RADIUS
+        delta_y = 0
+    if vertex1.x != vertex2.x and vertex2.y != vertex1.y:
+        a = (vertex2.y - vertex1.y) / (vertex2.x - vertex1.x)
+        angle = math.atan(a)
+        delta_y = RADIUS * math.sin(angle)
+        delta_x = RADIUS * math.cos(angle)
+    if vertex2.x - vertex1.x > 0:
+        delta_x = -delta_x
+        delta_y = -delta_y
+
+    return delta_x, delta_y
+
+
+def apex_point(vertex1, vertex2):
+    import math
+    mid_x = (vertex1.x + vertex2.x) / 2
+    mid_y = (vertex1.y + vertex2.y) / 2
+    dx = vertex2.x - vertex1.x
+    dy = vertex2.y - vertex1.y
+    perpendicular_dx = -dy
+    perpendicular_dy = dx
+    length = math.sqrt(perpendicular_dx ** 2 + perpendicular_dy ** 2)
+    scaled_dx = (APEX_DISTANCE / length) * perpendicular_dx
+    scaled_dy = (APEX_DISTANCE / length) * perpendicular_dy
+    apex_x = mid_x + scaled_dx
+    apex_y = mid_y + scaled_dy
+
+    return apex_x, apex_y
+
+
 class Drawer:
     def __init__(self, graph, canvas):
         self.graph = graph
@@ -33,46 +72,45 @@ class Drawer:
             self.draw_vertex(V[i], VERTEX_BG_COLOR, VERTEX_FG_COLOR)
 
     def draw_edge(self, edge, color, width):
-        self.draw_edge_by_vertexes(edge.vertex1, edge.vertex2, color, width)
+        self.draw_edge_by_vertexes(edge.vertex1, edge.vertex2, color, width, edge.directed)
 
-    def end_line_point(self, vertex1, vertex2):
-        import math
-        delta_x = 0
-        delta_y = 0
-        if vertex1.x == vertex2.x:
-            delta_x = 0
-            delta_y = RADIUS
-        if vertex1.y == vertex2.y:
-            delta_x = RADIUS
-            delta_y = 0
-        if vertex1.x != vertex2.x and vertex2.y != vertex1.y:
-            a = (vertex2.y - vertex1.y) / (vertex2.x - vertex1.x)
-            print('tga=', a)
-            angle = math.atan(a)
-            delta_y = RADIUS * math.sin(angle)
-            delta_x = RADIUS * math.cos(angle)
-        if vertex2.x - vertex1.x > 0:
-            delta_x = -delta_x
-            delta_y = -delta_y
-            print('right')
-
-        return delta_x, delta_y
-
-    def draw_edge_by_vertexes(self, vertex1, vertex2, color, width):
+    def draw_undirected_edge_by_vertexes(self, vertex1, vertex2, color, width):
         label = vertex1.label + '_' + vertex2.label
-        end_line_points = self.end_line_point(vertex1, vertex2)
-        # print('end_line_points', end_line_points)
+        end_line_points = end_line_point(vertex1, vertex2)
         line = self.canvas.create_line(
             vertex1.x,
             vertex1.y,
             vertex2.x + end_line_points[0],
             vertex2.y + end_line_points[1],
             fill=color, width=width,
-            tags=f"edge_{label}")
+            tags=f"edge_{label}",
+            smooth=True)
+        self.raise_vertexes()
+
+    def draw_directed_edge_by_vertexes(self, vertex1, vertex2, color, width):
+        label = vertex1.label + '_' + vertex2.label
+        end_line_points = end_line_point(vertex1, vertex2)
+        apex = apex_point(vertex1, vertex2)
+        line = self.canvas.create_line(
+            vertex1.x,
+            vertex1.y,
+            apex[0],
+            apex[1],
+            vertex2.x + end_line_points[0],
+            vertex2.y + end_line_points[1],
+            fill=color, width=width,
+            tags=f"edge_{label}",
+            smooth=True)
         self.raise_vertexes()
         if self.graph.is_directed:
             arrow_shape = (9, 9, 6)
             self.canvas.itemconfig(line, arrow=tkinter.LAST, arrowshape=arrow_shape)
+
+    def draw_edge_by_vertexes(self, vertex1, vertex2, color, width, is_directed):
+        if is_directed:
+            self.draw_directed_edge_by_vertexes(vertex1, vertex2, color, width)
+        else:
+            self.draw_undirected_edge_by_vertexes(vertex1, vertex2, color, width)
 
     def raise_vertexes(self):
         V = self.graph.V
@@ -111,6 +149,7 @@ class Drawer:
 
     def color_edge(self, edge_label):
         edge = self.graph.find_edge(edge_label)
+        print(edge)
         if edge is not None:
             self.canvas.delete(f"edge_{edge.label}")
             self.canvas.tag_raise(f"edge_{edge.label}")

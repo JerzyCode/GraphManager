@@ -8,14 +8,17 @@ from app.graph.Vertex import Vertex
 
 
 class Graph:
-    def __init__(self, matrix, canvas, is_directed):
+    def __init__(self, matrix, canvas, is_directed, weights=None):
         self.matrix = matrix
         self.V = set()
         self.E = set()
+        self.is_weights = weights
+        self.weights = weights
         self.is_directed = is_directed
         self.canvas = canvas
         self.create_vertexes()
         self.create_edges()
+        print(str(self))
 
     def create_vertexes(self):
         size = len(self.matrix)
@@ -24,23 +27,47 @@ class Graph:
             self.V[i] = Vertex(str(i + 1), self.canvas)
 
     def create_edges(self):
+        if not self.is_directed:
+            self.create_edges_undirected()
+        else:
+            self.create_edges_directed()
+
+    def create_edges_undirected(self):
         size = len(self.matrix)
         for i in range(size):
             for j in range(i, size):
-                if i != j and self.matrix[i][j] == 1:
-                    # self.V[i].add_edge(self.V[j])
-                    self.V[i].add_neighbor(self.V[j])
-                    self.E.add(Edge(self.V[i], self.V[j], self.is_directed))
+                self.take_edges_from_matrix(i, j)
+
+    def create_edges_directed(self):
+        size = len(self.matrix)
+        for i in range(size):
+            for j in range(size):
+                self.take_edges_from_matrix(i, j)
+
+    def take_edges_from_matrix(self, i, j):
+        if i != j and self.matrix[i][j] == 1:
+            if len(self.weights) > 0:
+                edge = Edge(self.V[i], self.V[j], self.is_directed, weight=self.weights[i][j])
+            else:
+                edge = Edge(self.V[i], self.V[j], self.is_directed, 0)
+
+            self.V[i].add_neighbor(self.V[j])
+            self.E.add(edge)
 
     def find_edge(self, edge_label):
-        for edge in self.E:
-            v1 = edge.vertex1.label
-            v2 = edge.vertex2.label
-            splited = edge_label.split('_')
-            if (v1 == splited[0] and v2 == splited[1]) or (v2 == splited[0] and v1 == splited[1]):
-                return edge
-            # if edge_label == edge.label or edge_label[::-1] == edge.label:
-            #     return edge
+        if self.is_directed:
+            for edge in self.E:
+                v1 = edge.vertex1.label
+                v2 = edge.vertex2.label
+                if edge_label == v1 + '_' + v2:
+                    return edge
+        else:
+            for edge in self.E:
+                v1 = edge.vertex1.label
+                v2 = edge.vertex2.label
+                splited = edge_label.split('_')
+                if (v1 == splited[0] and v2 == splited[1]) or (v2 == splited[0] and v1 == splited[1]):
+                    return edge
         return None
 
     def find_vertex(self, vertex_label):
@@ -49,28 +76,59 @@ class Graph:
             return vertex
         return None
 
+    def __str__(self):
+        edges = 'edges = '
+        vertexes = 'vertexes = '
+        for edge in self.E:
+            edges += str(edge) + ', '
+        for vertex in range(len(self.V)):
+            vertexes += str(self.V[vertex]) + ', '
 
-def generate_graph(n, canvas, probability, is_directed):
+        return vertexes + '\n' + edges
+
+
+def generate_graph(n, canvas, probability, is_weighted, is_directed):
+    if not is_directed:
+        return generate_undirected_graph(n, canvas, probability, is_weighted)
+    else:
+        return generate_directed_graph(n, canvas, probability, is_weighted)
+
+
+def generate_undirected_graph(n, canvas, probability, is_weighted):
     if probability < 0 or probability > 1:
         probability = 0.5
     A = generate_2d_array(n)
     probability = int(probability * 100)
+    num_of_edges = 0
+    weights = {}
     for i in range(n):
-        for j in range(i + 1, n):
+        for j in range(i, n):
             if i != j:
                 rand = random.randint(1, 100)
-                if not is_directed:
-                    if rand <= probability:
-                        A[i][j] = 1
-                        A[j][i] = 1
-                else:
-                    if rand <= probability:
-                        A[i][j] = 1
-                        A[j][i] = 0
-                    # rand = random.randint(1, 100)
-                    # if rand <= probability:
-                    #     A[j][i] = 1
-    return Graph(A, canvas, is_directed)
+                if rand <= probability:
+                    num_of_edges += 1
+                    A[i][j] = 1
+                    A[j][i] = 1
+                # if is_weighted:
+                #     weights[i][j] = rand
+    return Graph(A, canvas, False, weights)
+
+
+def generate_directed_graph(n, canvas, probability, is_weighted):
+    if probability < 0 or probability > 1:
+        probability = 0.5
+    A = generate_2d_array(n)
+    probability = int(probability * 40)
+    num_of_edges = 0
+    weights = {}
+    for i in range(n):
+        for j in range(n):
+            if i != j:
+                rand = random.randint(1, 100)
+                if rand <= probability:
+                    num_of_edges += 1
+                    A[i][j] = 1
+    return Graph(A, canvas, True, weights)
 
 
 def generate_2d_array(n):
@@ -86,6 +144,7 @@ def depth_search(graph, drawer):
 
 
 def dfs(graph, vertex, visited, drawer):
+    print('DFS')
     matrix = graph.matrix
     visited[vertex] = True
     drawer.canvas.after(500, drawer.color_vert(vertex + 1))
