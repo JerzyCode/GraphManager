@@ -8,11 +8,12 @@ class Edge:
         self.directed = directed
         self.weight = weight
         self.label = vertex1.label + '_' + vertex2.label
-        vertex1.edges.add(self)
-        vertex2.edges.add(self)
 
     def __eq__(self, other):
-        return self.label == other.label
+        if self.directed:
+            return self.label == other.label
+        else:
+            return self.label == other.label or self.label == other.label[::-1]
 
     def __hash__(self):
         return hash(self.label)

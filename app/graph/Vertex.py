@@ -21,14 +21,28 @@ class Vertex:
             self.x = random.randint(2 * RADIUS, max_width - 2 * RADIUS)
             self.y = random.randint(2 * RADIUS, max_height - 2 * RADIUS)
 
-    def find_edge_neigh(self, neigh):
+    def find_edge(self, neigh, is_directed):
+        if is_directed:
+            edge = self.find_edge_directed(neigh)
+        else:
+            edge = self.find_edge_undirected(neigh)
+        # print(edge)
+        return edge
+
+    def find_edge_directed(self, neigh):
         for edge in self.edges:
-            if edge.vertex1 == neigh or edge.vertex2 == neigh:
-                print(edge)
+            if edge.vertex2 == neigh:
                 return edge
 
-    def add_neighbor(self, vertex):
+    def find_edge_undirected(self, neigh):
+        for edge in self.edges:
+            if edge.vertex2 == neigh or edge.vertex1 == neigh:
+                print('find_edge', str(edge))
+                return edge
+
+    def add_neighbor(self, vertex, edge):
         self.neighbors.add(vertex)
+        self.edges.add(edge)
 
     def __str__(self):
         return self.label
