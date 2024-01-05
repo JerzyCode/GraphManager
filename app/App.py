@@ -35,14 +35,13 @@ class App:
         self.input_p = None
         self._create_gui()
 
-    def custom_graph(self):
-        A = [[0, 1, 1],
-             [1, 0, 0],
-             [1, 1, 0]]
-
-
-        self.graph = Graph(A, self.canvas, is_directed, [])
-        self.drawer = Drawer(self.graph, self.canvas)
+    # def custom_graph(self):
+    #     A = [[0, 1, 1],
+    #          [1, 0, 0],
+    #          [1, 1, 0]]
+    #
+    #     self.graph = Graph(A, is_directed, [], self.canvas.winfo_width(), self.canvas.winfo_height())
+    #     self.drawer = Drawer(self.graph, self.canvas)
 
     def _create_gui(self):
         pixel_virtual = tk.PhotoImage(width=1, height=1)
@@ -63,7 +62,7 @@ class App:
         self.canvas.pack(fill=tk.BOTH, expand=True)
 
         self.create_all_buttons(buttons_panel, pixel_virtual)
-        self.custom_graph()
+        # self.custom_graph()
 
         self.root.mainloop()
 
@@ -91,7 +90,8 @@ class App:
         if size and size.isdigit() and int(size) <= 100:
             self.canvas.delete('all')
             graph_size = int(self.input_size.get())
-            self.graph = generate_graph(graph_size, self.canvas, float(p), is_weighted, is_directed)
+            self.graph = generate_graph(graph_size, float(p), is_weighted, is_directed, self.canvas.winfo_width(),
+                                        self.canvas.winfo_height())
             self.drawer = Drawer(self.graph, self.canvas)
 
     def create_all_buttons(self, parent, image):

@@ -43,41 +43,71 @@ def apex_point(vertex1, vertex2):
 
 
 class Drawer:
+
     def __init__(self, graph, canvas):
         self.graph = graph
         self.canvas = canvas
         self.draw_all_vertexes()
         self.draw_all_edges()
 
+    # VERTEX_METHODS
     def draw_vertex(self, vertex, back_color, font_color):
         self.canvas.create_oval(vertex.x - RADIUS, vertex.y - RADIUS, vertex.x + RADIUS, vertex.y + RADIUS,
                                 fill=back_color,
                                 outline=font_color, width=2,
                                 tags=f"vertex_{vertex.label}")
-
         self.canvas.create_text(vertex.x, vertex.y, text=vertex.label,
-                                font=("Arial", VERTEX_FONT_SIZE), fill=font_color,
+                                font=("Arial", VERTEX_FONT_SIZE),
+                                fill=font_color,
                                 tags=f"text_{vertex.label}")
-
-        self.canvas.tag_bind(f"vertex_{vertex.label}", "<ButtonPress-1>",
-                             lambda event, v=vertex: self.start_move(event, v))
+        self.canvas.tag_bind(f"vertex_{vertex.label}", "<ButtonPress-1>", lambda event: self.start_move(event))
         self.canvas.tag_bind(f"vertex_{vertex.label}", "<B1-Motion>", lambda event, v=vertex: self.move(event, v))
-        self.canvas.tag_bind(f"text_{vertex.label}", "<ButtonPress-1>",
-                             lambda event, v=vertex: self.start_move(event, v))
+        self.canvas.tag_bind(f"text_{vertex.label}", "<ButtonPress-1>", lambda event: self.start_move(event))
         self.canvas.tag_bind(f"text_{vertex.label}", "<B1-Motion>", lambda event, v=vertex: self.move(event, v))
 
     def draw_all_vertexes(self):
-        V = self.graph.V
-        for i in range(len(V)):
-            self.draw_vertex(V[i], VERTEX_BG_COLOR, VERTEX_FG_COLOR)
+        vertexes = self.graph.V
+        for i in range(len(vertexes)):
+            self.draw_vertex(vertexes[i], VERTEX_BG_COLOR, VERTEX_FG_COLOR)
+
+    def raise_vertexes(self):
+        vertexes = self.graph.V
+        for i in range(len(vertexes)):
+            vert = vertexes[i]
+            self.canvas.tag_raise(f"vertex_{vert.label}")
+            self.canvas.tag_raise(f"text_{vert.label}")
+
+    def color_vertex(self, vert_label):
+        vert = self.graph.find_vertex(vert_label)
+        if vert is not None:
+            self.canvas.delete(f"vertex_{vert.label}")
+            self.canvas.delete(f"text_{vert.label}")
+            self.draw_vertex(vert, VERTEX_COLOR_CHANGE_BG, VERTEX_COLOR_CHANGE_FG)
+            self.canvas.update_idletasks()
+
+    # EDGE_METHODS
+    def draw_all_edges(self):
+        edges = self.graph.E
+        for edge in edges:
+            self.draw_edge(edge, VERTEX_FG_COLOR, EDGE_WIDTH)
+
+    def erase_edges(self):
+        edges = self.graph.E
+        for edge in edges:
+            self.canvas.delete(f"edge_{edge.label}")
 
     def draw_edge(self, edge, color, width):
-        self.draw_edge_by_vertexes(edge.vertex1, edge.vertex2, color, width, edge.directed)
+        if edge.directed:
+            self.draw_directed_edge(edge, color, width)
+        else:
+            self.draw_undirected_edge(edge, color, width)
 
-    def draw_undirected_edge_by_vertexes(self, vertex1, vertex2, color, width):
+    def draw_undirected_edge(self, edge, color, width):
+        vertex1 = edge.vertex1
+        vertex2 = edge.vertex2
         label = vertex1.label + '_' + vertex2.label
         end_line_points = end_line_point(vertex1, vertex2)
-        line = self.canvas.create_line(
+        self.canvas.create_line(
             vertex1.x,
             vertex1.y,
             vertex2.x + end_line_points[0],
@@ -87,7 +117,9 @@ class Drawer:
             smooth=True)
         self.raise_vertexes()
 
-    def draw_directed_edge_by_vertexes(self, vertex1, vertex2, color, width):
+    def draw_directed_edge(self, edge, color, width):
+        vertex1 = edge.vertex1
+        vertex2 = edge.vertex2
         label = vertex1.label + '_' + vertex2.label
         end_line_points = end_line_point(vertex1, vertex2)
         apex = apex_point(vertex1, vertex2)
@@ -106,47 +138,6 @@ class Drawer:
             arrow_shape = (9, 9, 6)
             self.canvas.itemconfig(line, arrow=tkinter.LAST, arrowshape=arrow_shape)
 
-    def draw_edge_by_vertexes(self, vertex1, vertex2, color, width, is_directed):
-        if is_directed:
-            self.draw_directed_edge_by_vertexes(vertex1, vertex2, color, width)
-        else:
-            self.draw_undirected_edge_by_vertexes(vertex1, vertex2, color, width)
-
-    def raise_vertexes(self):
-        V = self.graph.V
-        for i in range(len(V)):
-            vert = V[i]
-            self.canvas.tag_raise(f"vertex_{vert.label}")
-            self.canvas.tag_raise(f"text_{vert.label}")
-
-    def draw_all_edges(self):
-        edges = self.graph.E
-        for edge in edges:
-            self.draw_edge(edge, VERTEX_FG_COLOR, EDGE_WIDTH)
-
-    def erase_edges(self):
-        edges = self.graph.E
-        for edge in edges:
-            self.canvas.delete(f"edge_{edge.label}")
-
-    def start_move(self, event, vertex):
-        if (event.x <= RADIUS or event.x >= self.canvas.winfo_width() - RADIUS
-                or event.y <= RADIUS or event.y >= self.canvas.winfo_height() - RADIUS):
-            return
-
-    def move(self, event, vertex):
-        if (event.x <= RADIUS or event.x >= self.canvas.winfo_width() - RADIUS
-                or event.y <= RADIUS or event.y >= self.canvas.winfo_height() - RADIUS):
-            return
-        deltax = event.x - vertex.x
-        deltay = event.y - vertex.y
-        vertex.x = event.x
-        vertex.y = event.y
-        self.erase_edges()
-        self.canvas.move(f"vertex_{vertex.label}", deltax, deltay)
-        self.canvas.move(f"text_{vertex.label}", deltax, deltay)
-        self.draw_all_edges()
-
     def color_edge(self, edge_label):
         edge = self.graph.find_edge(edge_label)
         print(edge)
@@ -156,14 +147,7 @@ class Drawer:
             self.draw_edge(edge, EDGE_COLOR_CHANGE_BG, EDGE_WIDTH + 1.5)
             self.canvas.update_idletasks()
 
-    def color_vert(self, vert_label):
-        vert = self.graph.find_vertex(vert_label)
-        if vert is not None:
-            self.canvas.delete(f"vertex_{vert.label}")
-            self.canvas.delete(f"text_{vert.label}")
-            self.draw_vertex(vert, VERTEX_COLOR_CHANGE_BG, VERTEX_COLOR_CHANGE_FG)
-            self.canvas.update_idletasks()
-
+    # OTHER_METHODS
     def refresh_all(self):
         for vertex in self.graph.V:
             self.canvas.delete(f"vertex_{vertex.label}")
@@ -173,3 +157,21 @@ class Drawer:
             self.canvas.delete(f"edge_{edge.label}")
         self.draw_all_edges()
         self.draw_all_vertexes()
+
+    def start_move(self, event):
+        if (event.x <= RADIUS or event.x >= self.canvas.winfo_width() - RADIUS
+                or event.y <= RADIUS or event.y >= self.canvas.winfo_height() - RADIUS):
+            return
+
+    def move(self, event, vertex):
+        if (event.x <= RADIUS or event.x >= self.canvas.winfo_width() - RADIUS
+                or event.y <= RADIUS or event.y >= self.canvas.winfo_height() - RADIUS):
+            return
+        delta_x = event.x - vertex.x
+        delta_y = event.y - vertex.y
+        vertex.x = event.x
+        vertex.y = event.y
+        self.erase_edges()
+        self.canvas.move(f"vertex_{vertex.label}", delta_x, delta_y)
+        self.canvas.move(f"text_{vertex.label}", delta_x, delta_y)
+        self.draw_all_edges()

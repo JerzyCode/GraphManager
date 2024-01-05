@@ -8,23 +8,21 @@ from app.graph.Vertex import Vertex
 
 
 class Graph:
-    def __init__(self, matrix, canvas, is_directed, weights=None):
+    def __init__(self, matrix, is_directed, weights=None, max_width=None, max_height=None):
         self.matrix = matrix
         self.V = set()
         self.E = set()
-        self.is_weights = weights
         self.weights = weights
         self.is_directed = is_directed
-        self.canvas = canvas
-        self.create_vertexes()
+        self.create_vertexes(max_width, max_height)
         self.create_edges()
         print(str(self))
 
-    def create_vertexes(self):
+    def create_vertexes(self, max_width, max_height):
         size = len(self.matrix)
         self.V = list(range(size))
         for i in range(size):
-            self.V[i] = Vertex(str(i + 1), self.canvas)
+            self.V[i] = Vertex(str(i + 1), max_width, max_height)
 
     def create_edges(self):
         if not self.is_directed:
@@ -87,14 +85,14 @@ class Graph:
         return vertexes + '\n' + edges
 
 
-def generate_graph(n, canvas, probability, is_weighted, is_directed):
+def generate_graph(n, probability, is_weighted, is_directed, max_width, max_height):
     if not is_directed:
-        return generate_undirected_graph(n, canvas, probability, is_weighted)
+        return generate_undirected_graph(n, probability, is_weighted, max_width, max_height)
     else:
-        return generate_directed_graph(n, canvas, probability, is_weighted)
+        return generate_directed_graph(n, probability, is_weighted, max_width, max_height)
 
 
-def generate_undirected_graph(n, canvas, probability, is_weighted):
+def generate_undirected_graph(n, probability, is_weighted, max_width, max_height):
     if probability < 0 or probability > 1:
         probability = 0.5
     A = generate_2d_array(n)
@@ -111,10 +109,10 @@ def generate_undirected_graph(n, canvas, probability, is_weighted):
                     A[j][i] = 1
                 # if is_weighted:
                 #     weights[i][j] = rand
-    return Graph(A, canvas, False, weights)
+    return Graph(A, False, weights, max_width, max_height)
 
 
-def generate_directed_graph(n, canvas, probability, is_weighted):
+def generate_directed_graph(n, probability, is_weighted, max_width, max_height):
     if probability < 0 or probability > 1:
         probability = 0.5
     A = generate_2d_array(n)
@@ -128,7 +126,7 @@ def generate_directed_graph(n, canvas, probability, is_weighted):
                 if rand <= probability:
                     num_of_edges += 1
                     A[i][j] = 1
-    return Graph(A, canvas, True, weights)
+    return Graph(A, True, weights, max_width, max_height)
 
 
 def generate_2d_array(n):
@@ -147,7 +145,7 @@ def dfs(graph, vertex, visited, drawer):
     print('DFS')
     matrix = graph.matrix
     visited[vertex] = True
-    drawer.canvas.after(500, drawer.color_vert(vertex + 1))
+    drawer.canvas.after(500, drawer.color_vertex(vertex + 1))
     for i in range(len(matrix)):
         if not visited[i] and matrix[vertex][i] == 1:
             drawer.color_edge(str((vertex + 1)) + '_' + str(i + 1))
@@ -165,12 +163,12 @@ def binary_search(graph, drawer):
 def bfs(graph, queue, drawer, visited, vertex):
     visited[vertex] = True
     queue.put(vertex)
-    drawer.canvas.after(500, drawer.color_vert(vertex + 1))
+    drawer.canvas.after(500, drawer.color_vertex(vertex + 1))
     while not queue.empty():
         v = queue.get()
         for i in range(len(graph.V)):
             if not visited[i] and graph.matrix[v][i] == 1:
                 drawer.color_edge(str((v + 1)) + '_' + str(i + 1))
-                drawer.canvas.after(500, drawer.color_vert(i + 1))
+                drawer.canvas.after(500, drawer.color_vertex(i + 1))
                 queue.put(i)
                 visited[i] = True

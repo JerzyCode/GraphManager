@@ -12,11 +12,6 @@ class Edge:
         vertex2.edges.add(self)
 
     def __eq__(self, other):
-        # if not self.directed:
-        #     return (
-        #             (self.label == other.label) or (self.label[::-1] == other.label)
-        #     )
-        # else:
         return self.label == other.label
 
     def __hash__(self):
