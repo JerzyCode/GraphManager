@@ -1,6 +1,5 @@
 import random
 
-from app.graph.Edge import Edge
 from app.utils.const import *
 
 
@@ -11,7 +10,7 @@ class Vertex:
         self.set_coords(max_width, max_height)
         self.label = label + ''
         self.edges = set()
-        self.neighbors = set()
+        self.neighbors = []
 
     def set_coords(self, max_width, max_height):
         if max_width < 2 * RADIUS or max_height < 2 * RADIUS:
@@ -41,7 +40,7 @@ class Vertex:
                 return edge
 
     def add_neighbor(self, vertex, edge):
-        self.neighbors.add(vertex)
+        self.neighbors.append(vertex)
         self.edges.add(edge)
 
     def __str__(self):

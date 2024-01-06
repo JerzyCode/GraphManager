@@ -1,6 +1,3 @@
-from app.utils.const import RADIUS
-
-
 class Edge:
     def __init__(self, vertex1, vertex2, directed, weight):
         self.vertex1 = vertex1

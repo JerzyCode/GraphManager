@@ -1,7 +1,5 @@
 import random
-import threading
-import time
-from queue import Queue, PriorityQueue
+from queue import Queue
 
 from app.graph.Edge import Edge
 from app.graph.Vertex import Vertex
@@ -10,30 +8,18 @@ from app.graph.Vertex import Vertex
 class Graph:
     def __init__(self, matrix, is_directed, weights=None, max_width=None, max_height=None):
         self.matrix = matrix
-        self.V = set()
+        self.V = []
         self.E = set()
         self.weights = weights
         self.is_directed = is_directed
         self.create_vertexes(max_width, max_height)
         self.create_edges()
         print(self.__str__())
-        for vertex in self.V:
-            string = 'vertex:' + vertex.label + ": "
-            string += 'edges: '
-            for ede in vertex.edges:
-                string += str(ede) + ', '
-            string += 'neighbors: '
-            for neigh in vertex.neighbors:
-                string += str(neigh) + ', '
-            print(string)
-
-        # TODO NIE DZIALA KOLOROWANIE/BFS I DFS
 
     def create_vertexes(self, max_width, max_height):
         size = len(self.matrix)
-        self.V = list(range(size))
         for i in range(size):
-            self.V[i] = Vertex(str(i + 1), max_width, max_height)
+            self.V.append(Vertex(str(i + 1), max_width, max_height))
 
     def create_edges(self):
         if not self.is_directed:
@@ -68,14 +54,17 @@ class Graph:
             self.E.add(edge)
 
     def __str__(self):
-        edges = 'edges = '
-        vertexes = 'vertexes = '
-        for edge in self.E:
-            edges += str(edge) + ', '
-        for vertex in range(len(self.V)):
-            vertexes += str(self.V[vertex]) + ', '
-
-        return vertexes + '\n' + edges
+        string = ''
+        for vertex in self.V:
+            string = 'vertex:' + vertex.label + ": "
+            string += 'edges: '
+            for ede in vertex.edges:
+                string += str(ede) + ', '
+            string += 'neighbors: '
+            for neigh in vertex.neighbors:
+                string += str(neigh) + ', '
+            print(string)
+        return string
 
 
 def generate_graph(n, probability, is_weighted, is_directed, max_width, max_height):
@@ -88,7 +77,7 @@ def generate_graph(n, probability, is_weighted, is_directed, max_width, max_heig
 def generate_undirected_graph(n, probability, is_weighted, max_width, max_height):
     if probability < 0 or probability > 1:
         probability = 0.5
-    A = generate_2d_array(n)
+    matrix = generate_2d_array(n)
     probability = int(probability * 100)
     num_of_edges = 0
     weights = {}
@@ -98,17 +87,17 @@ def generate_undirected_graph(n, probability, is_weighted, max_width, max_height
                 rand = random.randint(1, 100)
                 if rand <= probability:
                     num_of_edges += 1
-                    A[i][j] = 1
-                    A[j][i] = 1
+                    matrix[i][j] = 1
+                    matrix[j][i] = 1
                 # if is_weighted:
                 #     weights[i][j] = rand
-    return Graph(A, False, weights, max_width, max_height)
+    return Graph(matrix, False, weights, max_width, max_height)
 
 
 def generate_directed_graph(n, probability, is_weighted, max_width, max_height):
     if probability < 0 or probability > 1:
         probability = 0.5
-    A = generate_2d_array(n)
+    matrix = generate_2d_array(n)
     probability = int(probability * 40)
     num_of_edges = 0
     weights = {}
@@ -118,8 +107,8 @@ def generate_directed_graph(n, probability, is_weighted, max_width, max_height):
                 rand = random.randint(1, 100)
                 if rand <= probability:
                     num_of_edges += 1
-                    A[i][j] = 1
-    return Graph(A, True, weights, max_width, max_height)
+                    matrix[i][j] = 1
+    return Graph(matrix, True, weights, max_width, max_height)
 
 
 def generate_2d_array(n):
