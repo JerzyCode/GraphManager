@@ -1,8 +1,9 @@
 class Edge:
-    def __init__(self, vertex1, vertex2, directed, weight):
+    def __init__(self, vertex1, vertex2, directed, digraph, weight):
         self.vertex1 = vertex1
         self.vertex2 = vertex2
         self.directed = directed
+        self.digraph = digraph
         self.weight = weight
         self.label = vertex1.label + '_' + vertex2.label
 

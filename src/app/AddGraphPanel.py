@@ -1,6 +1,7 @@
 import tkinter
 import src.app.graph.DirectedGraph as directedGraph
 import src.app.graph.UndirectedGraph as undirectedGraph
+import src.app.graph.Digraph as digraph
 
 from src.app.utils.AppUtils import *
 from src.app.utils.const import *
@@ -18,7 +19,7 @@ class AddGraphPanel(tk.Toplevel):
         self.input_size = None
         self.input_p = None
         self.panel = None
-        self.is_weighted = False
+        self.is_digraph = False
         self.is_directed = False
         self.graph = None
         self.canvas = canvas
@@ -54,11 +55,11 @@ class AddGraphPanel(tk.Toplevel):
                                   command=self.switch_directed, )
         checkbox.pack(side=tk.LEFT)
 
-        checkbox = tk.Checkbutton(checkboxes, text='Is Weighted',
+        checkbox = tk.Checkbutton(checkboxes, text='Is Digraph',
                                   bg=BUTTONS_PANEL_BG_COLOR,
                                   font=FONT,
                                   fg=BUTTON_BG_COLOR,
-                                  command=self.switch_directed)
+                                  command=self.switch_digraph)
         checkbox.pack(side=tk.RIGHT)
         checkboxes.pack(pady=50)
 
@@ -73,7 +74,11 @@ class AddGraphPanel(tk.Toplevel):
         if size and size.isdigit() and int(size) <= 100:
             self.canvas.delete('all')
             graph_size = int(self.input_size.get())
-            if self.is_directed:
+            if self.is_digraph:
+                self.graph = digraph.generate_graph(graph_size, float(p),
+                                                    self.canvas.winfo_width(),
+                                                    self.canvas.winfo_height())
+            elif self.is_directed:
                 self.graph = directedGraph.generate_graph(graph_size, float(p),
                                                           self.canvas.winfo_width(),
                                                           self.canvas.winfo_height())
@@ -86,5 +91,5 @@ class AddGraphPanel(tk.Toplevel):
     def switch_directed(self):
         self.is_directed = not self.is_directed
 
-    def switch_weighted(self):
-        self.is_weighted = not self.is_weighted
+    def switch_digraph(self):
+        self.is_digraph = not self.is_digraph
