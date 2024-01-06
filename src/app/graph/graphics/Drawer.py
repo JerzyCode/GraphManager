@@ -1,6 +1,5 @@
 import tkinter
-
-from app.utils.const import *
+from src.app.utils.const import *
 
 
 def end_line_point(vertex1, vertex2):
@@ -138,12 +137,13 @@ class Drawer:
             self.canvas.itemconfig(line, arrow=tkinter.LAST, arrowshape=arrow_shape)
 
     def color_edge(self, edge):
-        print('color_edge:', str(edge))
         if edge is not None:
             self.canvas.delete(f"edge_{edge.label}")
             self.canvas.tag_raise(f"edge_{edge.label}")
             self.draw_edge(edge, EDGE_COLOR_CHANGE_BG, EDGE_WIDTH + 1.5)
             self.canvas.update_idletasks()
+            self.raise_vertex(edge.vertex1)
+            self.raise_vertex(edge.vertex2)
 
     # OTHER_METHODS
     def refresh_all(self, graph):
@@ -158,8 +158,6 @@ class Drawer:
         self.raise_vertexes(graph.V)
 
     def draw_graph(self, graph):
-        print('draw graph')
-        print(graph)
         self.erase_edges(graph.E)
         self.draw_all_vertexes(graph)
         self.draw_all_edges(graph.E)
