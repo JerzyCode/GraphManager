@@ -1,6 +1,7 @@
 import tkinter
+import src.app.graph.DirectedGraph as directedGraph
+import src.app.graph.UndirectedGraph as undirectedGraph
 
-from src.app.graph.Graph import generate_graph
 from src.app.utils.AppUtils import *
 from src.app.utils.const import *
 
@@ -31,14 +32,9 @@ class AddGraphPanel(tk.Toplevel):
     def on_close(self):
         self.withdraw()
 
-    def create_all_buttons(self, parent, image):
-        print()
-        # self.create_button  = create_button_no_pack(parent, image, "Generate Graph", self.generate_and_draw_graph)
-        # create_button(parent, image, "Add Graph", lambda: print('add custom graph'))
-
     def create_all_inputs(self, parent):
         self.input_size = create_input(parent, 'Vertex number:', 5)
-        self.input_size.insert(0, 5)
+        self.input_size.insert(0, 8)
         self.input_p = create_input(parent, 'probability:', 5)
 
     def create_gui(self):
@@ -46,8 +42,8 @@ class AddGraphPanel(tk.Toplevel):
         size_window = tk.PanedWindow(self.panel, orient=tk.HORIZONTAL)
         self.create_all_inputs(size_window)
         size_window.pack(expand=False, pady=25)
-        self.create_button = create_button_no_pack(self.panel, None
-                                                   , "Generate Graph", self.generate_and_draw_graph)
+        self.create_button = create_button_no_pack(self.panel, None,
+                                                   "Generate Graph", self.generate_and_draw_graph)
 
         checkboxes = tk.PanedWindow(self.panel, orient=tk.HORIZONTAL)
 
@@ -77,9 +73,14 @@ class AddGraphPanel(tk.Toplevel):
         if size and size.isdigit() and int(size) <= 100:
             self.canvas.delete('all')
             graph_size = int(self.input_size.get())
-            self.graph = generate_graph(graph_size, float(p), self.is_weighted, self.is_directed,
-                                        self.canvas.winfo_width(),
-                                        self.canvas.winfo_height())
+            if self.is_directed:
+                self.graph = directedGraph.generate_graph(graph_size, float(p),
+                                                          self.canvas.winfo_width(),
+                                                          self.canvas.winfo_height())
+            else:
+                self.graph = undirectedGraph.generate_graph(graph_size, float(p),
+                                                            self.canvas.winfo_width(),
+                                                            self.canvas.winfo_height())
             self.drawer.draw_graph(self.graph)
 
     def switch_directed(self):

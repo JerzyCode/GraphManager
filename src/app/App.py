@@ -1,5 +1,5 @@
 from src.app.AddGraphPanel import AddGraphPanel
-from src.app.graph.Graph import binary_search, depth_search
+import src.app.graph.Graph as gr
 from src.app.graph.graphics.Drawer import Drawer
 from src.app.utils.AppUtils import *
 
@@ -40,13 +40,13 @@ class App:
     def run_dfs(self):
         graph = self.add_graph_panel.graph
         if graph and self.drawer:
-            depth_search(graph, self.drawer)
+            gr.depth_search(graph, self.drawer)
 
     def run_bfs(self):
         graph = self.add_graph_panel.graph
         try:
             if graph and self.drawer and len(graph.V) > 0:
-                binary_search(graph, self.drawer)
+                gr.binary_search(graph, self.drawer)
         except (NameError, AttributeError, TypeError):
             print('graph is not defined')
             pass
