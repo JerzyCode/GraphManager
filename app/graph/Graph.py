@@ -1,30 +1,25 @@
 import random
-import threading
-import time
-from queue import Queue, PriorityQueue
+from queue import Queue
 
 from app.graph.Edge import Edge
 from app.graph.Vertex import Vertex
 
 
 class Graph:
-    def __init__(self, matrix, canvas, is_directed, weights=None):
+    def __init__(self, matrix, is_directed, weights=None, max_width=None, max_height=None):
         self.matrix = matrix
-        self.V = set()
+        self.V = []
         self.E = set()
-        self.is_weights = weights
         self.weights = weights
         self.is_directed = is_directed
-        self.canvas = canvas
-        self.create_vertexes()
+        self.create_vertexes(max_width, max_height)
         self.create_edges()
-        print(str(self))
+        print(self.__str__())
 
-    def create_vertexes(self):
+    def create_vertexes(self, max_width, max_height):
         size = len(self.matrix)
-        self.V = list(range(size))
         for i in range(size):
-            self.V[i] = Vertex(str(i + 1), self.canvas)
+            self.V.append(Vertex(str(i + 1), max_width, max_height))
 
     def create_edges(self):
         if not self.is_directed:
@@ -51,53 +46,38 @@ class Graph:
             else:
                 edge = Edge(self.V[i], self.V[j], self.is_directed, 0)
 
-            self.V[i].add_neighbor(self.V[j])
+            if self.is_directed:
+                self.V[i].add_neighbor(self.V[j], edge)
+            else:
+                self.V[i].add_neighbor(self.V[j], edge)
+                self.V[j].add_neighbor(self.V[i], edge)
             self.E.add(edge)
 
-    def find_edge(self, edge_label):
-        if self.is_directed:
-            for edge in self.E:
-                v1 = edge.vertex1.label
-                v2 = edge.vertex2.label
-                if edge_label == v1 + '_' + v2:
-                    return edge
-        else:
-            for edge in self.E:
-                v1 = edge.vertex1.label
-                v2 = edge.vertex2.label
-                splited = edge_label.split('_')
-                if (v1 == splited[0] and v2 == splited[1]) or (v2 == splited[0] and v1 == splited[1]):
-                    return edge
-        return None
-
-    def find_vertex(self, vertex_label):
-        vertex = self.V[int(vertex_label) - 1]
-        if vertex is not None:
-            return vertex
-        return None
-
     def __str__(self):
-        edges = 'edges = '
-        vertexes = 'vertexes = '
-        for edge in self.E:
-            edges += str(edge) + ', '
-        for vertex in range(len(self.V)):
-            vertexes += str(self.V[vertex]) + ', '
+        string = ''
+        for vertex in self.V:
+            string = 'vertex:' + vertex.label + ": "
+            string += 'edges: '
+            for ede in vertex.edges:
+                string += str(ede) + ', '
+            string += 'neighbors: '
+            for neigh in vertex.neighbors:
+                string += str(neigh) + ', '
+            print(string)
+        return string
 
-        return vertexes + '\n' + edges
 
-
-def generate_graph(n, canvas, probability, is_weighted, is_directed):
+def generate_graph(n, probability, is_weighted, is_directed, max_width, max_height):
     if not is_directed:
-        return generate_undirected_graph(n, canvas, probability, is_weighted)
+        return generate_undirected_graph(n, probability, is_weighted, max_width, max_height)
     else:
-        return generate_directed_graph(n, canvas, probability, is_weighted)
+        return generate_directed_graph(n, probability, is_weighted, max_width, max_height)
 
 
-def generate_undirected_graph(n, canvas, probability, is_weighted):
+def generate_undirected_graph(n, probability, is_weighted, max_width, max_height):
     if probability < 0 or probability > 1:
         probability = 0.5
-    A = generate_2d_array(n)
+    matrix = generate_2d_array(n)
     probability = int(probability * 100)
     num_of_edges = 0
     weights = {}
@@ -107,17 +87,17 @@ def generate_undirected_graph(n, canvas, probability, is_weighted):
                 rand = random.randint(1, 100)
                 if rand <= probability:
                     num_of_edges += 1
-                    A[i][j] = 1
-                    A[j][i] = 1
+                    matrix[i][j] = 1
+                    matrix[j][i] = 1
                 # if is_weighted:
                 #     weights[i][j] = rand
-    return Graph(A, canvas, False, weights)
+    return Graph(matrix, False, weights, max_width, max_height)
 
 
-def generate_directed_graph(n, canvas, probability, is_weighted):
+def generate_directed_graph(n, probability, is_weighted, max_width, max_height):
     if probability < 0 or probability > 1:
         probability = 0.5
-    A = generate_2d_array(n)
+    matrix = generate_2d_array(n)
     probability = int(probability * 40)
     num_of_edges = 0
     weights = {}
@@ -127,50 +107,50 @@ def generate_directed_graph(n, canvas, probability, is_weighted):
                 rand = random.randint(1, 100)
                 if rand <= probability:
                     num_of_edges += 1
-                    A[i][j] = 1
-    return Graph(A, canvas, True, weights)
+                    matrix[i][j] = 1
+    return Graph(matrix, True, weights, max_width, max_height)
 
 
 def generate_2d_array(n):
     return [[0] * n for _ in range(n)]
 
 
-def depth_search(graph, drawer):
-    print('DFS')
-    visited = [False] * len(graph.V)
-    for i in range(len(graph.V)):
-        if not visited[i]:
-            dfs(graph, i, visited, drawer)
-
-
-def dfs(graph, vertex, visited, drawer):
-    print('DFS')
-    matrix = graph.matrix
-    visited[vertex] = True
-    drawer.canvas.after(500, drawer.color_vert(vertex + 1))
-    for i in range(len(matrix)):
-        if not visited[i] and matrix[vertex][i] == 1:
-            drawer.color_edge(str((vertex + 1)) + '_' + str(i + 1))
-            dfs(graph, i, visited, drawer)
-
-
 def binary_search(graph, drawer):
     visited = [False] * len(graph.V)
     queue = Queue()
-    for i in range(len(graph.V)):
-        if not visited[i]:
-            bfs(graph, queue, drawer, visited, i)
+    for vertex in graph.V:
+        if not visited[int(vertex.label) - 1]:
+            bfs(graph, queue, drawer, visited, vertex)
 
 
 def bfs(graph, queue, drawer, visited, vertex):
-    visited[vertex] = True
+    visited[int(vertex.label) - 1] = True
     queue.put(vertex)
-    drawer.canvas.after(500, drawer.color_vert(vertex + 1))
+    drawer.canvas.after(500, drawer.color_vertex(vertex, graph))
     while not queue.empty():
         v = queue.get()
-        for i in range(len(graph.V)):
-            if not visited[i] and graph.matrix[v][i] == 1:
-                drawer.color_edge(str((v + 1)) + '_' + str(i + 1))
-                drawer.canvas.after(500, drawer.color_vert(i + 1))
-                queue.put(i)
-                visited[i] = True
+        print(str(v))
+        for neigh in v.neighbors:
+            if not visited[int(neigh.label) - 1]:
+                drawer.color_edge(v.find_edge(neigh, graph.is_directed))
+                drawer.canvas.after(500, drawer.color_vertex(neigh, graph))
+                queue.put(neigh)
+                visited[int(neigh.label) - 1] = True
+
+
+def depth_search(graph, drawer):
+    print('DFS')
+    visited = [False] * len(graph.V)
+    for vertex in graph.V:
+        if not visited[int(vertex.label) - 1]:
+            dfs(graph, vertex, visited, drawer)
+
+
+def dfs(graph, vertex, visited, drawer):
+    visited[int(vertex.label) - 1] = True
+    print(vertex)
+    drawer.canvas.after(500, drawer.color_vertex(vertex, graph))
+    for neigh in vertex.neighbors:
+        if not visited[int(neigh.label) - 1]:
+            drawer.color_edge(vertex.find_edge(neigh, graph.is_directed))
+            dfs(graph, neigh, visited, drawer)

@@ -1,5 +1,5 @@
 import tkinter as tk
-from app.graph.Graph import generate_graph, depth_search, binary_search, Graph
+from app.graph.Graph import generate_graph, binary_search, depth_search
 from app.graph.graphics.Drawer import Drawer
 from app.utils.const import *
 
@@ -30,19 +30,17 @@ class App:
         self.root.resizable(True, True)
         self.root.title('Graph Manager')
         self.graph = None
-        self.drawer = None
         self.input_size = None
         self.input_p = None
         self._create_gui()
 
-    def custom_graph(self):
-        A = [[0, 1, 1],
-             [1, 0, 0],
-             [1, 1, 0]]
-
-
-        self.graph = Graph(A, self.canvas, is_directed, [])
-        self.drawer = Drawer(self.graph, self.canvas)
+    # def custom_graph(self):
+    #     A = [[0, 1, 1],
+    #          [1, 0, 0],
+    #          [1, 1, 0]]
+    #
+    #     self.graph = Graph(A, is_directed, [], self.canvas.winfo_width(), self.canvas.winfo_height())
+    #     self.drawer = Drawer(self.graph, self.canvas)
 
     def _create_gui(self):
         pixel_virtual = tk.PhotoImage(width=1, height=1)
@@ -56,14 +54,14 @@ class App:
         size_window.add(self.input_p)
         size_window.pack()
 
-        ## GRAPH PANEL
+        # GRAPH PANEL
         graph_panel = tk.PanedWindow(orient='horizontal', width=GRAPH_VIEW_WIDTH, height=GRAPH_VIEW_HEIGHT, bd=0)
         graph_panel.pack(fill=tk.BOTH, expand=True)
         self.canvas = tk.Canvas(graph_panel, bg=GRAPH_BG_COLOR)
         self.canvas.pack(fill=tk.BOTH, expand=True)
-
+        self.drawer = Drawer(self.canvas)
         self.create_all_buttons(buttons_panel, pixel_virtual)
-        self.custom_graph()
+        # self.custom_graph()
 
         self.root.mainloop()
 
@@ -81,7 +79,7 @@ class App:
 
     def refresh_graph(self):
         if self.drawer:
-            self.drawer.refresh_all()
+            self.drawer.refresh_all(self.graph)
 
     def generate_and_draw_graph(self):
         size = self.input_size.get()
@@ -91,8 +89,9 @@ class App:
         if size and size.isdigit() and int(size) <= 100:
             self.canvas.delete('all')
             graph_size = int(self.input_size.get())
-            self.graph = generate_graph(graph_size, self.canvas, float(p), is_weighted, is_directed)
-            self.drawer = Drawer(self.graph, self.canvas)
+            self.graph = generate_graph(graph_size, float(p), is_weighted, is_directed, self.canvas.winfo_width(),
+                                        self.canvas.winfo_height())
+            self.drawer.draw_graph(self.graph)
 
     def create_all_buttons(self, parent, image):
         create_button(parent, image, "Generate Graph", self.generate_and_draw_graph)
