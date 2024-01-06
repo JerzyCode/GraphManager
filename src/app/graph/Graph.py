@@ -1,8 +1,8 @@
 import random
 from queue import Queue
 
-from app.graph.Edge import Edge
-from app.graph.Vertex import Vertex
+from src.app.graph.Edge import Edge
+from src.app.graph.Vertex import Vertex
 
 
 class Graph:
@@ -14,7 +14,6 @@ class Graph:
         self.is_directed = is_directed
         self.create_vertexes(max_width, max_height)
         self.create_edges()
-        print(self.__str__())
 
     def create_vertexes(self, max_width, max_height):
         size = len(self.matrix)
@@ -129,7 +128,6 @@ def bfs(graph, queue, drawer, visited, vertex):
     drawer.canvas.after(500, drawer.color_vertex(vertex, graph))
     while not queue.empty():
         v = queue.get()
-        print(str(v))
         for neigh in v.neighbors:
             if not visited[int(neigh.label) - 1]:
                 drawer.color_edge(v.find_edge(neigh, graph.is_directed))
@@ -148,7 +146,6 @@ def depth_search(graph, drawer):
 
 def dfs(graph, vertex, visited, drawer):
     visited[int(vertex.label) - 1] = True
-    print(vertex)
     drawer.canvas.after(500, drawer.color_vertex(vertex, graph))
     for neigh in vertex.neighbors:
         if not visited[int(neigh.label) - 1]:

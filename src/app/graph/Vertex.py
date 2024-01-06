@@ -1,6 +1,5 @@
 import random
-
-from app.utils.const import *
+from src.app.utils.const import *
 
 
 class Vertex:
