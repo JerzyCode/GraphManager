@@ -34,7 +34,6 @@ class App:
         self.drawer = Drawer(self.canvas)
         self.add_graph_panel = AddGraphPanel(self.canvas, self.drawer)
         self.create_all_buttons(buttons_panel, pixel_virtual)
-        # self.custom_graph()
 
         self.root.mainloop()
 
@@ -63,10 +62,5 @@ class App:
         create_button(parent, image, "DFS", self.run_dfs)
         create_button(parent, image, "BFS", self.run_bfs)
 
-    def create_all_inputs(self, parent):
-        self.input_size = create_input(parent, 'size:', 7)
-        self.input_p = create_input(parent, 'p:', 7)
-
     def add_graph_view_set_visible(self):
-        self.canvas.delete('all')
-        self.add_graph_panel.set_visible()
+        self.add_graph_panel.show_add_graph_panel_visible()
