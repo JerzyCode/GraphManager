@@ -44,10 +44,7 @@ def apex_point(vertex1, vertex2):
 class Drawer:
 
     def __init__(self, canvas):
-        # self.graph = graph
         self.canvas = canvas
-        # self.draw_all_vertexes()
-        # self.draw_all_edges()
 
     # VERTEX_METHODS
     def draw_vertex(self, vertex, graph, back_color, font_color):
@@ -88,8 +85,8 @@ class Drawer:
             self.canvas.tag_raise(f"text_{vertex.label}")
 
     # EDGE_METHODS
-    def draw_all_edges(self, edges):
-        for edge in edges:
+    def draw_all_edges(self, graph):
+        for edge in graph.E:
             self.draw_edge(edge, VERTEX_FG_COLOR, EDGE_WIDTH)
 
     def erase_edges(self, edges):
@@ -97,10 +94,12 @@ class Drawer:
             self.canvas.delete(f"edge_{edge.label}")
 
     def draw_edge(self, edge, color, width):
-        if edge.directed:
+        if edge.directed and not edge.digraph:
             self.draw_directed_edge(edge, color, width)
-        else:
+        elif not edge.directed:
             self.draw_undirected_edge(edge, color, width)
+        else:
+            self.draw_digraph_edge(edge, color, width)
 
     def draw_undirected_edge(self, edge, color, width):
         vertex1 = edge.vertex1
@@ -121,6 +120,22 @@ class Drawer:
         vertex2 = edge.vertex2
         label = vertex1.label + '_' + vertex2.label
         end_line_points = end_line_point(vertex1, vertex2)
+        line = self.canvas.create_line(
+            vertex1.x,
+            vertex1.y,
+            vertex2.x + end_line_points[0],
+            vertex2.y + end_line_points[1],
+            fill=color, width=width,
+            tags=f"edge_{label}",
+            smooth=True)
+        arrow_shape = (9, 9, 6)
+        self.canvas.itemconfig(line, arrow=tkinter.LAST, arrowshape=arrow_shape)
+
+    def draw_digraph_edge(self, edge, color, width):
+        vertex1 = edge.vertex1
+        vertex2 = edge.vertex2
+        label = vertex1.label + '_' + vertex2.label
+        end_line_points = end_line_point(vertex1, vertex2)
         apex = apex_point(vertex1, vertex2)
         line = self.canvas.create_line(
             vertex1.x,
@@ -132,9 +147,8 @@ class Drawer:
             fill=color, width=width,
             tags=f"edge_{label}",
             smooth=True)
-        if edge.directed:
-            arrow_shape = (9, 9, 6)
-            self.canvas.itemconfig(line, arrow=tkinter.LAST, arrowshape=arrow_shape)
+        arrow_shape = (9, 9, 6)
+        self.canvas.itemconfig(line, arrow=tkinter.LAST, arrowshape=arrow_shape)
 
     def color_edge(self, edge):
         if edge is not None:
@@ -153,14 +167,14 @@ class Drawer:
         for edge in graph.E:
             self.canvas.delete(f"edge_{edge.label}")
 
-        self.draw_all_edges(graph.E)
+        self.draw_all_edges(graph)
         self.draw_all_vertexes(graph)
         self.raise_vertexes(graph.V)
 
     def draw_graph(self, graph):
         self.erase_edges(graph.E)
         self.draw_all_vertexes(graph)
-        self.draw_all_edges(graph.E)
+        self.draw_all_edges(graph)
 
     def start_move(self, event):
         if (event.x <= RADIUS or event.x >= self.canvas.winfo_width() - RADIUS
@@ -178,5 +192,5 @@ class Drawer:
         self.erase_edges(graph.E)
         self.canvas.move(f"vertex_{vertex.label}", delta_x, delta_y)
         self.canvas.move(f"text_{vertex.label}", delta_x, delta_y)
-        self.draw_all_edges(graph.E)
+        self.draw_all_edges(graph)
         self.raise_vertexes(graph.V)

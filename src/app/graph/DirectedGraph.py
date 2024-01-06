@@ -14,7 +14,7 @@ class DirectedGraph(Graph, ABC):
         for i in range(size):
             for j in range(size):
                 if i != j and self.matrix[i][j] == 1:
-                    edge = Edge(self.V[i], self.V[j], True, weight=None)
+                    edge = Edge(self.V[i], self.V[j], True, digraph=False, weight=None)
                     self.V[i].add_neighbor(self.V[j], edge)
                     self.E.add(edge)
 
@@ -30,4 +30,5 @@ def generate_graph(n, probability, max_width, max_height):
                 rand = rd.randint(1, 100)
                 if rand <= probability:
                     matrix[i][j] = 1
+                    matrix[j][i] = 0
     return DirectedGraph(matrix, max_width, max_height)
