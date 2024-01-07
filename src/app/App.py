@@ -4,8 +4,8 @@ from src.app.graph.Graph import *
 from src.app.graph.graphics.Drawer import Drawer
 from src.app.utils.const import *
 
-customtkinter.set_appearance_mode("System")  # Modes: "System" (standard), "Dark", "Light"
-customtkinter.set_default_color_theme("blue")  # Themes: "blue" (standard), "green", "dark-blue"
+customtkinter.set_appearance_mode("System")
+customtkinter.set_default_color_theme("blue")
 
 
 def change_scaling_event(new_scaling: str):
@@ -23,7 +23,8 @@ class App(customtkinter.CTk):
 
         # configure window
         self.title("Graph Manager")
-        self.geometry(f"{1100}x{580}")
+        self.geometry(f"{WINDOW_WIDTH}x{WINDOW_HEIGHT}")
+        self.protocol("WM_DELETE_WINDOW", self.on_close)
 
         self.grid_columnconfigure(1, weight=1)
         self.grid_rowconfigure((0, 1, 2), weight=1)
@@ -86,3 +87,7 @@ class App(customtkinter.CTk):
 
     def add_graph_view_set_visible(self):
         self.add_graph_panel.show_add_graph_panel_visible()
+
+    def on_close(self):
+        self.add_graph_panel.destroy()
+        self.destroy()

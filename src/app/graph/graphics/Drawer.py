@@ -87,7 +87,7 @@ class Drawer:
     # EDGE_METHODS
     def draw_all_edges(self, graph):
         for edge in graph.E:
-            self.draw_edge(edge, VERTEX_FG_COLOR, EDGE_WIDTH)
+            self.draw_edge(edge, EDGE_COLOR, EDGE_WIDTH)
 
     def erase_edges(self, edges):
         for edge in edges:
