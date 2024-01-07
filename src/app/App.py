@@ -1,52 +1,80 @@
+import customtkinter
 from src.app.AddGraphPanel import AddGraphPanel
-import src.app.graph.Graph as gr
+from src.app.graph.Graph import *
 from src.app.graph.graphics.Drawer import Drawer
-from src.app.utils.AppUtils import *
+from src.app.utils.const import *
 
-is_directed = True
-is_weighted = True
+customtkinter.set_appearance_mode("System")  # Modes: "System" (standard), "Dark", "Light"
+customtkinter.set_default_color_theme("blue")  # Themes: "blue" (standard), "green", "dark-blue"
 
 
-class App:
+def change_scaling_event(new_scaling: str):
+    new_scaling_float = int(new_scaling.replace("%", "")) / 100
+    customtkinter.set_widget_scaling(new_scaling_float)
+
+
+def change_appearance_mode_event(new_appearance_mode: str):
+    customtkinter.set_appearance_mode(new_appearance_mode)
+
+
+class App(customtkinter.CTk):
     def __init__(self):
-        self.root = tk.Tk()
-        self.root.geometry(f'{WINDOW_WIDTH}x{WINDOW_HEIGHT}')
-        self.root.resizable(True, True)
-        self.root.title('Graph Manager')
-        self.input_size = None
-        self.input_p = None
-        self.add_graph_panel = None
-        self._create_gui()
+        super().__init__()
 
-    def _create_gui(self):
-        pixel_virtual = tk.PhotoImage(width=1, height=1)
-        # BUTTONS PANEL
-        buttons_panel = tk.Frame(self.root, padx=5, pady=5, bg=BUTTONS_PANEL_BG_COLOR)
-        buttons_panel.pack(side=tk.LEFT, fill=tk.BOTH)
-        label = tk.Label(buttons_panel, text='FUNCTIONS', font=FONT, bg=BUTTONS_PANEL_BG_COLOR, bd=0,
-                         fg=BUTTONS_PANEL_SIZE_FG_COLOR, pady=5)
-        label.pack()
-        # GRAPH PANEL
-        graph_panel = tk.PanedWindow(orient='horizontal', width=GRAPH_VIEW_WIDTH, height=GRAPH_VIEW_HEIGHT, bd=0)
-        graph_panel.pack(fill=tk.BOTH, expand=True)
-        self.canvas = tk.Canvas(graph_panel, bg=GRAPH_BG_COLOR)
-        self.canvas.pack(fill=tk.BOTH, expand=True)
+        # configure window
+        self.title("Graph Manager")
+        self.geometry(f"{1100}x{580}")
+
+        self.grid_columnconfigure(1, weight=1)
+        self.grid_rowconfigure((0, 1, 2), weight=1)
+
+        # create sidebar frame with widgets
+        self.sidebar_frame = customtkinter.CTkFrame(self, width=140, corner_radius=0)
+        self.sidebar_frame.grid(row=0, column=0, rowspan=4, sticky="nsew")
+        self.sidebar_frame.grid_rowconfigure(5, weight=1)
+        self.logo_label = customtkinter.CTkLabel(self.sidebar_frame, text="Graph Manager",
+                                                 font=customtkinter.CTkFont(size=20, weight="bold"))
+        self.logo_label.grid(row=0, column=0, padx=20, pady=(20, 10))
+        self.generate_graph = customtkinter.CTkButton(self.sidebar_frame, text='Add Graph',
+                                                      command=self.add_graph_view_set_visible)
+        self.generate_graph.grid(row=1, column=0, padx=20, pady=10)
+        self.bfs_button = customtkinter.CTkButton(self.sidebar_frame, text='BFS', command=self.run_bfs)
+        self.bfs_button.grid(row=2, column=0, padx=20, pady=10)
+        self.dfs_button = customtkinter.CTkButton(self.sidebar_frame, text='DFS', command=self.run_dfs)
+        self.dfs_button.grid(row=3, column=0, padx=20, pady=10)
+        self.refresh_button = customtkinter.CTkButton(self.sidebar_frame, text='REFRESH GRAPH',
+                                                      command=self.refresh_graph)
+        self.refresh_button.grid(row=4, column=0, padx=20, pady=10)
+        self.appearance_mode_label = customtkinter.CTkLabel(self.sidebar_frame, text="Appearance Mode:", anchor="w")
+        self.appearance_mode_label.grid(row=6, column=0, padx=20, pady=(10, 0))
+        self.appearance_mode_option_menu = customtkinter.CTkOptionMenu(self.sidebar_frame,
+                                                                       values=["Light", "Dark", "System"],
+                                                                       command=change_appearance_mode_event)
+        self.appearance_mode_option_menu.grid(row=7, column=0, padx=20, pady=(10, 10))
+        self.scaling_label = customtkinter.CTkLabel(self.sidebar_frame, text="UI Scaling:", anchor="w")
+        self.scaling_label.grid(row=8, column=0, padx=20, pady=(10, 0))
+        self.scaling_option_menu = customtkinter.CTkOptionMenu(self.sidebar_frame,
+                                                               values=["80%", "90%", "100%", "110%", "120%"],
+                                                               command=change_scaling_event)
+        self.scaling_option_menu.grid(row=9, column=0, padx=20, pady=(10, 20))
+
+        # graph display
+        self.canvas = customtkinter.CTkCanvas(self, bg=GRAPH_BG_COLOR, bd=0, highlightthickness=0,
+                                              relief='ridge')
         self.drawer = Drawer(self.canvas)
         self.add_graph_panel = AddGraphPanel(self.canvas, self.drawer)
-        self.create_all_buttons(buttons_panel, pixel_virtual)
-
-        self.root.mainloop()
+        self.canvas.grid(row=0, column=1, rowspan=5, columnspan=2, padx=55, pady=5, sticky="nsew")
 
     def run_dfs(self):
         graph = self.add_graph_panel.graph
         if graph and self.drawer:
-            gr.depth_search(graph, self.drawer)
+            depth_search(graph, self.drawer)
 
     def run_bfs(self):
         graph = self.add_graph_panel.graph
         try:
             if graph and self.drawer and len(graph.V) > 0:
-                gr.binary_search(graph, self.drawer)
+                binary_search(graph, self.drawer)
         except (NameError, AttributeError, TypeError):
             print('graph is not defined')
             pass
@@ -55,12 +83,6 @@ class App:
         graph = self.add_graph_panel.graph
         if self.drawer:
             self.drawer.refresh_all(graph)
-
-    def create_all_buttons(self, parent, image):
-        create_button(parent, image, "Add Graph", self.add_graph_view_set_visible)
-        create_button(parent, image, "Refresh Graph", self.refresh_graph)
-        create_button(parent, image, "DFS", self.run_dfs)
-        create_button(parent, image, "BFS", self.run_bfs)
 
     def add_graph_view_set_visible(self):
         self.add_graph_panel.show_add_graph_panel_visible()
