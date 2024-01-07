@@ -35,7 +35,6 @@ class Vertex:
     def find_edge_undirected(self, neigh):
         for edge in self.edges:
             if edge.vertex2 == neigh or edge.vertex1 == neigh:
-                print('find_edge', str(edge))
                 return edge
 
     def add_neighbor(self, vertex, edge):
