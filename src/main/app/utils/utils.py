@@ -1,6 +1,6 @@
 import tkinter as tk
 
-from src.app.utils.const import *
+from src.app.utils.constants import *
 
 
 def create_button(parent, image, text, command):

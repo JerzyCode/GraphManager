@@ -1,7 +1,8 @@
 from abc import ABC
 import random as rd
-from src.app.graph.Edge import Edge
-from src.app.graph.Graph import Graph
+
+from src.main.app.graph.edge import Edge
+from src.main.app.graph.graph import Graph
 
 
 class UndirectedGraph(Graph, ABC):

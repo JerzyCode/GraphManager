@@ -1,11 +1,12 @@
 import customtkinter
-import src.app.graph.DirectedGraph as directedGraph
-import src.app.graph.UndirectedGraph as undirectedGraph
-import src.app.graph.Digraph as digraph
-from src.app.utils.const import *
+import src.main.app.graph.directed_graph as directed_graph
+import src.main.app.graph.undirected_graph as undirected_graph
+import src.main.app.graph.digraph as digraph
+
+from src.main.app.utils.constants import *
 
 
-class AddGraphPanel(customtkinter.CTk):
+class GenerateGraphPanel(customtkinter.CTk):
     def __init__(self, canvas, drawer):
         super().__init__()
         self.is_directed = False
@@ -16,7 +17,7 @@ class AddGraphPanel(customtkinter.CTk):
         self.drawer = drawer
 
         # configure window
-        self.title("CustomTkinter complex_example.py")
+        self.title("Add Graph")
         self.geometry(f"{ADD_GRAPH_WINDOW_WIDTH}x{ADD_GRAPH_WINDOW_HEIGHT}")
         self.protocol("WM_DELETE_WINDOW", self.on_close)
         self.grid_columnconfigure(1, weight=1)
@@ -93,13 +94,13 @@ class AddGraphPanel(customtkinter.CTk):
                                                     self.canvas.winfo_width(),
                                                     self.canvas.winfo_height())
             elif self.is_directed:
-                self.graph = directedGraph.generate_graph(graph_size, float(p),
-                                                          self.canvas.winfo_width(),
-                                                          self.canvas.winfo_height())
+                self.graph = directed_graph.generate_graph(graph_size, float(p),
+                                                           self.canvas.winfo_width(),
+                                                           self.canvas.winfo_height())
             else:
-                self.graph = undirectedGraph.generate_graph(graph_size, float(p),
-                                                            self.canvas.winfo_width(),
-                                                            self.canvas.winfo_height())
+                self.graph = undirected_graph.generate_graph(graph_size, float(p),
+                                                             self.canvas.winfo_width(),
+                                                             self.canvas.winfo_height())
             self.drawer.draw_graph(self.graph)
             self.withdraw()
 

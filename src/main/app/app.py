@@ -1,8 +1,9 @@
 import customtkinter
-from src.app.AddGraphPanel import AddGraphPanel
-from src.app.graph.Graph import *
-from src.app.graph.graphics.Drawer import Drawer
-from src.app.utils.const import *
+
+from src.main.app.generate_graph_panel import GenerateGraphPanel
+from src.main.app.graph.graph import binary_search, depth_search
+from src.main.app.graph.graphics.drawer import Drawer
+from src.main.app.utils.constants import *
 
 customtkinter.set_appearance_mode("System")
 customtkinter.set_default_color_theme("blue")
@@ -63,7 +64,7 @@ class App(customtkinter.CTk):
         self.canvas = customtkinter.CTkCanvas(self, bg=GRAPH_BG_COLOR, bd=0, highlightthickness=0,
                                               relief='ridge')
         self.drawer = Drawer(self.canvas)
-        self.add_graph_panel = AddGraphPanel(self.canvas, self.drawer)
+        self.add_graph_panel = GenerateGraphPanel(self.canvas, self.drawer)
         self.canvas.grid(row=0, column=1, rowspan=5, columnspan=2, padx=55, pady=5, sticky="nsew")
 
     def run_dfs(self):

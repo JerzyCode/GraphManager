@@ -1,17 +1,18 @@
 import random
-from src.app.utils.const import *
+
+from src.main.app.utils.constants import *
 
 
 class Vertex:
     def __init__(self, label, max_width, max_height):
         self.x = None
         self.y = None
-        self.set_coords(max_width, max_height)
+        self._set_coords(max_width, max_height)
         self.label = label + ''
         self.edges = set()
         self.neighbors = []
 
-    def set_coords(self, max_width, max_height):
+    def _set_coords(self, max_width, max_height):
         if max_width < 2 * RADIUS or max_height < 2 * RADIUS:
             self.x = random.randint(2 * RADIUS, GRAPH_VIEW_WIDTH - 2 * RADIUS)
             self.y = random.randint(2 * RADIUS, GRAPH_VIEW_HEIGHT - 2 * RADIUS)

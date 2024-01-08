@@ -1,8 +1,7 @@
-import random
 from abc import abstractmethod
 from queue import Queue
 
-from src.app.graph.Vertex import Vertex
+from src.main.app.graph.vertex import Vertex
 
 
 class Graph:
@@ -10,9 +9,9 @@ class Graph:
         self.matrix = matrix
         self.V = []
         self.E = set()
-        self.create_vertexes(max_width, max_height)
+        self._create_vertexes(max_width, max_height)
 
-    def create_vertexes(self, max_width, max_height):
+    def _create_vertexes(self, max_width, max_height):
         size = len(self.matrix)
         for i in range(size):
             self.V.append(Vertex(str(i + 1), max_width, max_height))
@@ -36,7 +35,7 @@ class Graph:
 
 
 def binary_search(graph, drawer):
-    from src.app.graph.DirectedGraph import DirectedGraph
+    from src.main.app.graph.directed_graph import DirectedGraph
     visited = [False] * len(graph.V)
     queue = Queue()
     directed = isinstance(graph, DirectedGraph)
@@ -60,7 +59,7 @@ def bfs(graph, queue, drawer, visited, vertex, directed):
 
 
 def depth_search(graph, drawer):
-    from src.app.graph.DirectedGraph import DirectedGraph
+    from src.main.app.graph.directed_graph import DirectedGraph
     print('DFS')
     directed = isinstance(graph, DirectedGraph)
     visited = [False] * len(graph.V)
