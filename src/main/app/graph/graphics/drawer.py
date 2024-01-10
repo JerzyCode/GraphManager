@@ -25,6 +25,12 @@ def end_line_point(vertex1, vertex2):
     return delta_x, delta_y
 
 
+def middle_point(vertex1, vertex2):
+    mid_x = (vertex1.x + vertex2.x) / 2
+    mid_y = (vertex1.y + vertex2.y) / 2
+    return mid_x, mid_y
+
+
 def apex_point(vertex1, vertex2):
     import math
     mid_x = (vertex1.x + vertex2.x) / 2
@@ -86,6 +92,13 @@ class Drawer:
             self.canvas.tag_raise(f"text_{vertex.label}")
 
     # EDGE_METHODS
+    def _draw_weight(self, edge, weight_color):
+        vertex1 = edge.vertex1
+        vertex2 = edge.vertex2
+        mid_point = middle_point(vertex1, vertex2)
+        self.canvas.create_text(mid_point[0], mid_point[1], fill=weight_color, font=("Arial", 14, "bold"),
+                                text=edge.weight, anchor="center", tags=f'weight_{edge.weight}')
+
     def _draw_all_edges(self, graph):
         for edge in graph.E:
             self._draw_edge(edge, EDGE_COLOR, EDGE_WIDTH)
@@ -93,6 +106,20 @@ class Drawer:
     def _erase_edges(self, edges):
         for edge in edges:
             self.canvas.delete(f"edge_{edge.label}")
+            self.canvas.delete(f'weight_{edge.weight}')
+
+    def hide_all_weights(self, graph):
+        if graph is not None and graph.is_weighted:
+            for edge in graph.E:
+                self._hide_weight(edge)
+
+    def _hide_weight(self, edge):
+        self.canvas.delete(f"weight_{edge.weight}")
+
+    def draw_all_weights(self, graph):
+        if graph.is_weighted:
+            for edge in graph.E:
+                self._draw_weight(edge, WEIGHT_COLOR)
 
     def _draw_edge(self, edge, color, width):
         if edge.directed and not edge.digraph:
@@ -156,26 +183,29 @@ class Drawer:
             self.canvas.delete(f"edge_{edge.label}")
             self.canvas.tag_raise(f"edge_{edge.label}")
             self._draw_edge(edge, EDGE_COLOR_CHANGE_BG, EDGE_WIDTH + 1.5)
+            self._draw_weight(edge, WEIGHT_COLOR_CHANGE)
             self.canvas.update_idletasks()
             self._raise_vertex(edge.vertex1)
             self._raise_vertex(edge.vertex2)
 
     # OTHER_METHODS
     def refresh_all(self, graph):
-        for vertex in graph.V:
-            self.canvas.delete(f"vertex_{vertex.label}")
-            self.canvas.delete(f"text_{vertex.label}")
-        for edge in graph.E:
-            self.canvas.delete(f"edge_{edge.label}")
-
-        self._draw_all_edges(graph)
-        self._draw_all_vertexes(graph)
-        self._raise_vertexes(graph.V)
+        if graph is not None:
+            for vertex in graph.V:
+                self.canvas.delete(f"vertex_{vertex.label}")
+                self.canvas.delete(f"text_{vertex.label}")
+            self._erase_edges(graph.E)
+            self._draw_all_edges(graph)
+            self._draw_all_vertexes(graph)
+            self.draw_all_weights(graph)
+            self._raise_vertexes(graph.V)
 
     def draw_graph(self, graph):
         self._erase_edges(graph.E)
         self._draw_all_vertexes(graph)
         self._draw_all_edges(graph)
+        self.draw_all_weights(graph)
+        self._raise_vertexes(graph.V)
 
     def _start_move(self, event):
         if (event.x <= RADIUS or event.x >= self.canvas.winfo_width() - RADIUS
@@ -194,4 +224,5 @@ class Drawer:
         self.canvas.move(f"vertex_{vertex.label}", delta_x, delta_y)
         self.canvas.move(f"text_{vertex.label}", delta_x, delta_y)
         self._draw_all_edges(graph)
+        self.draw_all_weights(graph)
         self._raise_vertexes(graph.V)

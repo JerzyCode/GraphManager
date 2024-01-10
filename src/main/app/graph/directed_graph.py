@@ -6,21 +6,24 @@ from src.main.app.graph.graph import Graph
 
 
 class DirectedGraph(Graph, ABC):
-    def __init__(self, matrix, max_width, max_height):
-        super().__init__(matrix, max_width, max_height)
-        self.__create_edges__()
+    def __init__(self, matrix, is_weighted, max_width, max_height):
+        super().__init__(matrix, is_weighted, max_width, max_height)
+        self.__create_edges__(self.is_weighted)
 
-    def __create_edges__(self):
+    def __create_edges__(self, is_weighted):
         size = len(self.matrix)
         for i in range(size):
             for j in range(size):
                 if i != j and self.matrix[i][j] == 1:
-                    edge = Edge(self.V[i], self.V[j], True, digraph=False, weight=None)
+                    weight = None
+                    if is_weighted:
+                        weight = rd.randint(0, 20)
+                    edge = Edge(self.V[i], self.V[j], True, digraph=False, weight=weight)
                     self.V[i].add_neighbor(self.V[j], edge)
                     self.E.add(edge)
 
 
-def generate_graph(n, probability, max_width, max_height):
+def generate_graph(n, probability, max_width, max_height, is_weighted):
     if probability < 0 or probability > 1:
         probability = 0.5
     matrix = [[0] * n for _ in range(n)]
@@ -32,4 +35,4 @@ def generate_graph(n, probability, max_width, max_height):
                 if rand <= probability:
                     matrix[i][j] = 1
                     matrix[j][i] = 0
-    return DirectedGraph(matrix, max_width, max_height)
+    return DirectedGraph(matrix, is_weighted, max_width, max_height)

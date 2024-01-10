@@ -21,6 +21,7 @@ def change_appearance_mode_event(new_appearance_mode: str):
 class App(customtkinter.CTk):
     def __init__(self):
         super().__init__()
+        self.weight_hidden = False
 
         # configure window
         self.title("Graph Manager")
@@ -33,7 +34,7 @@ class App(customtkinter.CTk):
         # create sidebar frame with widgets
         self.sidebar_frame = customtkinter.CTkFrame(self, width=140, corner_radius=0)
         self.sidebar_frame.grid(row=0, column=0, rowspan=4, sticky="nsew")
-        self.sidebar_frame.grid_rowconfigure(5, weight=1)
+        self.sidebar_frame.grid_rowconfigure(6, weight=1)
         self.logo_label = customtkinter.CTkLabel(self.sidebar_frame, text="Graph Manager",
                                                  font=customtkinter.CTkFont(size=20, weight="bold"))
         self.logo_label.grid(row=0, column=0, padx=20, pady=(20, 10))
@@ -47,18 +48,22 @@ class App(customtkinter.CTk):
         self.refresh_button = customtkinter.CTkButton(self.sidebar_frame, text='REFRESH GRAPH',
                                                       command=self.refresh_graph)
         self.refresh_button.grid(row=4, column=0, padx=20, pady=10)
+        # self.hide_weights_button = customtkinter.CTkButton(self.sidebar_frame, text='Hide weights',
+        #                                                    command=self.on_hide_weights)
+        # self.hide_weights_button.grid(row=5, column=0, padx=20, pady=10)
+
         self.appearance_mode_label = customtkinter.CTkLabel(self.sidebar_frame, text="Appearance Mode:", anchor="w")
-        self.appearance_mode_label.grid(row=6, column=0, padx=20, pady=(10, 0))
+        self.appearance_mode_label.grid(row=7, column=0, padx=20, pady=(10, 0))
         self.appearance_mode_option_menu = customtkinter.CTkOptionMenu(self.sidebar_frame,
                                                                        values=["Light", "Dark", "System"],
                                                                        command=change_appearance_mode_event)
-        self.appearance_mode_option_menu.grid(row=7, column=0, padx=20, pady=(10, 10))
+        self.appearance_mode_option_menu.grid(row=8, column=0, padx=20, pady=(10, 10))
         self.scaling_label = customtkinter.CTkLabel(self.sidebar_frame, text="UI Scaling:", anchor="w")
-        self.scaling_label.grid(row=8, column=0, padx=20, pady=(10, 0))
+        self.scaling_label.grid(row=9, column=0, padx=20, pady=(10, 0))
         self.scaling_option_menu = customtkinter.CTkOptionMenu(self.sidebar_frame,
                                                                values=["80%", "90%", "100%", "110%", "120%"],
                                                                command=change_scaling_event)
-        self.scaling_option_menu.grid(row=9, column=0, padx=20, pady=(10, 20))
+        self.scaling_option_menu.grid(row=10, column=0, padx=20, pady=(10, 20))
 
         # graph display
         self.canvas = customtkinter.CTkCanvas(self, bg=GRAPH_BG_COLOR, bd=0, highlightthickness=0,
@@ -92,3 +97,15 @@ class App(customtkinter.CTk):
     def on_close(self):
         self.add_graph_panel.destroy()
         self.destroy()
+
+    def on_hide_weights(self):
+        if not self.weight_hidden:
+            self.drawer.hide_all_weights(self.add_graph_panel.graph)
+            self.hide_weights_button.configure(text="Show weights")
+        else:
+            self.hide_weights_button.configure(text="Hide weights")
+            self.drawer.draw_all_weights(self.add_graph_panel.graph)
+        self.weight_hidden = not self.weight_hidden
+
+        # self.weight_hidden = not self.weight_hidden
+        # self.drawer.hide_all_weights(self.add_graph_panel.graph)
