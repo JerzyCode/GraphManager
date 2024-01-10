@@ -188,6 +188,12 @@ class Drawer:
             self._raise_vertex(edge.vertex1)
             self._raise_vertex(edge.vertex2)
 
+    def color_edge_kruskal(self, edge, graph):
+        self.color_vertex(edge.vertex1, graph)
+        self.color_vertex(edge.vertex2, graph)
+        if edge is not None:
+            self.color_edge(edge)
+
     # OTHER_METHODS
     def refresh_all(self, graph):
         if graph is not None:
