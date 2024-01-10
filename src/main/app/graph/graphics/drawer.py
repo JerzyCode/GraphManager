@@ -48,6 +48,24 @@ def apex_point(vertex1, vertex2):
     return apex_x, apex_y
 
 
+def _prepare_draw_edge(edge, is_digraph):
+    params = {}
+    vertex1 = edge.vertex1
+    vertex2 = edge.vertex2
+    label = vertex1.label + '_' + vertex2.label
+    end_line_points = end_line_point(vertex1, vertex2)
+    params['vertex1_x'] = edge.vertex1.x
+    params['vertex1_y'] = edge.vertex1.y
+    params['vertex2_x'] = edge.vertex2.x
+    params['vertex2_y'] = edge.vertex2.y
+    params['label'] = label
+    params['end_line_points'] = end_line_points
+    if is_digraph:
+        apex = apex_point(vertex1, vertex2)
+        params['apex'] = apex
+    return params
+
+
 class Drawer:
 
     def __init__(self, canvas):
@@ -103,17 +121,20 @@ class Drawer:
         for edge in graph.E:
             self._draw_edge(edge, EDGE_COLOR, EDGE_WIDTH)
 
+    def _erase_edge(self, edge):
+        self.canvas.delete(f"edge_{edge.label}")
+        self.canvas.delete(f'weight_{edge.weight}')
+
     def _erase_edges(self, edges):
         for edge in edges:
-            self.canvas.delete(f"edge_{edge.label}")
-            self.canvas.delete(f'weight_{edge.weight}')
+            self._erase_edge(edge)
 
     def hide_all_weights(self, graph):
         if graph is not None and graph.is_weighted:
             for edge in graph.E:
-                self._hide_weight(edge)
+                self._erase_weight(edge)
 
-    def _hide_weight(self, edge):
+    def _erase_weight(self, edge):
         self.canvas.delete(f"weight_{edge.weight}")
 
     def draw_all_weights(self, graph):
@@ -122,71 +143,72 @@ class Drawer:
                 self._draw_weight(edge, WEIGHT_COLOR)
 
     def _draw_edge(self, edge, color, width):
-        if edge.directed and not edge.digraph:
-            self._draw_directed_edge(edge, color, width)
-        elif not edge.directed:
-            self._draw_undirected_edge(edge, color, width)
-        else:
+        if edge.digraph:
             self._draw_digraph_edge(edge, color, width)
+        else:
+            self._draw_graph_edge(edge, color, width)
 
-    def _draw_undirected_edge(self, edge, color, width):
-        vertex1 = edge.vertex1
-        vertex2 = edge.vertex2
-        label = vertex1.label + '_' + vertex2.label
-        end_line_points = end_line_point(vertex1, vertex2)
-        self.canvas.create_line(
-            vertex1.x,
-            vertex1.y,
-            vertex2.x + end_line_points[0],
-            vertex2.y + end_line_points[1],
-            fill=color, width=width,
-            tags=f"edge_{label}",
-            smooth=True)
-
-    def _draw_directed_edge(self, edge, color, width):
-        vertex1 = edge.vertex1
-        vertex2 = edge.vertex2
-        label = vertex1.label + '_' + vertex2.label
-        end_line_points = end_line_point(vertex1, vertex2)
-        line = self.canvas.create_line(
-            vertex1.x,
-            vertex1.y,
-            vertex2.x + end_line_points[0],
-            vertex2.y + end_line_points[1],
-            fill=color, width=width,
-            tags=f"edge_{label}",
-            smooth=True)
-        arrow_shape = (9, 9, 6)
-        self.canvas.itemconfig(line, arrow=tkinter.LAST, arrowshape=arrow_shape)
+    def _draw_graph_edge(self, edge, color, width):
+        params = _prepare_draw_edge(edge, is_digraph=False)
+        self._draw_canvas_line(color, width, params, edge.directed)
 
     def _draw_digraph_edge(self, edge, color, width):
-        vertex1 = edge.vertex1
-        vertex2 = edge.vertex2
-        label = vertex1.label + '_' + vertex2.label
-        end_line_points = end_line_point(vertex1, vertex2)
-        apex = apex_point(vertex1, vertex2)
-        line = self.canvas.create_line(
-            vertex1.x,
-            vertex1.y,
-            apex[0],
-            apex[1],
-            vertex2.x + end_line_points[0],
-            vertex2.y + end_line_points[1],
-            fill=color, width=width,
-            tags=f"edge_{label}",
-            smooth=True)
-        arrow_shape = (9, 9, 6)
-        self.canvas.itemconfig(line, arrow=tkinter.LAST, arrowshape=arrow_shape)
+        params = _prepare_draw_edge(edge, is_digraph=True)
+        self._draw_canvas_line(color, width, params, edge.directed)
+
+    def _draw_canvas_line(self, color, width, params, is_directed):
+        if 'apex' in params:
+            line = self.canvas.create_line(
+                params['vertex1_x'], params['vertex1_y'],
+                params['apex'][0], params['apex'][1],
+                params['vertex2_x'] + params['end_line_points'][0],
+                params['vertex2_y'] + params['end_line_points'][1],
+                fill=color, width=width,
+                tags=f"edge_{params['label']}", smooth=True)
+        else:
+            line = self.canvas.create_line(
+                params['vertex1_x'], params['vertex1_y'],
+                params['vertex2_x'] + params['end_line_points'][0],
+                params['vertex2_y'] + params['end_line_points'][1],
+                fill=color, width=width,
+                tags=f"edge_{params['label']}", smooth=True)
+
+        if is_directed:
+            arrow_shape = (9, 9, 6)
+            self.canvas.itemconfig(line, arrow=tkinter.LAST, arrowshape=arrow_shape)
+
+    def _draw_edges_incidental(self, edges, vertex):
+        for edge in edges:
+            if edge.vertex1 == vertex or edge.vertex2 == vertex:
+                self._draw_edge(edge, EDGE_COLOR, EDGE_WIDTH)
+
+    def _erase_edges_incidental(self, edges, vertex):
+        for edge in edges:
+            if edge.vertex1 == vertex or edge.vertex2 == vertex:
+                self._erase_edge(edge)
+
+    def _erase_weights_incidental(self, edges, vertex):
+        for edge in edges:
+            if edge.vertex1 == vertex or edge.vertex2 == vertex:
+                self._erase_weight(edge)
+
+    def _draw_weights_incidental(self, edges, vertex):
+        for edge in edges:
+            if edge.vertex1 == vertex or edge.vertex2 == vertex:
+                self._draw_weight(edge, WEIGHT_COLOR)
+
+    def _move_edges_incidental(self, edges, vertex):
+        self._erase_edges_incidental(edges, vertex)
+        self._erase_weights_incidental(edges, vertex)
+        self._draw_edges_incidental(edges, vertex)
+        self._draw_weights_incidental(edges, vertex)
 
     def color_edge(self, edge):
         if edge is not None:
-            self.canvas.delete(f"edge_{edge.label}")
+            self.canvas.itemconfig(f"edge_{edge.label}", fill=EDGE_COLOR_CHANGE_BG, width=EDGE_WIDTH + 1.5)
+            self.canvas.itemconfig(f"weight_{edge.weight}", fill=WEIGHT_COLOR_CHANGE)
             self.canvas.tag_raise(f"edge_{edge.label}")
-            self._draw_edge(edge, EDGE_COLOR_CHANGE_BG, EDGE_WIDTH + 1.5)
-            self._draw_weight(edge, WEIGHT_COLOR_CHANGE)
-            self.canvas.update_idletasks()
-            self._raise_vertex(edge.vertex1)
-            self._raise_vertex(edge.vertex2)
+            self.canvas.tag_raise(f"weight_{edge.weight}")
 
     def color_edge_kruskal(self, edge, graph):
         self.color_vertex(edge.vertex1, graph)
@@ -226,9 +248,7 @@ class Drawer:
         delta_y = event.y - vertex.y
         vertex.x = event.x
         vertex.y = event.y
-        self._erase_edges(graph.E)
         self.canvas.move(f"vertex_{vertex.label}", delta_x, delta_y)
         self.canvas.move(f"text_{vertex.label}", delta_x, delta_y)
-        self._draw_all_edges(graph)
-        self.draw_all_weights(graph)
+        self._move_edges_incidental(graph.E, vertex)
         self._raise_vertexes(graph.V)
