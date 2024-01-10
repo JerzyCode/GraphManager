@@ -92,15 +92,18 @@ class GenerateGraphPanel(customtkinter.CTk):
             if self.is_digraph:
                 self.graph = digraph.generate_graph(graph_size, float(p),
                                                     self.canvas.winfo_width(),
-                                                    self.canvas.winfo_height())
+                                                    self.canvas.winfo_height(),
+                                                    self.is_weighted)
             elif self.is_directed:
                 self.graph = directed_graph.generate_graph(graph_size, float(p),
                                                            self.canvas.winfo_width(),
-                                                           self.canvas.winfo_height())
+                                                           self.canvas.winfo_height(),
+                                                           self.is_weighted)
             else:
                 self.graph = undirected_graph.generate_graph(graph_size, float(p),
                                                              self.canvas.winfo_width(),
-                                                             self.canvas.winfo_height())
+                                                             self.canvas.winfo_height(),
+                                                             self.is_weighted)
             self.drawer.draw_graph(self.graph)
             self.withdraw()
 

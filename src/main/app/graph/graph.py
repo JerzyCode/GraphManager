@@ -5,8 +5,9 @@ from src.main.app.graph.vertex import Vertex
 
 
 class Graph:
-    def __init__(self, matrix, max_width=None, max_height=None):
+    def __init__(self, matrix, is_weighted, max_width=None, max_height=None):
         self.matrix = matrix
+        self.is_weighted = is_weighted
         self.V = []
         self.E = set()
         self._create_vertexes(max_width, max_height)
@@ -17,7 +18,7 @@ class Graph:
             self.V.append(Vertex(str(i + 1), max_width, max_height))
 
     @abstractmethod
-    def __create_edges__(self):
+    def __create_edges__(self, is_weighted):
         pass
 
     def __str__(self):
