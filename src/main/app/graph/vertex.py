@@ -10,7 +10,7 @@ class Vertex:
         self._set_coords(max_width, max_height)
         self.label = label + ''
         self.edges = set()
-        self.neighbors = []
+        self.neighbors = set()
 
     def _set_coords(self, max_width, max_height):
         if max_width < 2 * RADIUS or max_height < 2 * RADIUS:
@@ -39,7 +39,7 @@ class Vertex:
                 return edge
 
     def add_neighbor(self, vertex, edge):
-        self.neighbors.append(vertex)
+        self.neighbors.add(vertex)
         self.edges.add(edge)
 
     def __str__(self):

@@ -209,6 +209,8 @@ class Drawer:
             self.canvas.itemconfig(f"weight_{edge.weight}", fill=WEIGHT_COLOR_CHANGE)
             self.canvas.tag_raise(f"edge_{edge.label}")
             self.canvas.tag_raise(f"weight_{edge.weight}")
+            self._raise_vertex(edge.vertex1)
+            self._raise_vertex(edge.vertex2)
 
     def color_edge_kruskal(self, edge, graph):
         self.color_vertex(edge.vertex1, graph)
