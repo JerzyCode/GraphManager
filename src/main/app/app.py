@@ -1,7 +1,7 @@
 import customtkinter
 
 from src.main.app.generate_graph_panel import GenerateGraphPanel
-from src.main.app.graph.graph import binary_search, depth_search
+import src.main.app.utils.algorithms as algorithm
 from src.main.app.graph.graphics.drawer import Drawer
 from src.main.app.utils.constants import *
 
@@ -26,7 +26,7 @@ class App(customtkinter.CTk):
         # configure window
         self.title("Graph Manager")
         self.geometry(f"{WINDOW_WIDTH}x{WINDOW_HEIGHT}")
-        self.protocol("WM_DELETE_WINDOW", self.on_close)
+        self.protocol("WM_DELETE_WINDOW", self._on_close)
 
         self.grid_columnconfigure(1, weight=1)
         self.grid_rowconfigure((0, 1, 2), weight=1)
@@ -39,15 +39,19 @@ class App(customtkinter.CTk):
                                                  font=customtkinter.CTkFont(size=20, weight="bold"))
         self.logo_label.grid(row=0, column=0, padx=20, pady=(20, 10))
         self.generate_graph = customtkinter.CTkButton(self.sidebar_frame, text='Add Graph',
-                                                      command=self.add_graph_view_set_visible)
+                                                      command=self._on_add_graph_view_visible)
         self.generate_graph.grid(row=1, column=0, padx=20, pady=10)
-        self.bfs_button = customtkinter.CTkButton(self.sidebar_frame, text='BFS', command=self.run_bfs)
+        self.bfs_button = customtkinter.CTkButton(self.sidebar_frame, text='BFS', command=self._on_run_bfs)
         self.bfs_button.grid(row=2, column=0, padx=20, pady=10)
-        self.dfs_button = customtkinter.CTkButton(self.sidebar_frame, text='DFS', command=self.run_dfs)
+        self.dfs_button = customtkinter.CTkButton(self.sidebar_frame, text='DFS', command=self._on_run_dfs)
         self.dfs_button.grid(row=3, column=0, padx=20, pady=10)
-        self.refresh_button = customtkinter.CTkButton(self.sidebar_frame, text='REFRESH GRAPH',
-                                                      command=self.refresh_graph)
-        self.refresh_button.grid(row=4, column=0, padx=20, pady=10)
+        self.hide_weights_button = customtkinter.CTkButton(self.sidebar_frame, text='Kruskal Algorithm',
+                                                           command=self._on_kruskal_algorithm)
+        self.hide_weights_button.grid(row=4, column=0, padx=20, pady=10)
+        self.refresh_button = customtkinter.CTkButton(self.sidebar_frame, text='Refresh Graph',
+                                                      command=self._on_refresh_graph)
+        self.refresh_button.grid(row=5, column=0, padx=20, pady=10)
+
         # self.hide_weights_button = customtkinter.CTkButton(self.sidebar_frame, text='Hide weights',
         #                                                    command=self.on_hide_weights)
         # self.hide_weights_button.grid(row=5, column=0, padx=20, pady=10)
@@ -72,33 +76,43 @@ class App(customtkinter.CTk):
         self.add_graph_panel = GenerateGraphPanel(self.canvas, self.drawer)
         self.canvas.grid(row=0, column=1, rowspan=5, columnspan=2, padx=55, pady=5, sticky="nsew")
 
-    def run_dfs(self):
+    def _on_run_dfs(self):
         graph = self.add_graph_panel.graph
         if graph and self.drawer:
-            depth_search(graph, self.drawer)
+            algorithm.depth_search(graph, self.drawer)
 
-    def run_bfs(self):
+    def _on_run_bfs(self):
         graph = self.add_graph_panel.graph
         try:
             if graph and self.drawer and len(graph.V) > 0:
-                binary_search(graph, self.drawer)
+                algorithm.binary_search(graph, self.drawer)
         except (NameError, AttributeError, TypeError):
             print('graph is not defined')
             pass
 
-    def refresh_graph(self):
+    def _on_refresh_graph(self):
         graph = self.add_graph_panel.graph
         if self.drawer:
             self.drawer.refresh_all(graph)
 
-    def add_graph_view_set_visible(self):
+    def _on_add_graph_view_visible(self):
         self.add_graph_panel.show_add_graph_panel_visible()
 
-    def on_close(self):
+    def _on_close(self):
         self.add_graph_panel.destroy()
         self.destroy()
 
-    def on_hide_weights(self):
+    def _on_kruskal_algorithm(self):
+        graph = self.add_graph_panel.graph
+        # kruskal_algorithm(graph, self.drawer)
+        try:
+            if graph and self.drawer and len(graph.V) > 0 and graph.is_weighted:
+                algorithm.kruskal_algorithm(graph, self.drawer)
+        except (NameError, AttributeError, TypeError):
+            print('graph is not defined')
+            pass
+
+    def _on_hide_weights(self):
         if not self.weight_hidden:
             self.drawer.hide_all_weights(self.add_graph_panel.graph)
             self.hide_weights_button.configure(text="Show weights")
