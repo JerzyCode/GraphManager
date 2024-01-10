@@ -115,7 +115,7 @@ class Drawer:
         vertex2 = edge.vertex2
         mid_point = middle_point(vertex1, vertex2)
         self.canvas.create_text(mid_point[0], mid_point[1], fill=weight_color, font=("Arial", 14, "bold"),
-                                text=edge.weight, anchor="center", tags=f'weight_{edge.weight}')
+                                text=edge.weight, anchor="center", tags=f'weight_{edge.weight}_{edge.label}')
 
     def _draw_all_edges(self, graph):
         for edge in graph.E:
@@ -123,7 +123,7 @@ class Drawer:
 
     def _erase_edge(self, edge):
         self.canvas.delete(f"edge_{edge.label}")
-        self.canvas.delete(f'weight_{edge.weight}')
+        self.canvas.delete(f'weight_{edge.weight}_{edge.label}')
 
     def _erase_edges(self, edges):
         for edge in edges:
@@ -135,7 +135,7 @@ class Drawer:
                 self._erase_weight(edge)
 
     def _erase_weight(self, edge):
-        self.canvas.delete(f"weight_{edge.weight}")
+        self.canvas.delete(f'weight_{edge.weight}_{edge.label}')
 
     def draw_all_weights(self, graph):
         if graph.is_weighted:
@@ -206,9 +206,9 @@ class Drawer:
     def color_edge(self, edge):
         if edge is not None:
             self.canvas.itemconfig(f"edge_{edge.label}", fill=EDGE_COLOR_CHANGE_BG, width=EDGE_WIDTH + 1.5)
-            self.canvas.itemconfig(f"weight_{edge.weight}", fill=WEIGHT_COLOR_CHANGE)
+            self.canvas.itemconfig(f'weight_{edge.weight}_{edge.label}', fill=WEIGHT_COLOR_CHANGE)
             self.canvas.tag_raise(f"edge_{edge.label}")
-            self.canvas.tag_raise(f"weight_{edge.weight}")
+            self.canvas.tag_raise(f'weight_{edge.weight}_{edge.label}')
             self._raise_vertex(edge.vertex1)
             self._raise_vertex(edge.vertex2)
 
