@@ -44,3 +44,11 @@ class Vertex:
 
     def __str__(self):
         return self.label
+
+    def __eq__(self, other):
+        if isinstance(other, Vertex):
+            return self.label == other.label
+        return False
+
+    def __hash__(self):
+        return hash('vertex' + self.label)

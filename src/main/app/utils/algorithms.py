@@ -15,21 +15,25 @@ def binary_search(graph, drawer):
     visited = [False] * len(graph.V)
     queue = Queue()
     directed = isinstance(graph, DirectedGraph)
+    result = []
     for vertex in graph.V:
         if not visited[int(vertex.label) - 1]:
-            bfs(graph, queue, drawer, visited, vertex, directed)
+            bfs(graph, queue, drawer, visited, vertex, directed, result)
+    return result
 
 
-def bfs(graph, queue, drawer, visited, vertex, directed):
+def bfs(graph, queue, drawer, visited, vertex, directed, result):
     visited[int(vertex.label) - 1] = True
     queue.put(vertex)
     drawer.canvas.after(500, drawer.color_vertex(vertex, graph))
+    result.append(vertex)
     while not queue.empty():
         v = queue.get()
         for neigh in v.neighbors:
             if not visited[int(neigh.label) - 1]:
                 drawer.color_edge(v.find_edge(neigh, directed))
                 drawer.canvas.after(500, drawer.color_vertex(neigh, graph))
+                result.append(neigh)
                 queue.put(neigh)
                 visited[int(neigh.label) - 1] = True
 
@@ -84,6 +88,7 @@ def kruskal_algorithm(graph, drawer):
             wood.remove(set_a)
             wood.remove(set_b)
             wood.add(set_a.union(set_b))
+    return tree
 
 
 def different_sets(vertex1, vertex2, wood):
