@@ -19,13 +19,13 @@ class GenerateGraphPanel(customtkinter.CTk):
         self.matrix = [
             [0, 0, 0, 0, 1, 0, 1, 1, 0, 1],
             [0, 0, 1, 1, 1, 0, 1, 1, 1, 1],
-            [0, 1, 0, 1, 1, 0, 0, 0, 1, 0],
-            [0, 1, 1, 0, 0, 0, 1, 1, 1, 1],
+            [0, 0, 0, 1, 1, 0, 0, 0, 1, 0],
+            [0, 1, 0, 0, 0, 0, 1, 0, 0, 1],
             [1, 1, 1, 0, 0, 1, 0, 0, 0, 0],
-            [0, 0, 0, 0, 1, 0, 1, 1, 1, 0],
-            [1, 1, 0, 1, 0, 1, 0, 0, 1, 1],
-            [1, 1, 0, 1, 0, 1, 0, 0, 1, 0],
-            [0, 1, 1, 1, 0, 1, 1, 1, 0, 1],
+            [0, 0, 0, 0, 1, 0, 1, 1, 0, 0],
+            [1, 1, 0, 1, 0, 0, 0, 0, 1, 1],
+            [1, 1, 0, 0, 0, 0, 0, 0, 1, 0],
+            [0, 1, 0, 1, 0, 1, 1, 1, 0, 1],
             [1, 1, 0, 1, 0, 0, 1, 0, 1, 0]
         ]
 
@@ -116,9 +116,9 @@ class GenerateGraphPanel(customtkinter.CTk):
             self.canvas.delete('all')
             graph_size = int(size)
             if self.is_custom:
-                self.graph = undirected_graph.UndirectedGraph(self.matrix, False,
-                                                              self.canvas.winfo_width(),
-                                                              self.canvas.winfo_height())
+                self.graph = directed_graph.DirectedGraph(self.matrix, False,
+                                                          self.canvas.winfo_width(),
+                                                          self.canvas.winfo_height())
             elif self.is_digraph:
                 self.graph = digraph.generate_graph(graph_size, float(p),
                                                     self.canvas.winfo_width(),

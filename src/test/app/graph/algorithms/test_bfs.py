@@ -3,6 +3,7 @@ import unittest
 from unittest.mock import Mock
 
 import src.main.app.utils.algorithms as alg
+from src.main.app.graph.directed_graph import DirectedGraph
 from src.main.app.graph.graphics.drawer import Drawer
 from src.main.app.graph.undirected_graph import UndirectedGraph
 
@@ -26,7 +27,25 @@ class TestBfs(unittest.TestCase):
             [1, 1, 0, 1, 0, 0, 1, 0, 1, 0]
         ]
         graph = UndirectedGraph(graph_matrix, is_weighted=False, max_width=12, max_height=12)
+        self.assert_equal_graph(graph)
 
+    def test_bfs_directed(self):
+        graph_matrix = [
+            [0, 0, 0, 0, 1, 0, 1, 1, 0, 1],
+            [0, 0, 1, 1, 1, 0, 1, 1, 1, 1],
+            [0, 0, 0, 1, 1, 0, 0, 0, 1, 0],
+            [0, 1, 0, 0, 0, 0, 1, 0, 0, 1],
+            [1, 1, 1, 0, 0, 1, 0, 0, 0, 0],
+            [0, 0, 0, 0, 1, 0, 1, 1, 0, 0],
+            [1, 1, 0, 1, 0, 0, 0, 0, 1, 1],
+            [1, 1, 0, 0, 0, 0, 0, 0, 1, 0],
+            [0, 1, 0, 1, 0, 1, 1, 1, 0, 1],
+            [1, 1, 0, 1, 0, 0, 1, 0, 1, 0]
+        ]
+        graph = DirectedGraph(graph_matrix, is_weighted=False, max_width=12, max_height=12)
+        self.assert_equal_graph(graph)
+
+    def assert_equal_graph(self, graph):
         res = alg.binary_search(graph, self.drawer_mock)
         res_set = [vertex.label for vertex in res]
 
