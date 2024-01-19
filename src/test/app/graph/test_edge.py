@@ -1,6 +1,7 @@
+import unittest
+
 from src.main.app.graph.edge import Edge
 from src.main.app.graph.vertex import Vertex
-import unittest
 
 
 class TestEdge(unittest.TestCase):

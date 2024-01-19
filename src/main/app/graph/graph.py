@@ -10,6 +10,7 @@ class Graph:
         self.V = []
         self.E = set()
         self._create_vertexes(max_width, max_height)
+        self.__create_edges__(is_weighted)
 
     def _create_vertexes(self, max_width, max_height):
         size = len(self.matrix)

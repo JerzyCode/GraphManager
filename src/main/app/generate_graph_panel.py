@@ -1,8 +1,8 @@
 import customtkinter
+
+import src.main.app.graph.digraph as digraph
 import src.main.app.graph.directed_graph as directed_graph
 import src.main.app.graph.undirected_graph as undirected_graph
-import src.main.app.graph.digraph as digraph
-
 from src.main.app.utils.constants import *
 
 
@@ -12,9 +12,22 @@ class GenerateGraphPanel(customtkinter.CTk):
         self.is_directed = False
         self.is_digraph = False
         self.is_weighted = False
+        self.is_custom = False
         self.graph = None
         self.canvas = canvas
         self.drawer = drawer
+        self.matrix = [
+            [0, 0, 0, 0, 1, 0, 1, 1, 0, 1],
+            [0, 0, 1, 1, 1, 0, 1, 1, 1, 1],
+            [0, 0, 0, 1, 1, 0, 0, 0, 1, 0],
+            [0, 1, 0, 0, 0, 0, 1, 0, 0, 1],
+            [1, 1, 1, 0, 0, 1, 0, 0, 0, 0],
+            [0, 0, 0, 0, 1, 0, 1, 1, 0, 0],
+            [1, 1, 0, 1, 0, 0, 0, 0, 1, 1],
+            [1, 1, 0, 0, 0, 0, 0, 0, 1, 0],
+            [0, 1, 0, 1, 0, 1, 1, 1, 0, 1],
+            [1, 1, 0, 1, 0, 0, 1, 0, 1, 0]
+        ]
 
         # configure window
         self.title("Add Graph")
@@ -38,12 +51,18 @@ class GenerateGraphPanel(customtkinter.CTk):
         self.checkbox_1 = customtkinter.CTkCheckBox(master=self.checkbox_frame, text='Directed',
                                                     command=self.switch_directed)
         self.checkbox_1.grid(row=1, column=0, pady=(20, 0), padx=20, sticky="n")
+
         self.checkbox_2 = customtkinter.CTkCheckBox(master=self.checkbox_frame, text='Digraph',
                                                     command=self.switch_digraph)
         self.checkbox_2.grid(row=2, column=0, pady=(20, 0), padx=20, sticky="n", )
+
         self.checkbox_3 = customtkinter.CTkCheckBox(master=self.checkbox_frame, text='Weighted',
                                                     command=self.switch_weighted)
         self.checkbox_3.grid(row=3, column=0, pady=20, padx=20, sticky="n")
+
+        self.checkbox_4 = customtkinter.CTkCheckBox(master=self.checkbox_frame, text='Custom',
+                                                    command=self.switch_custom)
+        self.checkbox_4.grid(row=4, column=0, pady=20, padx=20, sticky="n")
 
         # params frame
         self.params_frame = customtkinter.CTkFrame(self)
@@ -75,6 +94,13 @@ class GenerateGraphPanel(customtkinter.CTk):
     def switch_weighted(self):
         self.is_weighted = not self.is_weighted
 
+    def switch_custom(self):
+        self.is_custom = not self.is_custom
+        if self.is_custom:
+            self.is_digraph = False
+            self.is_directed = False
+            self.is_weighted = False
+
     def on_close(self):
         self.withdraw()
 
@@ -89,7 +115,11 @@ class GenerateGraphPanel(customtkinter.CTk):
         if size and size.isdigit() and int(size) <= 100:
             self.canvas.delete('all')
             graph_size = int(size)
-            if self.is_digraph:
+            if self.is_custom:
+                self.graph = directed_graph.DirectedGraph(self.matrix, False,
+                                                          self.canvas.winfo_width(),
+                                                          self.canvas.winfo_height())
+            elif self.is_digraph:
                 self.graph = digraph.generate_graph(graph_size, float(p),
                                                     self.canvas.winfo_width(),
                                                     self.canvas.winfo_height(),

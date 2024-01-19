@@ -1,5 +1,5 @@
-from abc import ABC
 import random as rd
+from abc import ABC
 
 from src.main.app.graph.edge import Edge
 from src.main.app.graph.graph import Graph

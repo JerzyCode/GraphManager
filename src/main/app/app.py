@@ -1,9 +1,10 @@
 import customtkinter
 
-from src.main.app.generate_graph_panel import GenerateGraphPanel
 import src.main.app.utils.algorithms as algorithm
+from src.main.app.generate_graph_panel import GenerateGraphPanel
 from src.main.app.graph.graphics.drawer import Drawer
 from src.main.app.utils.constants import *
+from src.main.app.utils.study_ex_algorithms import ex_4
 
 customtkinter.set_appearance_mode("System")
 customtkinter.set_default_color_theme("blue")
@@ -45,9 +46,12 @@ class App(customtkinter.CTk):
         self.bfs_button.grid(row=2, column=0, padx=20, pady=10)
         self.dfs_button = customtkinter.CTkButton(self.sidebar_frame, text='DFS', command=self._on_run_dfs)
         self.dfs_button.grid(row=3, column=0, padx=20, pady=10)
-        self.hide_weights_button = customtkinter.CTkButton(self.sidebar_frame, text='Kruskal Algorithm',
-                                                           command=self._on_kruskal_algorithm)
-        self.hide_weights_button.grid(row=4, column=0, padx=20, pady=10)
+        self.kruskal_button = customtkinter.CTkButton(self.sidebar_frame, text='Kruskal Algorithm',
+                                                      command=self._on_kruskal_algorithm)
+        self.kruskal_button.grid(row=4, column=0, padx=20, pady=10)
+        # self.ex_button = customtkinter.CTkButton(self.sidebar_frame, text='Exercise Algorithm',
+        #                                          command=self._on_ex_algorithm)
+        # self.ex_button.grid(row=4, column=0, padx=20, pady=10)
         self.refresh_button = customtkinter.CTkButton(self.sidebar_frame, text='Refresh Graph',
                                                       command=self._on_refresh_graph)
         self.refresh_button.grid(row=5, column=0, padx=20, pady=10)
@@ -120,6 +124,9 @@ class App(customtkinter.CTk):
             self.hide_weights_button.configure(text="Hide weights")
             self.drawer.draw_all_weights(self.add_graph_panel.graph)
         self.weight_hidden = not self.weight_hidden
+
+    def _on_ex_algorithm(self):
+        ex_4(self.add_graph_panel.graph, '1',self.drawer, 3)
 
         # self.weight_hidden = not self.weight_hidden
         # self.drawer.hide_all_weights(self.add_graph_panel.graph)
