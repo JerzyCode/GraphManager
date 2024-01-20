@@ -4,10 +4,12 @@ from src.main.app.utils.constants import *
 
 
 class Vertex:
-    def __init__(self, label, max_width, max_height):
-        self.x = None
-        self.y = None
-        self._set_coords(max_width, max_height)
+    def __init__(self, label, max_width, max_height, x=None, y=None):
+        if x is None and y is None:
+            self._set_coords(max_width, max_height)
+        else:
+            self.x = x
+            self.y = y
         self.label = label + ''
         self.edges = set()
         self.neighbors = set()

@@ -3,6 +3,8 @@ import customtkinter
 import src.main.app.graph.digraph as digraph
 import src.main.app.graph.directed_graph as directed_graph
 import src.main.app.graph.undirected_graph as undirected_graph
+from src.main.app.graph.graph import Graph
+from src.main.app.graph.handlers.canvas_handler import CanvasHandler
 from src.main.app.utils.constants import *
 
 
@@ -13,26 +15,16 @@ class GenerateGraphPanel(customtkinter.CTk):
         self.is_digraph = False
         self.is_weighted = False
         self.is_custom = False
-        self.graph = None
         self.canvas = canvas
         self.drawer = drawer
-        self.matrix = [
-            [0, 0, 0, 0, 1, 0, 1, 1, 0, 1],
-            [0, 0, 1, 1, 1, 0, 1, 1, 1, 1],
-            [0, 0, 0, 1, 1, 0, 0, 0, 1, 0],
-            [0, 1, 0, 0, 0, 0, 1, 0, 0, 1],
-            [1, 1, 1, 0, 0, 1, 0, 0, 0, 0],
-            [0, 0, 0, 0, 1, 0, 1, 1, 0, 0],
-            [1, 1, 0, 1, 0, 0, 0, 0, 1, 1],
-            [1, 1, 0, 0, 0, 0, 0, 0, 1, 0],
-            [0, 1, 0, 1, 0, 1, 1, 1, 0, 1],
-            [1, 1, 0, 1, 0, 0, 1, 0, 1, 0]
-        ]
+        self.graph = Graph([], self.is_weighted,
+                           self.canvas.winfo_width(),
+                           self.canvas.winfo_height())
 
         # configure window
         self.title("Add Graph")
         self.geometry(f"{ADD_GRAPH_WINDOW_WIDTH}x{ADD_GRAPH_WINDOW_HEIGHT}")
-        self.protocol("WM_DELETE_WINDOW", self.on_close)
+        self.protocol("WM_DELETE_WINDOW", self._on_close)
         self.grid_columnconfigure(1, weight=1)
         self.grid_columnconfigure((2, 3), weight=0)
         self.grid_rowconfigure((0, 1, 2), weight=1)
@@ -58,11 +50,7 @@ class GenerateGraphPanel(customtkinter.CTk):
 
         self.checkbox_3 = customtkinter.CTkCheckBox(master=self.checkbox_frame, text='Weighted',
                                                     command=self.switch_weighted)
-        self.checkbox_3.grid(row=3, column=0, pady=20, padx=20, sticky="n")
-
-        self.checkbox_4 = customtkinter.CTkCheckBox(master=self.checkbox_frame, text='Custom',
-                                                    command=self.switch_custom)
-        self.checkbox_4.grid(row=4, column=0, pady=20, padx=20, sticky="n")
+        self.checkbox_3.grid(row=3, column=0, pady=(20, 0), padx=20, sticky="n")
 
         # params frame
         self.params_frame = customtkinter.CTkFrame(self)
@@ -74,34 +62,33 @@ class GenerateGraphPanel(customtkinter.CTk):
         self.size_label = customtkinter.CTkLabel(self.params_frame, text='Enter number of vertexes:',
                                                  font=customtkinter.CTkFont(size=20, weight="bold"))
         self.size_label.grid(row=1, column=2, padx=(10, 0), pady=(20, 0), sticky="nsew")
-        self.size_entry = customtkinter.CTkEntry(self.params_frame, placeholder_text="size", width=100)
+        self.size_entry = customtkinter.CTkEntry(self.params_frame, placeholder_text="size", width=100,
+                                                 fg_color=GRAPH_BG_COLOR)
         self.size_entry.insert(0, '10')
         self.size_entry.grid(row=1, column=3, rowspan=1, padx=(20, 20), pady=(20, 0))
 
         self.density_label = customtkinter.CTkLabel(self.params_frame, text='Edges density (0 to 1):',
                                                     font=customtkinter.CTkFont(size=20, weight="bold"))
         self.density_label.grid(row=2, column=2, padx=(10, 0), pady=(20, 0), sticky="nsew")
-        self.density_entry = customtkinter.CTkEntry(self.params_frame, placeholder_text="size", width=100)
+        self.density_entry = customtkinter.CTkEntry(self.params_frame, placeholder_text="size", width=100,
+                                                    fg_color=GRAPH_BG_COLOR)
         self.density_entry.insert(0, '0.5')
         self.density_entry.grid(row=2, column=3, rowspan=1, padx=(20, 20), pady=(20, 0))
 
+        self.canvas_handler = CanvasHandler(self.canvas, self.drawer, self.graph, self.is_directed, self.is_digraph)
+
     def switch_directed(self):
+        self.canvas_handler.change_is_directed()
         self.is_directed = not self.is_directed
 
     def switch_digraph(self):
+        self.canvas_handler.change_is_digraph()
         self.is_digraph = not self.is_digraph
 
     def switch_weighted(self):
         self.is_weighted = not self.is_weighted
 
-    def switch_custom(self):
-        self.is_custom = not self.is_custom
-        if self.is_custom:
-            self.is_digraph = False
-            self.is_directed = False
-            self.is_weighted = False
-
-    def on_close(self):
+    def _on_close(self):
         self.withdraw()
 
     def show_add_graph_panel_visible(self):
@@ -115,11 +102,7 @@ class GenerateGraphPanel(customtkinter.CTk):
         if size and size.isdigit() and int(size) <= 100:
             self.canvas.delete('all')
             graph_size = int(size)
-            if self.is_custom:
-                self.graph = directed_graph.DirectedGraph(self.matrix, False,
-                                                          self.canvas.winfo_width(),
-                                                          self.canvas.winfo_height())
-            elif self.is_digraph:
+            if self.is_digraph:
                 self.graph = digraph.generate_graph(graph_size, float(p),
                                                     self.canvas.winfo_width(),
                                                     self.canvas.winfo_height(),

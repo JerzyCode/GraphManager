@@ -22,6 +22,7 @@ def change_appearance_mode_event(new_appearance_mode: str):
 class App(customtkinter.CTk):
     def __init__(self):
         super().__init__()
+
         self.weight_hidden = False
 
         # configure window
@@ -126,7 +127,7 @@ class App(customtkinter.CTk):
         self.weight_hidden = not self.weight_hidden
 
     def _on_ex_algorithm(self):
-        ex_4(self.add_graph_panel.graph, '1',self.drawer, 3)
+        ex_4(self.add_graph_panel.graph, '1', self.drawer, 3)
 
         # self.weight_hidden = not self.weight_hidden
         # self.drawer.hide_all_weights(self.add_graph_panel.graph)
