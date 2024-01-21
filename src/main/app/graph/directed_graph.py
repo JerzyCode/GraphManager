@@ -6,7 +6,7 @@ from src.main.app.graph.graph import Graph
 
 
 class DirectedGraph(Graph, ABC):
-    def __init__(self, matrix, is_weighted, max_width, max_height):
+    def __init__(self, matrix, is_weighted, max_width=None, max_height=None):
         super().__init__(matrix, is_weighted, max_width, max_height)
         self.__create_edges__(self.is_weighted)
 

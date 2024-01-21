@@ -1,12 +1,12 @@
-from abc import ABC
 import random as rd
+from abc import ABC
 
 from src.main.app.graph.edge import Edge
 from src.main.app.graph.graph import Graph
 
 
 class UndirectedGraph(Graph, ABC):
-    def __init__(self, matrix, is_weighted, max_width, max_height):
+    def __init__(self, matrix, is_weighted, max_width=None, max_height=None):
         super().__init__(matrix, is_weighted, max_width, max_height)
         self.__create_edges__(self.is_weighted)
 
