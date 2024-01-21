@@ -73,20 +73,13 @@ class Drawer:
 
     # VERTEX_METHODS
     def draw_vertex(self, vertex, graph, back_color, font_color):
-        self.canvas.create_oval(vertex.x - RADIUS, vertex.y - RADIUS, vertex.x + RADIUS, vertex.y + RADIUS,
-                                fill=back_color,
-                                outline=font_color, width=2,
-                                tags=f"vertex_{vertex.label}")
-        self.canvas.create_text(vertex.x, vertex.y, text=vertex.label,
-                                font=("Arial", VERTEX_FONT_SIZE),
-                                fill=font_color,
-                                tags=f"text_{vertex.label}")
+        self.canvas.create_oval(vertex.x - RADIUS, vertex.y - RADIUS, vertex.x + RADIUS, vertex.y + RADIUS, fill=back_color, outline=font_color,
+                                width=2, tags=f"vertex_{vertex.label}")
+        self.canvas.create_text(vertex.x, vertex.y, text=vertex.label, font=("Arial", VERTEX_FONT_SIZE), fill=font_color, tags=f"text_{vertex.label}")
         self.canvas.tag_bind(f"vertex_{vertex.label}", "<ButtonPress-1>", lambda event: self._start_move(event))
-        self.canvas.tag_bind(f"vertex_{vertex.label}", "<B1-Motion>",
-                             lambda event, g=graph, v=vertex: self._move(event, v, g))
+        self.canvas.tag_bind(f"vertex_{vertex.label}", "<B1-Motion>", lambda event, g=graph, v=vertex: self._move(event, v, g))
         self.canvas.tag_bind(f"text_{vertex.label}", "<ButtonPress-1>", lambda event: self._start_move(event))
-        self.canvas.tag_bind(f"text_{vertex.label}", "<B1-Motion>",
-                             lambda event, g=graph, v=vertex: self._move(event, v, g))
+        self.canvas.tag_bind(f"text_{vertex.label}", "<B1-Motion>", lambda event, g=graph, v=vertex: self._move(event, v, g))
 
     def _draw_all_vertexes(self, graph):
         for vertex in graph.V:
@@ -239,6 +232,9 @@ class Drawer:
             self._draw_all_vertexes(graph)
             self.draw_all_weights(graph)
             self._raise_all_vertexes(graph.V)
+
+    def erase_all(self):
+        self.canvas.delete('all')
 
     def draw_graph(self, graph):
         self._erase_edges(graph.E)
