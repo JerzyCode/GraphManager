@@ -32,14 +32,8 @@ class CanvasHandler:
     def _on_shift_button_1(self, event):
         self._add_vertex(event)
 
-    def change_is_directed(self):
-        self.is_directed = not self.is_directed
-
     def unbind(self):
         self.canvas.unbind("<Shift-Button-1>")
-
-    def change_is_digraph(self):
-        self.is_digraph = not self.is_digraph
 
     def _on_add_edge(self, event):
         self.enabled_vertex_select = True

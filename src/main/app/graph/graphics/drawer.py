@@ -157,6 +157,7 @@ class Drawer:
 
     def _draw_digraph_edge(self, edge, color, width):
         params = _prepare_draw_edge(edge, is_digraph=True)
+        print(edge.directed)
         self._draw_canvas_line(color, width, params, edge.directed)
 
     def _draw_canvas_line(self, color, width, params, is_directed):

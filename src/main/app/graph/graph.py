@@ -21,8 +21,8 @@ class Graph:
     def add_vertex(self, vertex):
         self.V.append(vertex)
 
-    def add_edge(self, vertex1, vertex2, is_directed=False, is_digraph=False):
-        if is_directed:
+    def add_edge(self, vertex1, vertex2, is_directed, is_digraph):
+        if is_digraph:
             is_directed = True
         edge = Edge(vertex1, vertex2, is_directed, digraph=is_digraph, weight=None)
         vertex1.add_neighbor(vertex2, edge)
