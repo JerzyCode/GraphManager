@@ -24,5 +24,7 @@ class ParamsCheckboxFrame(customtkinter.CTkFrame):
     def _on_switch_digraph(self):
         self.window.is_digraph = not self.window.is_digraph
 
+
+
     def _on_switch_weighted(self):
         self.window.is_weighted = not self.window.is_weighted

@@ -1,14 +1,10 @@
 shift + left m button - add vertex
 alt + left m button - check vertex to add edge
 
-jest problem z bfs'em i dfs'em, zacinaja sie dla wiekszych grafow niz 10, podejrzewam
-ze to przez .sleep
 
-zastanowić się czy może graf mieć kilka różnych rodzajów krawędzi
-NIE DZIALA DFS DLA TAKIEJ SYTUACJI NA RAZIE, PYTANIE CZY POPRAWIAĆ, CZY WALIDOWAC ZE NIE MOZE MIEC ROZNYCH KRAWEDZI
-
-DODAC GUZIK USUWANIA GRAFU
-
-JEŚLI SIĘ OTWORZY OKNO DODAWANIA GRAFU I POTEM SIE WYGENERUJE GRAF, TO JEST PROBLEM BO MOZNA DODAC DRUGI GRAF OKNEM
-
-teksty do stałych w przyszłości
+PLAN:
+ - zapobiec sytuacji, w której użytkownik otworzy okno dodawania grafu oraz generowania na raz,
+    bo jak kliknie generuj, to moze wtedy zmienic parametry dodawania i sie psuje
+ - przy zaznaczaniu digraph, ma sie zaznaczać też directed
+ - naprawić algorytmy, ten sleep nie działa poprawnie, chce zeby sie wykonywał na oddzielnym wątku
+    żeby można było klikac w aplikacji
