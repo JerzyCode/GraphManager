@@ -4,7 +4,7 @@ from src.main.app.graph.directed_graph import DirectedGraph
 
 
 def sort_edges_by_weights(edges):
-    sorted_edges = sorted(edges, key=lambda edge: edge.weight)
+    sorted_edges = sorted(edges, key=lambda e: e.weight)
     queue = Queue()
     for edge in sorted_edges:
         queue.put(edge)
@@ -39,7 +39,6 @@ def bfs(graph, queue, drawer, visited, vertex, directed, result):
 
 
 def depth_search(graph, drawer):
-    print('DFS')
     directed = isinstance(graph, DirectedGraph)
     visited = [False] * len(graph.V)
     for vertex in graph.V:
@@ -69,8 +68,7 @@ def is_graph_connected(graph):
 
 
 def kruskal_algorithm(graph, drawer):
-    if not is_graph_connected(graph):
-        print('not connected')
+    if not graph.is_weighted:
         return
     tree = set()
     wood = set()
