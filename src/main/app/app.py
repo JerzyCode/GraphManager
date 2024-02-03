@@ -74,8 +74,8 @@ class App(customtkinter.CTk):
         self.refresh_button = customtkinter.CTkButton(self.sidebar_frame, text='Refresh Graph', command=self._on_refresh_graph_btn)
         self.refresh_button.grid(row=5, column=0, padx=20, pady=10)
 
-        self.refresh_button = customtkinter.CTkButton(self.sidebar_frame, text='Clear Graph', command=self._on_clear_graph_btn)
-        self.refresh_button.grid(row=6, column=0, padx=20, pady=10)
+        self.clear_button = customtkinter.CTkButton(self.sidebar_frame, text='Clear Graph', command=self._on_clear_graph_btn)
+        self.clear_button.grid(row=6, column=0, padx=20, pady=10)
 
         self.appearance_mode_label = customtkinter.CTkLabel(self.sidebar_frame, text="Appearance Mode:", anchor="w")
         self.appearance_mode_label.grid(row=7, column=0, padx=20, pady=(10, 0))

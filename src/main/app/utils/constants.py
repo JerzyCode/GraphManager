@@ -60,3 +60,5 @@ DIRECTED = 'Directed'
 DIGRAPH = 'Digraph'
 WEIGHTED = 'Weighted'
 GENERATE_GRAPH = 'Generate Graph'
+
+BUTTON_1 = "<Button-1>"
