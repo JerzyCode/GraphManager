@@ -1,3 +1,5 @@
+import tkinter
+
 import customtkinter
 
 from src.main.app.utils.constants import DIGRAPH, DIRECTED, WEIGHTED
@@ -6,10 +8,14 @@ from src.main.app.utils.constants import DIGRAPH, DIRECTED, WEIGHTED
 class ParamsCheckboxFrame(customtkinter.CTkFrame):
     def __init__(self, window):
         super().__init__(window)
+
+        self.directed_var = tkinter.IntVar()
+
         self.window = window
         self.grid(row=0, column=0, rowspan=3, padx=(20, 20), pady=(20, 0), sticky="nsew")
 
-        self.checkbox_1 = customtkinter.CTkCheckBox(master=self, text=DIRECTED, command=self._on_switch_directed)
+        self.checkbox_1 = customtkinter.CTkCheckBox(master=self, text=DIRECTED
+                                                    , variable=self.directed_var, command=self._on_switch_directed)
         self.checkbox_1.grid(row=1, column=0, pady=(20, 0), padx=20, sticky="n")
 
         self.checkbox_2 = customtkinter.CTkCheckBox(master=self, text=DIGRAPH, command=self._on_switch_digraph)
@@ -23,8 +29,14 @@ class ParamsCheckboxFrame(customtkinter.CTkFrame):
 
     def _on_switch_digraph(self):
         self.window.is_digraph = not self.window.is_digraph
-
-
+        if self.window.is_digraph:
+            self.window.is_directed = True
+            self.directed_var.set(1)
+            self.checkbox_1.configure(state='disabled')
+        else:
+            self.window.is_directed = False
+            self.directed_var.set(0)
+            self.checkbox_1.configure(state='normal')
 
     def _on_switch_weighted(self):
         self.window.is_weighted = not self.window.is_weighted

@@ -38,6 +38,12 @@ class AddGraphWindow(customtkinter.CTk):
                                                          text_color=("gray10", "#DCE4EE"), command=self._on_set_params_btn)
         self.set_params_button.grid(row=4, column=0, rowspan=2, padx=(20, 20), pady=(20, 20), sticky="nsew")
 
+    def disable_options(self):
+        self.set_params_button.configure(state='disabled')
+
+    def enable_options(self):
+        self.set_params_button.configure(state='normal')
+
     def _on_set_params_btn(self):
         self.on_set_params_btn(self.is_directed, self.is_digraph, self.is_weighted)
         self.set_params_button.configure(state='disabled')

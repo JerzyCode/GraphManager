@@ -2,7 +2,7 @@ import tkinter
 import unittest
 from unittest.mock import Mock
 
-import src.main.app.utils.algorithms as alg
+import src.main.app.graph.algorithms.algorithms as alg
 from src.main.app.graph.directed_graph import DirectedGraph
 from src.main.app.graph.graphics.drawer import Drawer
 from src.main.app.graph.undirected_graph import UndirectedGraph
@@ -49,7 +49,7 @@ class TestBfs(unittest.TestCase):
         res = alg.binary_search(graph, self.drawer_mock)
         res_set = [vertex.label for vertex in res]
 
-        num_of_colored_vertexes = [call for call in self.drawer_mock.color_vertex.call_args_list if
+        num_of_colored_vertexes = [call for call in self.drawer_mock.color_vertex_delay.call_args_list if
                                    call[0][0] is not None]
         self.assertEqual(res[0].label, '1')
         self.assertEqual(set(res_set[1:5]), {'5', '7', '8', '10'})

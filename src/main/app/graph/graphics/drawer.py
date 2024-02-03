@@ -93,21 +93,20 @@ class Drawer:
         for vertex in vertexes:
             self._raise_vertex(vertex)
 
-    def color_vertex(self, vertex, graph):
+    def color_vertex(self, vertex):
         if vertex is not None:
-            self._color_vertex(vertex, graph, VERTEX_COLOR_CHANGE_BG, VERTEX_COLOR_CHANGE_FG)
+            self._color_vertex(vertex, VERTEX_COLOR_CHANGE_BG, VERTEX_COLOR_CHANGE_FG)
 
-    def uncolor_vertex(self, vertex, graph):
+    def color_vertex_delay(self, vertex, delay):
+        self.canvas.after(delay, lambda: self.color_vertex(vertex))
+
+    def uncolor_vertex(self, vertex):
         if vertex is not None:
-            self._color_vertex(vertex, graph, VERTEX_BG_COLOR, VERTEX_FG_COLOR)
+            self._color_vertex(vertex, VERTEX_BG_COLOR, VERTEX_FG_COLOR)
 
-    def _color_vertex(self, vertex, graph, color_bg, color_fg):
-        self.canvas.delete(f"vertex_{vertex.label}")
-        self.canvas.delete(f"text_{vertex.label}")
-        self.draw_vertex(vertex, graph, color_bg, color_fg)
-        self.canvas.update_idletasks()
-        self.canvas.tag_raise(f"vertex_{vertex.label}")
-        self.canvas.tag_raise(f"text_{vertex.label}")
+    def _color_vertex(self, vertex, color_bg, color_fg):
+        self.canvas.itemconfig(f"vertex_{vertex.label}", fill=color_bg)
+        self.canvas.itemconfig(f"text_{vertex.label}", fill=color_fg)
 
     # EDGE_METHODS
     def _draw_weight(self, edge, weight_color):
@@ -123,19 +122,19 @@ class Drawer:
 
     def _erase_edge(self, edge):
         self.canvas.delete(f"edge_{edge.label}")
+
+    def _erase_weight(self, edge):
         self.canvas.delete(f'weight_{edge.weight}_{edge.label}')
 
     def _erase_edges(self, edges):
         for edge in edges:
             self._erase_edge(edge)
+            self._erase_weight(edge)
 
     def hide_all_weights(self, graph):
         if graph is not None and graph.is_weighted:
             for edge in graph.E:
                 self._erase_weight(edge)
-
-    def _erase_weight(self, edge):
-        self.canvas.delete(f'weight_{edge.weight}_{edge.label}')
 
     def draw_all_weights(self, graph):
         if graph.is_weighted:
@@ -157,7 +156,6 @@ class Drawer:
 
     def _draw_digraph_edge(self, edge, color, width):
         params = _prepare_draw_edge(edge, is_digraph=True)
-        print(edge.directed)
         self._draw_canvas_line(color, width, params, edge.directed)
 
     def _draw_canvas_line(self, color, width, params, is_directed):
@@ -181,46 +179,59 @@ class Drawer:
             arrow_shape = (9, 9, 6)
             self.canvas.itemconfig(line, arrow=tkinter.LAST, arrowshape=arrow_shape)
 
-    def _draw_edges_incidental(self, edges, vertex):
+    def _draw_edges_incidental(self, edges):
         for edge in edges:
-            if edge.vertex1 == vertex or edge.vertex2 == vertex:
-                self._draw_edge(edge, EDGE_COLOR, EDGE_WIDTH)
+            self._draw_edge(edge, edges.get(edge)["color"], edges.get(edge)["width"])
 
     def _erase_edges_incidental(self, edges, vertex):
+        erased_edges_params = {}
         for edge in edges:
             if edge.vertex1 == vertex or edge.vertex2 == vertex:
+                fill_color = self.canvas.itemcget(f"edge_{edge.label}", "fill")
+                width = self.canvas.itemcget(f"edge_{edge.label}", "width")
+                erased_edges_params[edge] = {"color": fill_color, "width": width}
                 self._erase_edge(edge)
+        return erased_edges_params
 
     def _erase_weights_incidental(self, edges, vertex):
+        erased_weights_param = {}
         for edge in edges:
             if edge.vertex1 == vertex or edge.vertex2 == vertex:
+                fill_color = self.canvas.itemcget(f'weight_{edge.weight}_{edge.label}', "fill")
+                erased_weights_param[edge] = fill_color
                 self._erase_weight(edge)
+        return erased_weights_param
 
-    def _draw_weights_incidental(self, edges, vertex):
+    def _draw_weights_incidental(self, edges):
         for edge in edges:
-            if edge.vertex1 == vertex or edge.vertex2 == vertex:
-                self._draw_weight(edge, WEIGHT_COLOR)
+            self._draw_weight(edge, edges.get(edge))
 
     def _move_edges_incidental(self, edges, vertex):
-        self._erase_edges_incidental(edges, vertex)
-        self._erase_weights_incidental(edges, vertex)
-        self._draw_edges_incidental(edges, vertex)
-        self._draw_weights_incidental(edges, vertex)
+        erased_edges_params = self._erase_edges_incidental(edges, vertex)
+        self._draw_edges_incidental(erased_edges_params)
+        erased_weight_params = self._erase_weights_incidental(edges, vertex)
+        self._draw_weights_incidental(erased_weight_params)
 
     def color_edge(self, edge):
         if edge is not None:
-            self.canvas.itemconfig(f"edge_{edge.label}", fill=EDGE_COLOR_CHANGE_BG, width=EDGE_WIDTH + 1.5)
-            self.canvas.itemconfig(f'weight_{edge.weight}_{edge.label}', fill=WEIGHT_COLOR_CHANGE)
-            self.canvas.tag_raise(f"edge_{edge.label}")
-            self.canvas.tag_raise(f'weight_{edge.weight}_{edge.label}')
-            self._raise_vertex(edge.vertex1)
-            self._raise_vertex(edge.vertex2)
+            self._color_edge(edge)
 
-    def color_edge_kruskal(self, edge, graph):
-        self.color_vertex(edge.vertex1, graph)
-        self.color_vertex(edge.vertex2, graph)
+    def _color_edge(self, edge):
+        self.canvas.itemconfig(f"edge_{edge.label}", fill=EDGE_COLOR_CHANGE_BG, width=EDGE_WIDTH + 1.5)
+        self.canvas.itemconfig(f'weight_{edge.weight}_{edge.label}', fill=WEIGHT_COLOR_CHANGE)
+        self.canvas.tag_raise(f"edge_{edge.label}")
+        self.canvas.tag_raise(f'weight_{edge.weight}_{edge.label}')
+        self._raise_vertex(edge.vertex1)
+        self._raise_vertex(edge.vertex2)
+
+    def color_edge_delay(self, edge, delay):
+        self.canvas.after(delay, lambda: self.color_edge(edge))
+
+    def color_edge_kruskal(self, edge, delay):
+        self.color_vertex_delay(edge.vertex1, delay)
+        self.color_vertex_delay(edge.vertex2, delay)
         if edge is not None:
-            self.color_edge(edge)
+            self.color_edge_delay(edge, delay)
 
     # OTHER_METHODS
     def refresh_all(self, graph):

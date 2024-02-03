@@ -1,7 +1,7 @@
 import sys
 from queue import Queue
 
-from src.main.app.utils.algorithms import kruskal_algorithm
+from src.main.app.graph.algorithms.algorithms import kruskal_algorithm
 
 
 def ex_4(graph, start_label, drawer, max_count):

@@ -18,21 +18,23 @@ def binary_search(graph, drawer):
     result = []
     for vertex in graph.V:
         if not visited[int(vertex.label) - 1]:
-            bfs(graph, queue, drawer, visited, vertex, directed, result)
+            bfs(queue, drawer, visited, vertex, directed, result)
     return result
 
 
-def bfs(graph, queue, drawer, visited, vertex, directed, result):
+def bfs(queue, drawer, visited, vertex, directed, result):
+    delay = 0
     visited[int(vertex.label) - 1] = True
     queue.put(vertex)
-    drawer.canvas.after(500, drawer.color_vertex(vertex, graph))
+    drawer.color_vertex_delay(vertex, delay)
     result.append(vertex)
     while not queue.empty():
         v = queue.get()
+        delay += 500
         for neigh in v.neighbors:
             if not visited[int(neigh.label) - 1]:
-                drawer.color_edge(v.find_edge(neigh, directed))
-                drawer.canvas.after(500, drawer.color_vertex(neigh, graph))
+                drawer.color_edge_delay(v.find_edge(neigh, directed), delay)
+                drawer.color_vertex_delay(neigh, delay)
                 result.append(neigh)
                 queue.put(neigh)
                 visited[int(neigh.label) - 1] = True
@@ -43,23 +45,24 @@ def depth_search(graph, drawer):
     visited = [False] * len(graph.V)
     for vertex in graph.V:
         if not visited[int(vertex.label) - 1]:
-            dfs(graph, vertex, visited, drawer, directed)
+            dfs(graph, vertex, visited, drawer, directed, 0)
 
 
-def dfs(graph, vertex, visited, drawer, directed):
+def dfs(graph, vertex, visited, drawer, directed, delay):
     visited[int(vertex.label) - 1] = True
+    delay = delay + 500
     if drawer is not None:
-        drawer.canvas.after(500, drawer.color_vertex(vertex, graph))
+        drawer.color_vertex_delay(vertex, delay)
     for neigh in vertex.neighbors:
         if not visited[int(neigh.label) - 1]:
             if drawer is not None:
-                drawer.color_edge(vertex.find_edge(neigh, directed))
-            dfs(graph, neigh, visited, drawer, directed)
+                drawer.color_edge_delay(vertex.find_edge(neigh, directed), delay)
+            dfs(graph, neigh, visited, drawer, directed, delay)
 
 
 def is_graph_connected(graph):
     visited = [False] * len(graph.V)
-    dfs(graph, graph.V[0], visited, None, None)
+    dfs(graph, graph.V[0], visited, None, None, 0)
     for v in visited:
         if not v:
             return False
@@ -72,6 +75,7 @@ def kruskal_algorithm(graph, drawer):
         return
     tree = set()
     wood = set()
+    delay = 0
     for vertex in graph.V:
         wood.add(frozenset({vertex}))
     queue = sort_edges_by_weights(graph.E)
@@ -82,7 +86,8 @@ def kruskal_algorithm(graph, drawer):
         set_b = sets[1]
         if len(set_a.intersection(set_b)) == 0:
             tree.add(edge)
-            drawer.canvas.after(600, drawer.color_edge_kruskal(edge, graph))
+            drawer.color_edge_kruskal(edge, delay)
+            delay += 500
             wood.remove(set_a)
             wood.remove(set_b)
             wood.add(set_a.union(set_b))

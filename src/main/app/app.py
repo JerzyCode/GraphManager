@@ -88,8 +88,9 @@ class App(customtkinter.CTk):
         self.canvas = customtkinter.CTkCanvas(self, bg=GRAPH_BG_COLOR, bd=0, highlightthickness=0, relief='ridge')
         self.drawer = Drawer(self.canvas)
         self.add_graph_window = AddGraphWindow(self._set_params_add_graph)
-        self.generate_graph_window = GenerateGraphWindow(self.canvas, self.drawer, self._on_graph_generated_hook)
-        self.algorithms_window = AlgorithmsWindow(self.drawer)
+        self.generate_graph_window = GenerateGraphWindow(self.canvas, self.drawer, self._on_graph_generated_hook,
+                                                         self.add_graph_window.enable_options)
+        self.algorithms_window = AlgorithmsWindow(self.drawer, self.disable_buttons, self.enable_buttons)
         self.canvas.grid(row=1, column=1, rowspan=5, columnspan=2, padx=55, pady=5, sticky="nsew")
 
     def _on_refresh_graph_btn(self):
@@ -99,6 +100,7 @@ class App(customtkinter.CTk):
 
     def _on_generate_graph_btn(self):
         self.generate_graph_window.show_generate_graph_window_visible()
+        self.add_graph_window.disable_options()
 
     def _on_add_graph_btn(self):
         self.add_graph_window.show_add_graph_panel()
@@ -135,3 +137,9 @@ class App(customtkinter.CTk):
         self.graph = None
         if self.canvas_handler is not None:
             self.canvas_handler.unbind()
+
+    def disable_buttons(self):
+        self.refresh_button.configure(state='disabled')
+
+    def enable_buttons(self):
+        self.refresh_button.configure(state='normal')
