@@ -3,8 +3,12 @@ alt + left m button - check vertex to add edge
 
 
 PLAN:
- - zapobiec sytuacji, w której użytkownik otworzy okno dodawania grafu oraz generowania na raz,
-    bo jak kliknie generuj, to moze wtedy zmienic parametry dodawania i sie psuje
- - przy zaznaczaniu digraph, ma sie zaznaczać też directed
- - naprawić algorytmy, ten sleep nie działa poprawnie, chce zeby sie wykonywał na oddzielnym wątku
-    żeby można było klikac w aplikacji
+
+ - naprawione ale powstały bugi, typu kliknięcie usunięcia grafu, podczas działania algorytmu
+
+ - kolorowanie kruskala do poprawy analgocznie ^
+
+ - wywoływania bfsów i dfsów na razie ok, ale dla innych algorytmów może tak nie zadziałać, przydałoby się coś co odblokowywuje guziki jak się skończy algorytm
+    rozwiązać powyższy problem jakoś, że te guziki się uaktywniają dopiero jak algorytm się skończy, w ogóle ten sposób chyba nie działa,
+    bo trzebaby walidować/zamykać tez okna po kliknięciu w algorytm kurde,
+   ale na razie nie mam nic poza mrożeniem guzików, moze da sie wystartować

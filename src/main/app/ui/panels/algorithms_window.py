@@ -1,12 +1,14 @@
 import customtkinter
 
-import src.main.app.utils.algorithms as algorithm
+import src.main.app.graph.algorithms.algorithms as algorithm
 from src.main.app.utils.constants import *
 
 
 class AlgorithmsWindow(customtkinter.CTk):
-    def __init__(self, drawer):
+    def __init__(self, drawer, disable_buttons_method, enable_buttons_method):
         super().__init__()
+        self.disable_buttons_method = disable_buttons_method
+        self.enable_buttons_method = enable_buttons_method
         self.drawer = drawer
         self._configure_window()
         self._create_buttons()
@@ -41,19 +43,21 @@ class AlgorithmsWindow(customtkinter.CTk):
         self.deiconify()
 
     def _on_run_dfs_btn(self):
-        if self.graph is None:
-            return
-        else:
-            algorithm.depth_search(self.graph, self.drawer)
+        self._run_search(algorithm.depth_search)
 
     def _on_run_bfs_btn(self):
-        if self.graph is None:
-            return
-        else:
-            algorithm.binary_search(self.graph, self.drawer)
+        self._run_search(algorithm.binary_search)
 
     def _on_kruskal_algorithm_btn(self):
         if self.graph is None:
             return
         else:
             algorithm.kruskal_algorithm(self.graph, self.drawer)
+
+    def _run_search(self, search):
+        if self.graph is None:
+            return
+        else:
+            # self.after(len(self.graph.V) * 500, lambda: self.enable_buttons_method())
+            # self.disable_buttons_method()
+            search(self.graph, self.drawer)

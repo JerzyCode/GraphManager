@@ -35,7 +35,7 @@ class CanvasHandler:
     def unbind(self):
         self.canvas.unbind("<Shift-Button-1>")
 
-    def _on_add_edge(self, event):
+    def _on_add_edge(self):
         self.enabled_vertex_select = True
 
     def _add_vertex(self, event):
@@ -53,10 +53,10 @@ class CanvasHandler:
         if (vertex.x - RADIUS < event.x < vertex.x + RADIUS and vertex.y - RADIUS < event.y < vertex.y + RADIUS
                 and len(self.selected_vertexes) < 2 and vertex not in self.selected_vertexes):
             self.selected_vertexes.append(vertex)
-            self.drawer.color_vertex(vertex, self.graph)
+            self.drawer.color_vertex(vertex)
         if len(self.selected_vertexes) == 2 and self.selected_vertexes[0] != self.selected_vertexes[1]:
             edge = self.graph.add_edge(self.selected_vertexes[0], self.selected_vertexes[1], self.is_directed, self.is_digraph)
-            self.drawer.uncolor_vertex(self.selected_vertexes[0], self.graph)
-            self.drawer.uncolor_vertex(self.selected_vertexes[1], self.graph)
+            self.drawer.uncolor_vertex(self.selected_vertexes[0])
+            self.drawer.uncolor_vertex(self.selected_vertexes[1])
             self.drawer.draw_edge(edge)
             self.selected_vertexes = []
