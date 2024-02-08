@@ -87,7 +87,7 @@ class CanvasHandler:
             self.pop_up.tk_popup(x, y, 0)
 
     def _on_delete_vertex(self):
-        logger.log(f'deleting vertex: {self.vertex_to_delete}')
+        logger.debug(f'deleting vertex: {self.vertex_to_delete}')
         self.drawer.erase_vertex_and_incidental_edges(self.vertex_to_delete)
         self.graph.delete_vertex(self.vertex_to_delete)
         self.vertex_to_delete = None
