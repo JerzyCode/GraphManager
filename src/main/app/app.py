@@ -6,6 +6,9 @@ from src.main.app.ui.panels.add_graph_window import AddGraphWindow
 from src.main.app.ui.panels.algorithms_window import AlgorithmsWindow
 from src.main.app.ui.panels.generate_graph_window import GenerateGraphWindow
 from src.main.app.utils.constants import *
+from src.main.app.utils.logger import setup_logger
+
+logger = setup_logger("App")
 
 customtkinter.set_appearance_mode("System")
 customtkinter.set_default_color_theme("blue")
@@ -39,13 +42,14 @@ class App(customtkinter.CTk):
         self._configure_window()
         self._create_sidebar_frame()
         self._create_graph_display_frame()
+        # MOCK
+        self.generate_graph_window.generate_button.invoke()
 
     def _configure_window(self):
         self.title("Graph Manager")
         self.minsize(WINDOW_WIDTH, WINDOW_HEIGHT)
         self.geometry(f"{WINDOW_WIDTH}x{WINDOW_HEIGHT}+0+0")
         self.protocol("WM_DELETE_WINDOW", self._on_close_btn)
-
         self.grid_columnconfigure(1, weight=1)
         self.grid_rowconfigure((1, 2), weight=1)
 
@@ -89,10 +93,11 @@ class App(customtkinter.CTk):
         self.drawer = Drawer(self.canvas)
         self.add_graph_window = AddGraphWindow(self._set_params_add_graph)
         self.generate_graph_window = GenerateGraphWindow(self)
-        self.algorithms_window = AlgorithmsWindow(self.drawer, self.disable_buttons, self.enable_buttons)
+        self.algorithms_window = AlgorithmsWindow(self.drawer)
         self.canvas.grid(row=1, column=1, rowspan=5, columnspan=2, padx=55, pady=5, sticky="nsew")
 
     def _on_refresh_graph_btn(self):
+        logger.debug("_on_refresh_graph_btn()")
         graph = self.graph
         if self.drawer:
             self.drawer.refresh_all(graph)
@@ -114,6 +119,7 @@ class App(customtkinter.CTk):
         self.add_graph_button.configure(state='disabled')
 
     def _set_params_add_graph(self, is_directed, is_digraph, is_weighted):
+        logger.debug("_set_params_add_graph()")
         self.canvas_handler = CanvasHandler(self, is_directed, is_digraph, is_weighted)
         graph = self.canvas_handler.graph
         self.graph = graph
@@ -128,6 +134,7 @@ class App(customtkinter.CTk):
         self.destroy()
 
     def _on_clear_graph_btn(self):
+        logger.debug("_on_clear_graph_btn()")
         self.add_graph_button.configure(state='normal')
         self.add_graph_window.set_params_button_state_normal()
         self.drawer.erase_all()
@@ -138,9 +145,3 @@ class App(customtkinter.CTk):
         self.canvas_handler.enabled = False
         if self.canvas_handler is not None:
             self.canvas_handler.unbind()
-
-    def disable_buttons(self):
-        self.refresh_button.configure(state='disabled')
-
-    def enable_buttons(self):
-        self.refresh_button.configure(state='normal')

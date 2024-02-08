@@ -12,7 +12,6 @@ class AddGraphWindow(customtkinter.CTk):
         self.is_weighted = False
         self.is_custom = False
         self.on_set_params_btn = set_params_add_graph
-
         self._configure_window()
         self.checkbox_frame = ParamsCheckboxFrame(self)
         self._create_params_frame()

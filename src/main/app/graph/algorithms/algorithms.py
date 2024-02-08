@@ -32,11 +32,11 @@ def bfs(queue, drawer, visited, vertex, directed, result):
     result.append(vertex)
     while not queue.empty():
         v = queue.get()
-        delay += 500
         for neigh in v.neighbors:
             if not visited[neigh]:
                 drawer.color_edge_delay(v.find_edge(neigh, directed), delay)
                 drawer.color_vertex_delay(neigh, delay)
+                delay += 500
                 result.append(neigh)
                 queue.put(neigh)
                 visited[neigh] = True
@@ -54,13 +54,13 @@ def depth_search(graph, drawer):
 
 def dfs(graph, vertex, visited, drawer, directed, delay):
     visited[vertex] = True
-    delay = delay + 500
     if drawer is not None:
         drawer.color_vertex_delay(vertex, delay)
     for neigh in vertex.neighbors:
         if not visited[neigh]:
             if drawer is not None:
                 drawer.color_edge_delay(vertex.find_edge(neigh, directed), delay)
+                delay += 500
             dfs(graph, neigh, visited, drawer, directed, delay)
 
 
