@@ -5,10 +5,8 @@ from src.main.app.utils.constants import *
 
 
 class AlgorithmsWindow(customtkinter.CTk):
-    def __init__(self, drawer, disable_buttons_method, enable_buttons_method):
+    def __init__(self, drawer):
         super().__init__()
-        self.disable_buttons_method = disable_buttons_method
-        self.enable_buttons_method = enable_buttons_method
         self.drawer = drawer
         self._configure_window()
         self._create_buttons()

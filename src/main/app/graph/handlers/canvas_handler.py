@@ -1,4 +1,3 @@
-import logging as logger
 import tkinter as tk
 
 from src.main.app.graph.digraph import Digraph
@@ -6,8 +5,9 @@ from src.main.app.graph.directed_graph import DirectedGraph
 from src.main.app.graph.undirected_graph import UndirectedGraph
 from src.main.app.graph.vertex import Vertex
 from src.main.app.utils.constants import *
+from src.main.app.utils.logger import setup_logger
 
-logger.basicConfig(level=logger.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = setup_logger("CanvasHandler")
 
 
 class CanvasHandler:
@@ -37,7 +37,6 @@ class CanvasHandler:
                 self.graph = DirectedGraph([], self.is_weighted)
             else:
                 self.graph = UndirectedGraph([], self.is_weighted)
-            logger.debug('_create_graph()')
         self.prev_label = str(len(self.graph.V) + 1)
 
     def _create_popup_menu(self):
@@ -69,8 +68,6 @@ class CanvasHandler:
         self.canvas.tag_bind(f"vertex_{vertex.label}", "<ButtonPress-3>", lambda e, v=vertex: self._on_vertex_right_click(e, v))
 
     def _on_vertex_click(self, event, vertex):
-        logger.debug('_on_vertex_click()')
-
         if (vertex.x - RADIUS < event.x < vertex.x + RADIUS and vertex.y - RADIUS < event.y < vertex.y + RADIUS
                 and len(self.selected_vertexes) < 2 and vertex not in self.selected_vertexes):
             self.selected_vertexes.append(vertex)
@@ -91,6 +88,6 @@ class CanvasHandler:
 
     def _on_delete_vertex(self):
         logger.debug(f'deleting vertex: {self.vertex_to_delete}')
-        self.drawer.erase_vertex(self.vertex_to_delete, is_weighted=self.graph.is_weighted)
+        self.drawer.erase_vertex_and_incidental_edges(self.vertex_to_delete)
         self.graph.delete_vertex(self.vertex_to_delete)
         self.vertex_to_delete = None
