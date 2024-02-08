@@ -10,19 +10,18 @@ from src.main.app.utils.constants import *
 
 
 class GenerateGraphWindow(customtkinter.CTk):
-    def __init__(self, canvas, drawer, graph_generated, enable_option_method):
+    def __init__(self, root):
         super().__init__()
         self.is_directed = False
         self.is_digraph = False
         self.is_weighted = False
         self.is_custom = False
-        self.canvas = canvas
-        self.drawer = drawer
+        self.root = root
+        self.canvas = root.canvas
+        self.drawer = root.drawer
         self.graph = Graph([], self.is_weighted,
                            self.canvas.winfo_width(),
                            self.canvas.winfo_height())
-        self.graph_generated_callback = graph_generated
-        self.enable_options = enable_option_method
         self._configure_window()
         self.checkbox_frame = ParamsCheckboxFrame(self)
         self._create_params_frame()
@@ -63,16 +62,18 @@ class GenerateGraphWindow(customtkinter.CTk):
 
     def _on_close(self):
         self.withdraw()
-        self.enable_options()
+        self.root.add_graph_window.enable_options()
+        # self.enable_options()
 
     def _on_generate_graph(self):
         self._generate_graph()
-        self.canvas_handler = CanvasHandler(self.canvas, self.drawer,
+        self.canvas_handler = CanvasHandler(self.root,
                                             self.is_directed,
                                             self.is_digraph,
                                             self.is_weighted,
                                             self.graph)
-        self.graph_generated_callback()
+        self.root.canvas_handler = self.canvas_handler
+        self.root.on_graph_generated_hook()
 
     def _generate_graph(self):
         size = self.size_entry.get()

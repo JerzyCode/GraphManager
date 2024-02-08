@@ -69,6 +69,7 @@ def _prepare_draw_edge(edge, is_digraph):
 class Drawer:
 
     def __init__(self, canvas):
+        self.graph = None
         self.canvas = canvas
 
     # VERTEX_METHODS
@@ -92,6 +93,13 @@ class Drawer:
     def _raise_all_vertexes(self, vertexes):
         for vertex in vertexes:
             self._raise_vertex(vertex)
+
+    def erase_vertex(self, vertex, is_weighted=False):
+        self.canvas.delete(f"vertex_{vertex.label}")
+        self.canvas.delete(f"text_{vertex.label}")
+        self._erase_edges_incidental(vertex)
+        if is_weighted:
+            self._erase_weights_incidental(vertex)
 
     def color_vertex(self, vertex):
         if vertex is not None:
@@ -179,13 +187,15 @@ class Drawer:
             arrow_shape = (9, 9, 6)
             self.canvas.itemconfig(line, arrow=tkinter.LAST, arrowshape=arrow_shape)
 
+
     def _draw_edges_incidental(self, edges):
         for edge in edges:
             self._draw_edge(edge, edges.get(edge)["color"], edges.get(edge)["width"])
 
-    def _erase_edges_incidental(self, edges, vertex):
+    # te 2 metody poniżej powinny być jedną!!
+    def _erase_edges_incidental(self, vertex):
         erased_edges_params = {}
-        for edge in edges:
+        for edge in self.graph.E:
             if edge.vertex1 == vertex or edge.vertex2 == vertex:
                 fill_color = self.canvas.itemcget(f"edge_{edge.label}", "fill")
                 width = self.canvas.itemcget(f"edge_{edge.label}", "width")
@@ -193,9 +203,9 @@ class Drawer:
                 self._erase_edge(edge)
         return erased_edges_params
 
-    def _erase_weights_incidental(self, edges, vertex):
+    def _erase_weights_incidental(self, vertex):
         erased_weights_param = {}
-        for edge in edges:
+        for edge in self.graph.E:
             if edge.vertex1 == vertex or edge.vertex2 == vertex:
                 fill_color = self.canvas.itemcget(f'weight_{edge.weight}_{edge.label}', "fill")
                 erased_weights_param[edge] = fill_color
@@ -207,9 +217,9 @@ class Drawer:
             self._draw_weight(edge, edges.get(edge))
 
     def _move_edges_incidental(self, edges, vertex):
-        erased_edges_params = self._erase_edges_incidental(edges, vertex)
+        erased_edges_params = self._erase_edges_incidental(vertex)
         self._draw_edges_incidental(erased_edges_params)
-        erased_weight_params = self._erase_weights_incidental(edges, vertex)
+        erased_weight_params = self._erase_weights_incidental(vertex)
         self._draw_weights_incidental(erased_weight_params)
 
     def color_edge(self, edge):
@@ -249,6 +259,7 @@ class Drawer:
         self.canvas.delete('all')
 
     def draw_graph(self, graph):
+        self.graph = graph
         self._erase_edges(graph.E)
         self._draw_all_vertexes(graph)
         self._draw_all_edges(graph)

@@ -30,6 +30,9 @@ class Vertex:
         # print(edge)
         return edge
 
+    def remove_neighbor(self, neigh):
+        self.neighbors.remove(neigh)
+
     def find_edge_directed(self, neigh):
         for edge in self.edges:
             if edge.vertex2 == neigh:

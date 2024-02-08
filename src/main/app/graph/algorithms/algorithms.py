@@ -12,19 +12,21 @@ def sort_edges_by_weights(edges):
 
 
 def binary_search(graph, drawer):
-    visited = [False] * len(graph.V)
+    visited = {}
+    for v in graph.V:
+        visited[v] = False
     queue = Queue()
     directed = isinstance(graph, DirectedGraph)
     result = []
     for vertex in graph.V:
-        if not visited[int(vertex.label) - 1]:
+        if not visited[vertex]:
             bfs(queue, drawer, visited, vertex, directed, result)
     return result
 
 
 def bfs(queue, drawer, visited, vertex, directed, result):
     delay = 0
-    visited[int(vertex.label) - 1] = True
+    visited[vertex] = True
     queue.put(vertex)
     drawer.color_vertex_delay(vertex, delay)
     result.append(vertex)
@@ -32,29 +34,31 @@ def bfs(queue, drawer, visited, vertex, directed, result):
         v = queue.get()
         delay += 500
         for neigh in v.neighbors:
-            if not visited[int(neigh.label) - 1]:
+            if not visited[neigh]:
                 drawer.color_edge_delay(v.find_edge(neigh, directed), delay)
                 drawer.color_vertex_delay(neigh, delay)
                 result.append(neigh)
                 queue.put(neigh)
-                visited[int(neigh.label) - 1] = True
+                visited[neigh] = True
 
 
 def depth_search(graph, drawer):
     directed = isinstance(graph, DirectedGraph)
-    visited = [False] * len(graph.V)
+    visited = {}
+    for v in graph.V:
+        visited[v] = False
     for vertex in graph.V:
-        if not visited[int(vertex.label) - 1]:
+        if not visited[vertex]:
             dfs(graph, vertex, visited, drawer, directed, 0)
 
 
 def dfs(graph, vertex, visited, drawer, directed, delay):
-    visited[int(vertex.label) - 1] = True
+    visited[vertex] = True
     delay = delay + 500
     if drawer is not None:
         drawer.color_vertex_delay(vertex, delay)
     for neigh in vertex.neighbors:
-        if not visited[int(neigh.label) - 1]:
+        if not visited[neigh]:
             if drawer is not None:
                 drawer.color_edge_delay(vertex.find_edge(neigh, directed), delay)
             dfs(graph, neigh, visited, drawer, directed, delay)

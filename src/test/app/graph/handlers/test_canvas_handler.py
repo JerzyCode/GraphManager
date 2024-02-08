@@ -3,7 +3,9 @@ from unittest import TestCase
 from src.main.app.app import App
 from src.main.app.graph.digraph import Digraph
 from src.main.app.graph.directed_graph import DirectedGraph
+from src.main.app.graph.edge import Edge
 from src.main.app.graph.undirected_graph import UndirectedGraph
+from src.main.app.graph.vertex import Vertex
 
 
 class TestCanvasHandler(TestCase):
@@ -76,6 +78,29 @@ class TestCanvasHandler(TestCase):
         self._prepare_canvas_handler_adding_vertexes(is_weighted=True, is_directed=False, is_digraph=True)
         edge = next(iter(self.app.graph.E), None)
         self._assertions_canvas_handler_adding_vertexes(edge)
+
+    def test_canvas_handler_deleting_vertexes(self):
+        # given
+        self._create_graph(False, False, False)
+        vertex1 = Vertex('1', 122, 122)
+        vertex2 = Vertex('2', 155, 155)
+        edge = Edge(vertex1, vertex2, False, False, None)
+        self.app.graph.add_vertex(vertex1)
+        self.app.graph.add_vertex(vertex2)
+        self.app.graph.add_edge(vertex1, vertex2, is_directed=edge.directed, is_digraph=edge.digraph)
+
+        # when
+        # tutaj sie nie zamyka ten popup, i bug jest przez to, zatzrymuje test
+        # self.app.canvas_handler._on_vertex_right_click(Event(vertex1.x, vertex1.y), vertex1)
+        self.app.canvas_handler.vertex_to_delete = vertex1
+        self.app.canvas_handler._on_delete_vertex()
+
+        # then
+        self.assertTrue(edge not in self.app.graph.E)
+        self.assertTrue(vertex1 not in vertex2.neighbors)
+        self.assertTrue(vertex2 not in vertex1.neighbors)
+        self.assertTrue(edge not in vertex1.edges)
+        self.assertTrue(edge not in vertex2.edges)
 
     def _set_add_graph_params(self, is_weighted, is_directed, is_digraph):
         self.graph_window.is_weighted = is_weighted

@@ -47,3 +47,10 @@ class TestVertex(unittest.TestCase):
         edge = self.vertex1.find_edge(self.vertex2, False)
         self.assertEqual(edge, self.edge_undirected_v1_v2)
         self.assertEqual(edge, self.edge_undirected_v2_v1)
+
+    def test_remove_neighbor(self):
+        self.vertex1.add_neighbor(self.vertex2, self.edge_directed_v1_v2)
+        self.vertex2.add_neighbor(self.vertex1, self.edge_directed_v2_v1)
+
+        self.vertex1.remove_neighbor(self.vertex2)
+        self.assertTrue(self.vertex2 not in self.vertex1.neighbors)

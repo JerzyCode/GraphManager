@@ -88,8 +88,7 @@ class App(customtkinter.CTk):
         self.canvas = customtkinter.CTkCanvas(self, bg=GRAPH_BG_COLOR, bd=0, highlightthickness=0, relief='ridge')
         self.drawer = Drawer(self.canvas)
         self.add_graph_window = AddGraphWindow(self._set_params_add_graph)
-        self.generate_graph_window = GenerateGraphWindow(self.canvas, self.drawer, self._on_graph_generated_hook,
-                                                         self.add_graph_window.enable_options)
+        self.generate_graph_window = GenerateGraphWindow(self)
         self.algorithms_window = AlgorithmsWindow(self.drawer, self.disable_buttons, self.enable_buttons)
         self.canvas.grid(row=1, column=1, rowspan=5, columnspan=2, padx=55, pady=5, sticky="nsew")
 
@@ -108,18 +107,19 @@ class App(customtkinter.CTk):
     def _on_algorithms_button(self):
         self.algorithms_window.show_algorithms_window_visible()
 
-    def _on_graph_generated_hook(self):
+    def on_graph_generated_hook(self):
         graph = self.generate_graph_window.graph
         self.graph = graph
         self.algorithms_window.graph = graph
         self.add_graph_button.configure(state='disabled')
 
     def _set_params_add_graph(self, is_directed, is_digraph, is_weighted):
-        print('add_graph_set_params')
-        self.canvas_handler = CanvasHandler(self.canvas, self.drawer, is_directed, is_digraph, is_weighted)
+        self.canvas_handler = CanvasHandler(self, is_directed, is_digraph, is_weighted)
         graph = self.canvas_handler.graph
         self.graph = graph
+        self.drawer.graph = graph
         self.algorithms_window.graph = graph
+        self.canvas_handler.enabled = True
 
     def _on_close_btn(self):
         self.add_graph_window.destroy()
@@ -135,6 +135,7 @@ class App(customtkinter.CTk):
         self.generate_graph_window.graph = None
         self.algorithms_window.graph = None
         self.graph = None
+        self.canvas_handler.enabled = False
         if self.canvas_handler is not None:
             self.canvas_handler.unbind()
 

@@ -21,6 +21,25 @@ class Graph:
     def add_vertex(self, vertex):
         self.V.append(vertex)
 
+    def delete_vertex(self, vertex):
+        self.V.remove(vertex)
+        for edge in list(self.E):
+            if edge.vertex1 == vertex or edge.vertex2 == vertex:
+                self.delete_edge(edge)
+
+    def delete_edge(self, edge):
+        self.E.remove(edge)
+        vertex1 = edge.vertex1
+        vertex2 = edge.vertex2
+        if edge in vertex1.edges:
+            vertex1.edges.remove(edge)
+        if edge in vertex2.edges:
+            vertex2.edges.remove(edge)
+        if vertex1 in vertex2.neighbors:
+            vertex2.neighbors.remove(vertex1)
+        if vertex2 in vertex1.neighbors:
+            vertex1.neighbors.remove(vertex2)
+
     def add_edge(self, vertex1, vertex2, is_directed, is_digraph):
         if is_digraph:
             is_directed = True
