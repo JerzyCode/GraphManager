@@ -9,6 +9,7 @@ LOG_COLORS = {
     logging.ERROR: RED,
     logging.CRITICAL: MAGENTA, }
 
+time_format = "%Y-%m-%d %H:%M:%S"
 
 def create_color_format(color_code):
     return f"\033[1;3{color_code}m%(asctime)s - %(name)s - %(levelname)s - %(message)s\033[0m"
@@ -17,7 +18,7 @@ def create_color_format(color_code):
 class ColoredFormatter(logging.Formatter):
     def format(self, record):
         color_code = LOG_COLORS.get(record.levelno, WHITE)
-        formatter = logging.Formatter(create_color_format(color_code))
+        formatter = logging.Formatter(create_color_format(color_code), datefmt=time_format)
         return formatter.format(record)
 
 

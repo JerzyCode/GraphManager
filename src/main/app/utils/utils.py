@@ -1,6 +1,6 @@
 import tkinter as tk
 
-from src.app.utils.constants import *
+from src.main.app.utils.constants import *
 
 
 def create_button(parent, image, text, command):
@@ -22,3 +22,5 @@ def create_input(parent, text, input_width):
     parent.add(label)
     parent.add(entry)
     return entry
+
+
