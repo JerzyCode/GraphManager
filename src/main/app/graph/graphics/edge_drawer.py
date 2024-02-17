@@ -71,9 +71,9 @@ class EdgeDrawer:
     def __init__(self, canvas):
         self.canvas = canvas
 
-    def draw_edge_params(self, edge, graph, color, width):
+    def draw_edge_params(self, edge, graph, color, width, weight_color):
         self.draw_edge(edge, graph)
-        self.change_edge_params(edge, color, width)
+        self.change_edge_params(edge, color, width, weight_color)
 
     def draw_edge(self, edge, graph):
         if isinstance(graph, Digraph):
@@ -122,11 +122,11 @@ class EdgeDrawer:
         if edge.weight is not None:
             self.canvas.delete(f'weight_{edge.weight}_{edge.label}')
 
-    def change_edge_params(self, edge, color, width):
+    def change_edge_params(self, edge, color, width, weight_color):
         self.canvas.itemconfig(f"edge_{edge.label}", fill=color, width=width)
         self.canvas.tag_raise(f"edge_{edge.label}")
         if edge.weight is not None:
-            self.canvas.itemconfig(f'weight_{edge.weight}_{edge.label}', fill=color)
+            self.canvas.itemconfig(f'weight_{edge.weight}_{edge.label}', fill=weight_color)
             self.canvas.tag_raise(f'weight_{edge.weight}_{edge.label}')
 
     def erase_edges_incidental(self, vertex, graph):
@@ -135,14 +135,17 @@ class EdgeDrawer:
             if edge.vertex1 == vertex or edge.vertex2 == vertex:
                 fill_color_edge = self.canvas.itemcget(f"edge_{edge.label}", "fill")
                 width = self.canvas.itemcget(f"edge_{edge.label}", "width")
-                erased_edges_params[edge] = {"color": fill_color_edge, "width": width}
+                erased_edges_params[edge] = {"color": fill_color_edge, "width": width, "weight_color": None}
+                if edge.weight is not None:
+                    fill_color_weight = self.canvas.itemcget(f'weight_{edge.weight}_{edge.label}', "fill")
+                    erased_edges_params[edge]["weight_color"] = fill_color_weight
                 self.erase_edge(edge)
         return erased_edges_params
 
     def _draw_edges_incidental(self, graph, edges):
         for edge in edges:
             params = edges.get(edge)
-            self.draw_edge_params(edge, graph, params["color"], params["width"])
+            self.draw_edge_params(edge, graph, params["color"], params["width"], params["weight_color"])
 
     def move_edge_incidental(self, vertex, graph):
         erased_edges_params = self.erase_edges_incidental(vertex, graph)

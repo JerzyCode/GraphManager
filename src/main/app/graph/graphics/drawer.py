@@ -64,7 +64,7 @@ class Drawer:
 
     def color_edge(self, edge):
         if edge is not None:
-            self.edge_drawer.change_edge_params(edge, EDGE_COLOR_CHANGE_BG, EDGE_WIDTH_WIDER)
+            self.edge_drawer.change_edge_params(edge, EDGE_COLOR_CHANGE_BG, EDGE_WIDTH_WIDER, WEIGHT_COLOR_CHANGE)
 
     def color_edge_delay(self, edge, delay):
         self.canvas.after(delay, lambda: self.color_edge(edge))
