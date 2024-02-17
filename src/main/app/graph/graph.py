@@ -1,7 +1,10 @@
 from abc import abstractmethod
 
+from src.main.app.utils.logger import setup_logger
 from src.main.app.graph.edge import Edge
 from src.main.app.graph.vertex import Vertex
+
+logger = setup_logger("Graph")
 
 
 class Graph:
@@ -19,9 +22,11 @@ class Graph:
             self.V.append(Vertex(str(i + 1), max_width, max_height))
 
     def add_vertex(self, vertex):
+        logger.debug("Add Vertex")
         self.V.append(vertex)
 
     def delete_vertex(self, vertex):
+        logger.debug(f"Delete Vertex: {vertex}")
         self.V.remove(vertex)
         for edge in list(self.E):
             if edge.vertex1 == vertex or edge.vertex2 == vertex:

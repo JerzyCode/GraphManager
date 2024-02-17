@@ -57,7 +57,7 @@ class CanvasHandler:
             vertex = Vertex(self.prev_label, self.canvas.winfo_width(), self.canvas.winfo_height(), event.x,
                             event.y)
             self.graph.add_vertex(vertex)
-            self.drawer.draw_vertex(vertex, self.graph, VERTEX_BG_COLOR, VERTEX_FG_COLOR)
+            self.drawer.draw_vertex(vertex, self.graph)
             self._bind_vertex(vertex)
             self.prev_label = str(int(self.prev_label) + 1)
 
@@ -76,7 +76,7 @@ class CanvasHandler:
             edge = self.graph.add_edge(self.selected_vertexes[0], self.selected_vertexes[1], self.is_directed, self.is_digraph)
             self.drawer.uncolor_vertex(self.selected_vertexes[0])
             self.drawer.uncolor_vertex(self.selected_vertexes[1])
-            self.drawer.draw_edge(edge)
+            self.drawer.edge_drawer.draw_edge(edge, self.graph)
             self.selected_vertexes = []
 
     def _on_vertex_right_click(self, event, vertex):
@@ -87,7 +87,6 @@ class CanvasHandler:
             self.pop_up.tk_popup(x, y, 0)
 
     def _on_delete_vertex(self):
-        logger.debug(f'deleting vertex: {self.vertex_to_delete}')
         self.drawer.erase_vertex_and_incidental_edges(self.vertex_to_delete)
         self.graph.delete_vertex(self.vertex_to_delete)
         self.vertex_to_delete = None

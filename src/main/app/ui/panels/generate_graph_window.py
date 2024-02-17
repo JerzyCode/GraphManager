@@ -99,7 +99,6 @@ class GenerateGraphWindow(customtkinter.CTk):
                                                              self.canvas.winfo_height(),
                                                              self.is_weighted)
             self.drawer.draw_graph(self.graph)
-            self.withdraw()
 
     def show_generate_graph_window_visible(self):
         self.deiconify()

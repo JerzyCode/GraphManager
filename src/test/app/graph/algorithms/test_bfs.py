@@ -3,6 +3,7 @@ import unittest
 from unittest.mock import Mock
 
 import src.main.app.graph.algorithms.algorithms as alg
+from src.main.app.graph.graphics.edge_drawer import EdgeDrawer
 from src.main.app.graph.directed_graph import DirectedGraph
 from src.main.app.graph.graphics.drawer import Drawer
 from src.main.app.graph.undirected_graph import UndirectedGraph
@@ -11,7 +12,8 @@ from src.main.app.graph.undirected_graph import UndirectedGraph
 class TestBfs(unittest.TestCase):
     def setUp(self):
         self.canvas_mock = Mock(spec=tkinter.Canvas)
-        self.drawer_mock = Mock(spec=Drawer(self.canvas_mock))
+        self.edge_drawer_mock = EdgeDrawer(self.canvas_mock)
+        self.drawer_mock = Mock(spec=Drawer(self.canvas_mock, edge_drawer=self))
 
     def test_bfs_undirected(self):
         graph_matrix = [

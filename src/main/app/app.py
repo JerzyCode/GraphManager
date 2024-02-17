@@ -1,6 +1,7 @@
 import customtkinter
 
 from src.main.app.graph.graphics.drawer import Drawer
+from src.main.app.graph.graphics.edge_drawer import EdgeDrawer
 from src.main.app.graph.handlers.canvas_handler import CanvasHandler
 from src.main.app.ui.panels.add_graph_window import AddGraphWindow
 from src.main.app.ui.panels.algorithms_window import AlgorithmsWindow
@@ -34,7 +35,7 @@ def _on_load_graph_btn():
 class App(customtkinter.CTk):
     def __init__(self):
         super().__init__()
-
+        logger.debug("App starting...")
         self.canvas_handler = None
         self.graph = None
         self.weight_hidden = False
@@ -42,10 +43,10 @@ class App(customtkinter.CTk):
         self._configure_window()
         self._create_sidebar_frame()
         self._create_graph_display_frame()
-        # MOCK
         self.generate_graph_window.generate_button.invoke()
 
     def _configure_window(self):
+        logger.debug("Configuring Window...")
         self.title("Graph Manager")
         self.minsize(WINDOW_WIDTH, WINDOW_HEIGHT)
         self.geometry(f"{WINDOW_WIDTH}x{WINDOW_HEIGHT}+0+0")
@@ -54,6 +55,7 @@ class App(customtkinter.CTk):
         self.grid_rowconfigure((1, 2), weight=1)
 
     def _create_sidebar_frame(self):
+        logger.debug("Creating Sidebar Frame...")
         self.sidebar_frame = customtkinter.CTkFrame(self, width=140, corner_radius=0)
         self.sidebar_frame.grid(row=1, column=0, rowspan=4, sticky="nsew")
 
@@ -89,24 +91,28 @@ class App(customtkinter.CTk):
         self.appearance_mode_option_menu.grid(row=8, column=0, padx=20, pady=(10, 10))
 
     def _create_graph_display_frame(self):
+        logger.debug("Creating Graph Display Frame...")
         self.canvas = customtkinter.CTkCanvas(self, bg=GRAPH_BG_COLOR, bd=0, highlightthickness=0, relief='ridge')
-        self.drawer = Drawer(self.canvas)
+        self.edge_drawer = EdgeDrawer(self.canvas)
+        self.drawer = Drawer(self.canvas, self.edge_drawer)
         self.add_graph_window = AddGraphWindow(self._set_params_add_graph)
         self.generate_graph_window = GenerateGraphWindow(self)
         self.algorithms_window = AlgorithmsWindow(self.drawer)
         self.canvas.grid(row=1, column=1, rowspan=5, columnspan=2, padx=55, pady=5, sticky="nsew")
 
     def _on_refresh_graph_btn(self):
-        logger.debug("_on_refresh_graph_btn()")
+        logger.debug("Refreshing Graph")
         graph = self.graph
         if self.drawer:
             self.drawer.refresh_all(graph)
 
     def _on_generate_graph_btn(self):
+        logger.debug("On Generate Graph")
         self.generate_graph_window.show_generate_graph_window_visible()
         self.add_graph_window.disable_options()
 
     def _on_add_graph_btn(self):
+        logger.debug("On Add Graph")
         self.add_graph_window.show_add_graph_panel()
 
     def _on_algorithms_button(self):
@@ -119,7 +125,7 @@ class App(customtkinter.CTk):
         self.add_graph_button.configure(state='disabled')
 
     def _set_params_add_graph(self, is_directed, is_digraph, is_weighted):
-        logger.debug("_set_params_add_graph()")
+        logger.debug("Clearing Graph")
         self.canvas_handler = CanvasHandler(self, is_directed, is_digraph, is_weighted)
         graph = self.canvas_handler.graph
         self.graph = graph
@@ -128,13 +134,14 @@ class App(customtkinter.CTk):
         self.canvas_handler.enabled = True
 
     def _on_close_btn(self):
+        logger.debug("Closing App")
         self.add_graph_window.destroy()
         self.generate_graph_window.destroy()
         self.algorithms_window.destroy()
         self.destroy()
 
     def _on_clear_graph_btn(self):
-        logger.debug("_on_clear_graph_btn()")
+        logger.debug("Clearing Graph")
         self.add_graph_button.configure(state='normal')
         self.add_graph_window.set_params_button_state_normal()
         self.drawer.erase_all()
