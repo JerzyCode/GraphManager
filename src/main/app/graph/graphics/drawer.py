@@ -89,6 +89,7 @@ class Drawer:
         for edge in edges:
             self.edge_drawer.erase_edge(edge)
 
+    # TODO metody na dole powinny mieć logike w edge_drawer, a tutaj ewentualnie wywołanie dla ułatwienia
     def color_edge(self, edge):
         if edge is not None:
             self.edge_drawer.change_edge_params(edge, edge_color_changed, EDGE_WIDTH_WIDER, weight_color_changed)
