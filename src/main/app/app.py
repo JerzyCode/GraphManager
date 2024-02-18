@@ -1,17 +1,17 @@
 import customtkinter
 
-from src.main.app.graph.graphics.drawer import Drawer
+from src.main.app.graph.graphics.drawer import Drawer, change_appearance_mode
 from src.main.app.graph.graphics.edge_drawer import EdgeDrawer
 from src.main.app.graph.handlers.canvas_handler import CanvasHandler
 from src.main.app.ui.panels.add_graph_window import AddGraphWindow
 from src.main.app.ui.panels.algorithms_window import AlgorithmsWindow
-from src.main.app.ui.panels.generate_graph_window import GenerateGraphWindow
+from src.main.app.ui.panels.generate_graph_window import GenerateGraphWindow, change_generate_graph_window_appearance_mode
 from src.main.app.utils.constants import *
 from src.main.app.utils.logger import setup_logger
 
 logger = setup_logger("App")
 
-customtkinter.set_appearance_mode("System")
+customtkinter.set_appearance_mode("Dark")
 customtkinter.set_default_color_theme("blue")
 
 
@@ -43,7 +43,6 @@ class App(customtkinter.CTk):
         self._configure_window()
         self._create_sidebar_frame()
         self._create_graph_display_frame()
-        self.generate_graph_window.generate_button.invoke()
 
     def _configure_window(self):
         logger.debug("Configuring Window...")
@@ -86,19 +85,20 @@ class App(customtkinter.CTk):
         self.appearance_mode_label = customtkinter.CTkLabel(self.sidebar_frame, text="Appearance Mode:", anchor="w")
         self.appearance_mode_label.grid(row=7, column=0, padx=20, pady=(10, 0))
         self.appearance_mode_option_menu = customtkinter.CTkOptionMenu(self.sidebar_frame,
-                                                                       values=["Light", "Dark", "System"],
-                                                                       command=change_appearance_mode_event)
+                                                                       values=["Light", "Dark"],
+                                                                       command=self._change_appearance_mode)
+        self.appearance_mode_option_menu.set("Dark")
         self.appearance_mode_option_menu.grid(row=8, column=0, padx=20, pady=(10, 10))
 
     def _create_graph_display_frame(self):
         logger.debug("Creating Graph Display Frame...")
-        self.canvas = customtkinter.CTkCanvas(self, bg=GRAPH_BG_COLOR, bd=0, highlightthickness=0, relief='ridge')
+        self.canvas = customtkinter.CTkCanvas(self, bg=GRAPH_BG_COLOR_DARK, bd=0, highlightthickness=0, relief='ridge')
         self.edge_drawer = EdgeDrawer(self.canvas)
         self.drawer = Drawer(self.canvas, self.edge_drawer)
         self.add_graph_window = AddGraphWindow(self._set_params_add_graph)
         self.generate_graph_window = GenerateGraphWindow(self)
         self.algorithms_window = AlgorithmsWindow(self.drawer)
-        self.canvas.grid(row=1, column=1, rowspan=5, columnspan=2, padx=55, pady=5, sticky="nsew")
+        self.canvas.grid(row=1, column=1, rowspan=5, columnspan=2, padx=5, pady=5, sticky="nsew")
 
     def _on_refresh_graph_btn(self):
         logger.debug("Refreshing Graph")
@@ -152,3 +152,16 @@ class App(customtkinter.CTk):
         self.canvas_handler.enabled = False
         if self.canvas_handler is not None:
             self.canvas_handler.unbind()
+
+    def _change_appearance_mode(self, new_appearance_mode: str):
+        logger.debug("Changing appearance mode to: " + new_appearance_mode)
+        change_appearance_mode_event(new_appearance_mode)
+        if new_appearance_mode == "Light":
+            self.canvas.configure(bg=GRAPH_BG_COLOR_LIGHT)
+            change_appearance_mode("Light")
+            change_generate_graph_window_appearance_mode("Light")
+        elif new_appearance_mode == "Dark":
+            self.canvas.configure(bg=GRAPH_BG_COLOR_DARK)
+            change_appearance_mode("Dark")
+            change_generate_graph_window_appearance_mode("Dark")
+        self.drawer.refresh_all(self.graph)
