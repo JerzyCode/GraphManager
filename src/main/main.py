@@ -1,8 +1,8 @@
 from src.main.app.app import App
-from src.main.app.graph.vertex import Vertex
 
 if __name__ == "__main__":
     app = App()
+    app.generate_graph_window.generate_button.invoke()
     app.mainloop()
 
 #

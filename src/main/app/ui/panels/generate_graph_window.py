@@ -8,6 +8,19 @@ from src.main.app.graph.handlers.canvas_handler import CanvasHandler
 from src.main.app.ui.utils.params_checkbox_frame import ParamsCheckboxFrame
 from src.main.app.utils.constants import *
 
+global input_box_bg_color, input_box_fg_color
+
+
+def change_generate_graph_window_appearance_mode(new_appearance_mode: str):
+    global input_box_bg_color, input_box_fg_color
+    if new_appearance_mode == "Light":
+        input_box_fg_color = GRAPH_BG_COLOR_LIGHT
+    elif new_appearance_mode == "Dark":
+        input_box_fg_color = GRAPH_BG_COLOR_DARK
+
+
+change_generate_graph_window_appearance_mode("Dark")
+
 
 class GenerateGraphWindow(customtkinter.CTk):
     def __init__(self, root):
@@ -49,14 +62,14 @@ class GenerateGraphWindow(customtkinter.CTk):
         self.size_label = customtkinter.CTkLabel(self.params_frame, text='Enter number of vertexes:',
                                                  font=customtkinter.CTkFont(size=20, weight="bold"))
         self.size_label.grid(row=1, column=2, padx=(10, 0), pady=(20, 0), sticky="nsew")
-        self.size_entry = customtkinter.CTkEntry(self.params_frame, placeholder_text="size", width=100, fg_color=GRAPH_BG_COLOR)
+        self.size_entry = customtkinter.CTkEntry(self.params_frame, placeholder_text="size", width=100, bg_color=input_box_fg_color)
         self.size_entry.insert(0, '10')
         self.size_entry.grid(row=1, column=3, rowspan=1, padx=(20, 20), pady=(20, 0))
 
         self.density_label = customtkinter.CTkLabel(self.params_frame, text='Edges density (0 to 1):',
                                                     font=customtkinter.CTkFont(size=20, weight="bold"))
         self.density_label.grid(row=2, column=2, padx=(10, 0), pady=(20, 0), sticky="nsew")
-        self.density_entry = customtkinter.CTkEntry(self.params_frame, placeholder_text="size", width=100, fg_color=GRAPH_BG_COLOR)
+        self.density_entry = customtkinter.CTkEntry(self.params_frame, placeholder_text="size", width=100, bg_color=input_box_fg_color)
         self.density_entry.insert(0, '0.5')
         self.density_entry.grid(row=2, column=3, rowspan=1, padx=(20, 20), pady=(20, 0))
 
