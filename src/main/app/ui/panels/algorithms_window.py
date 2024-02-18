@@ -2,6 +2,9 @@ import customtkinter
 
 import src.main.app.graph.algorithms.algorithms as algorithm
 from src.main.app.utils.constants import *
+from src.main.app.utils.logger import setup_logger
+
+logger = setup_logger("AlgorithmsWindow")
 
 
 class AlgorithmsWindow(customtkinter.CTk):
@@ -41,15 +44,18 @@ class AlgorithmsWindow(customtkinter.CTk):
         self.deiconify()
 
     def _on_run_dfs_btn(self):
+        logger.debug("Running DFS")
         self._run_search(algorithm.depth_search)
 
     def _on_run_bfs_btn(self):
+        logger.debug("Running BFS")
         self._run_search(algorithm.binary_search)
 
     def _on_kruskal_algorithm_btn(self):
         if self.graph is None:
             return
         else:
+            logger.debug("Running Kruskal")
             algorithm.kruskal_algorithm(self.graph, self.drawer)
 
     def _run_search(self, search):
