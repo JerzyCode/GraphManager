@@ -1,7 +1,10 @@
 import customtkinter
 
+from src.main.app.utils.logger import setup_logger
 from src.main.app.ui.utils.params_checkbox_frame import ParamsCheckboxFrame
 from src.main.app.utils.constants import *
+
+logger = setup_logger("AddGraphWindow")
 
 
 class AddGraphWindow(customtkinter.CTk):
@@ -44,6 +47,7 @@ class AddGraphWindow(customtkinter.CTk):
         self.set_params_button.configure(state='normal')
 
     def _on_set_params_btn(self):
+        logger.debug("Setting params for graph")
         self.on_set_params_btn(self.is_directed, self.is_digraph, self.is_weighted)
         self.set_params_button.configure(state='disabled')
 
