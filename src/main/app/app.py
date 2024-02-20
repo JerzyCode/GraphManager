@@ -52,6 +52,7 @@ class App(customtkinter.CTk):
         self.protocol("WM_DELETE_WINDOW", self._on_close_btn)
         self.grid_columnconfigure(1, weight=1)
         self.grid_rowconfigure((1, 2), weight=1)
+        self.iconbitmap(r'assets/graph_icon_144306.ico')
 
     def _create_sidebar_frame(self):
         logger.debug("Creating Sidebar Frame...")
