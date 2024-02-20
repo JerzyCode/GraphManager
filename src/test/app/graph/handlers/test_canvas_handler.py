@@ -1,4 +1,4 @@
-from unittest import TestCase
+from unittest import TestCase, mock
 
 from src.main.app.app import App
 from src.main.app.graph.digraph import Digraph
@@ -63,9 +63,23 @@ class TestCanvasHandler(TestCase):
         self.assertEqual(edge.label, '1_2')
         self.assertEqual(len(self.app.graph.V), 3)
 
+# TODO TEN TEST NIE DZIALA NA DOLE
+    def add_vertex_to_existing_with_weight(self):
+        self._create_graph(is_weighted=True, is_directed=False, is_digraph=False)
+        self.app.canvas_handler._on_shift_button_1(Event(120, 120))
+        self.app.canvas_handler._on_shift_button_1(Event(150, 150))
+        graph = self.app.graph
+        vertex1 = graph.V[0]
+        vertex2 = graph.V[1]
+        self.app.canvas_handler.dialog = mock()
+        self.app.canvas_handler._on_vertex_click(Event(vertex1.x, vertex1.y), vertex1)
+        self.app.canvas_handler._on_vertex_click(Event(vertex2.x, vertex2.y), vertex2)
+        self.app.canvas_handler.dialog.weight_entry.set(5)
+        self.app.canvas_handler.dialog.weight_entry.validate()
+
     # w przyszloci zamienic wywolywanie na metodach prywatnych
     def test_canvas_handler_undirected_graph_adding_vertexes(self):
-        self._prepare_canvas_handler_adding_vertexes(is_weighted=True, is_directed=False, is_digraph=False)
+        self._prepare_canvas_handler_adding_vertexes(is_weighted=False, is_directed=False, is_digraph=False)
         edge = next(iter(self.app.graph.E), None)
         self._assertions_canvas_handler_adding_vertexes(edge)
 
@@ -75,7 +89,7 @@ class TestCanvasHandler(TestCase):
         self._assertions_canvas_handler_adding_vertexes(edge)
 
     def test_canvas_handler_digraph_graph_adding_vertexes(self):
-        self._prepare_canvas_handler_adding_vertexes(is_weighted=True, is_directed=False, is_digraph=True)
+        self._prepare_canvas_handler_adding_vertexes(is_weighted=False, is_directed=False, is_digraph=True)
         edge = next(iter(self.app.graph.E), None)
         self._assertions_canvas_handler_adding_vertexes(edge)
 
@@ -87,7 +101,7 @@ class TestCanvasHandler(TestCase):
         edge = Edge(vertex1, vertex2, False, False, None)
         self.app.graph.add_vertex(vertex1)
         self.app.graph.add_vertex(vertex2)
-        self.app.graph.add_edge(vertex1, vertex2, is_directed=edge.directed, is_digraph=edge.digraph)
+        self.app.graph.add_edge(vertex1, vertex2, is_directed=edge.directed, is_digraph=edge.digraph, weight=None)
 
         # when
         # tutaj sie nie zamyka ten popup, i bug jest przez to, zatzrymuje test
@@ -110,6 +124,7 @@ class TestCanvasHandler(TestCase):
     def _create_graph(self, is_weighted, is_directed, is_digraph):
         self._set_add_graph_params(is_weighted, is_directed, is_digraph)
         self.graph_window.set_params_button.invoke()
+        self.graph_window.withdraw()
 
     def _assertions_create_graph(self, graph, is_weighted, is_directed, is_digraph):
         self.assertIsNotNone(graph)

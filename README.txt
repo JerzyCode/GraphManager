@@ -6,3 +6,5 @@ PLAN:
 
 testy do dopisania są:
  - drawer do zmockowania i sprawdzania czy metody są wywoływane
+
+ wszystkie testy są do przerobienia
