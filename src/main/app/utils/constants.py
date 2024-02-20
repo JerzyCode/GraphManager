@@ -78,3 +78,6 @@ WEIGHTED = 'Weighted'
 GENERATE_GRAPH = 'Generate Graph'
 
 BUTTON_1 = "<Button-1>"
+
+ADD_WEIGHT_WIDTH = 220
+ADD_WEIGHT_HEIGHT = 80

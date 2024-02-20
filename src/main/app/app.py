@@ -6,6 +6,7 @@ from src.main.app.graph.handlers.canvas_handler import CanvasHandler
 from src.main.app.ui.panels.add_graph_window import AddGraphWindow
 from src.main.app.ui.panels.algorithms_window import AlgorithmsWindow
 from src.main.app.ui.panels.generate_graph_window import GenerateGraphWindow, change_generate_graph_window_appearance_mode
+from src.main.app.ui.panels.set_weight_window import change_set_weight_window_appearance_mode
 from src.main.app.utils.constants import *
 from src.main.app.utils.logger import setup_logger
 
@@ -114,7 +115,7 @@ class App(customtkinter.CTk):
 
     def _on_add_graph_btn(self):
         logger.debug("On Add Graph")
-        self.add_graph_window.show_add_graph_panel()
+        self.add_graph_window.show_add_graph_window()
 
     def _on_algorithms_button(self):
         self.algorithms_window.show_algorithms_window_visible()
@@ -161,8 +162,10 @@ class App(customtkinter.CTk):
             self.canvas.configure(bg=GRAPH_BG_COLOR_LIGHT)
             change_appearance_mode("Light")
             change_generate_graph_window_appearance_mode("Light")
+            change_set_weight_window_appearance_mode("Light")
         elif new_appearance_mode == "Dark":
             self.canvas.configure(bg=GRAPH_BG_COLOR_DARK)
             change_appearance_mode("Dark")
             change_generate_graph_window_appearance_mode("Dark")
+            change_set_weight_window_appearance_mode("Dark")
         self.drawer.refresh_all(self.graph)

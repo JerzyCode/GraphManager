@@ -4,6 +4,7 @@ from src.main.app.graph.digraph import Digraph
 from src.main.app.graph.directed_graph import DirectedGraph
 from src.main.app.graph.undirected_graph import UndirectedGraph
 from src.main.app.graph.vertex import Vertex
+from src.main.app.ui.panels.set_weight_window import AskWeightDialog
 from src.main.app.utils.constants import *
 from src.main.app.utils.logger import setup_logger
 
@@ -73,7 +74,12 @@ class CanvasHandler:
             self.selected_vertexes.append(vertex)
             self.drawer.color_vertex(vertex)
         if len(self.selected_vertexes) == 2 and self.selected_vertexes[0] != self.selected_vertexes[1]:
-            edge = self.graph.add_edge(self.selected_vertexes[0], self.selected_vertexes[1], self.is_directed, self.is_digraph)
+            weight = None
+            if self.is_weighted:
+                weight = self._ask_weight()
+                if weight >= 1000:
+                    weight = 999
+            edge = self.graph.add_edge(self.selected_vertexes[0], self.selected_vertexes[1], self.is_directed, self.is_digraph, weight)
             self.drawer.uncolor_vertex(self.selected_vertexes[0])
             self.drawer.uncolor_vertex(self.selected_vertexes[1])
             self.drawer.edge_drawer.draw_edge(edge, self.graph)
@@ -90,3 +96,7 @@ class CanvasHandler:
         self.drawer.erase_vertex_and_incidental_edges(self.vertex_to_delete)
         self.graph.delete_vertex(self.vertex_to_delete)
         self.vertex_to_delete = None
+
+    def _ask_weight(self):
+        dialog = AskWeightDialog(self.root)
+        return dialog.weight

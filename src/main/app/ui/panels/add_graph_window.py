@@ -4,7 +4,7 @@ from src.main.app.utils.logger import setup_logger
 from src.main.app.ui.utils.params_checkbox_frame import ParamsCheckboxFrame
 from src.main.app.utils.constants import *
 
-logger = setup_logger("AddGraphWindow")
+logger = setup_logger("Add Graph Window")
 
 
 class AddGraphWindow(customtkinter.CTk):
@@ -57,5 +57,5 @@ class AddGraphWindow(customtkinter.CTk):
     def set_params_button_state_normal(self):
         self.set_params_button.configure(state='normal')
 
-    def show_add_graph_panel(self):
+    def show_add_graph_window(self):
         self.deiconify()

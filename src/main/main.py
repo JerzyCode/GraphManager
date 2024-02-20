@@ -2,7 +2,7 @@ from src.main.app.app import App
 
 if __name__ == "__main__":
     app = App()
-    app.generate_graph_window.generate_button.invoke()
+    # app.generate_graph_window.generate_button.invoke()
     app.mainloop()
 
 #

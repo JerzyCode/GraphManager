@@ -45,10 +45,11 @@ class Graph:
         if vertex2 in vertex1.neighbors:
             vertex1.neighbors.remove(vertex2)
 
-    def add_edge(self, vertex1, vertex2, is_directed, is_digraph):
+    def add_edge(self, vertex1, vertex2, is_directed, is_digraph, weight):
+        logger.debug("Add Edge")
         if is_digraph:
             is_directed = True
-        edge = Edge(vertex1, vertex2, is_directed, digraph=is_digraph, weight=None)
+        edge = Edge(vertex1, vertex2, is_directed, digraph=is_digraph, weight=weight)
         vertex1.add_neighbor(vertex2, edge)
         if not is_directed:
             vertex2.add_neighbor(vertex1, edge)
