@@ -136,6 +136,10 @@ class EdgeDrawer:
             arrow_shape = (9, 9, 6)
             self.canvas.itemconfig(line, arrow=tkinter.LAST, arrowshape=arrow_shape)
 
+    def highlight_edge_color(self, edge):
+        if edge is not None:
+            self.change_edge_params(edge, edge_color_changed, EDGE_WIDTH_WIDER, weight_color_changed)
+
     def erase_edge(self, edge):
         self.canvas.delete(f"edge_{edge.label}")
         if edge.weight is not None:
@@ -169,3 +173,11 @@ class EdgeDrawer:
     def move_edge_incidental(self, vertex, graph):
         erased_edges_params = self.erase_edges_incidental(vertex, graph)
         self._draw_edges_incidental(graph, erased_edges_params)
+
+    def draw_all_edges(self, graph):
+        for edge in graph.E:
+            self.draw_edge(edge, graph)
+
+    def erase_all_edges(self, edges):
+        for edge in edges:
+            self.erase_edge(edge)
