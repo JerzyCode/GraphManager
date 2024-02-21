@@ -4,7 +4,7 @@ from src.main.app.graph.digraph import Digraph
 from src.main.app.graph.directed_graph import DirectedGraph
 from src.main.app.graph.undirected_graph import UndirectedGraph
 from src.main.app.graph.vertex import Vertex
-from src.main.app.ui.panels.set_weight_window import AskWeightDialog
+from src.main.app.ui.windows.set_weight_window import AskWeightDialog
 from src.main.app.utils.constants import *
 from src.main.app.utils.logger import setup_logger
 

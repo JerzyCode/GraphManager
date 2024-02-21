@@ -35,7 +35,7 @@ class TestGraph(unittest.TestCase):
         edge = Edge(self.vertex1, self.vertex2, True, False, False)
 
         # when
-        self.graph.add_edge(self.vertex1, self.vertex2, True, False)
+        self.graph.add_edge(self.vertex1, self.vertex2, True, False, weight=None)
 
         # then
         self.assertTrue(edge in self.graph.E)
@@ -47,7 +47,7 @@ class TestGraph(unittest.TestCase):
     def test_delete_edge(self):
         # given
         edge = Edge(self.vertex1, self.vertex2, True, False, False)
-        self.graph.add_edge(self.vertex1, self.vertex2, True, False)
+        self.graph.add_edge(self.vertex1, self.vertex2, True, False, weight=None)
         # when
         self.graph.delete_edge(edge)
 
@@ -57,7 +57,7 @@ class TestGraph(unittest.TestCase):
     def test_delete_vertex(self):
         # given
         edge = Edge(self.vertex1, self.vertex2, True, False, False)
-        self.graph.add_edge(self.vertex1, self.vertex2, True, False)
+        self.graph.add_edge(self.vertex1, self.vertex2, True, False, weight=None)
 
         # when
         self.graph.delete_vertex(self.vertex1)

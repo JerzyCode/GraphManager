@@ -3,9 +3,9 @@ import unittest
 from unittest.mock import Mock
 
 import src.main.app.graph.algorithms.algorithms as alg
-from src.main.app.graph.graphics.edge_drawer import EdgeDrawer
+from src.main.app.ui.drawing.drawer import Drawer
+from src.main.app.ui.drawing.edge_drawer import EdgeDrawer
 from src.main.app.graph.directed_graph import DirectedGraph
-from src.main.app.graph.graphics.drawer import Drawer
 from src.main.app.graph.undirected_graph import UndirectedGraph
 
 

@@ -4,7 +4,7 @@ import src.main.app.graph.digraph as digraph
 import src.main.app.graph.directed_graph as directed_graph
 import src.main.app.graph.undirected_graph as undirected_graph
 from src.main.app.graph.graph import Graph
-from src.main.app.graph.handlers.canvas_handler import CanvasHandler
+from src.main.app.ui.drawing.canvas_handler import CanvasHandler
 from src.main.app.ui.utils.params_checkbox_frame import ParamsCheckboxFrame
 from src.main.app.utils.constants import *
 

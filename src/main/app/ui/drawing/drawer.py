@@ -1,4 +1,4 @@
-from src.main.app.graph.graphics.edge_drawer import change_edge_appearance_mode
+from src.main.app.ui.drawing.edge_drawer import change_edge_appearance_mode
 from src.main.app.utils.constants import *
 from src.main.app.utils.logger import setup_logger
 

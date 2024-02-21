@@ -1,12 +1,12 @@
 import customtkinter
 
-from src.main.app.graph.graphics.drawer import Drawer, change_appearance_mode
-from src.main.app.graph.graphics.edge_drawer import EdgeDrawer
-from src.main.app.graph.handlers.canvas_handler import CanvasHandler
-from src.main.app.ui.panels.add_graph_window import AddGraphWindow
-from src.main.app.ui.panels.algorithms_window import AlgorithmsWindow
-from src.main.app.ui.panels.generate_graph_window import GenerateGraphWindow, change_generate_graph_window_appearance_mode
-from src.main.app.ui.panels.set_weight_window import change_set_weight_window_appearance_mode
+from src.main.app.ui.drawing.canvas_handler import CanvasHandler
+from src.main.app.ui.drawing.drawer import Drawer, change_appearance_mode
+from src.main.app.ui.drawing.edge_drawer import EdgeDrawer
+from src.main.app.ui.windows.add_graph_window import AddGraphWindow
+from src.main.app.ui.windows.algorithms_window import AlgorithmsWindow
+from src.main.app.ui.windows.generate_graph_window import GenerateGraphWindow, change_generate_graph_window_appearance_mode
+from src.main.app.ui.windows.set_weight_window import change_set_weight_window_appearance_mode
 from src.main.app.utils.constants import *
 from src.main.app.utils.logger import setup_logger
 
