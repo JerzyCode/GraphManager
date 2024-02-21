@@ -68,11 +68,15 @@ def apex_point(vertex1, vertex2):
     return apex_x, apex_y
 
 
+# TODO ZLE LICZY TE START LINE POINTS, DO PZREROBIENIA TO JEST
+# BO ZLE RYSUJE
+
 def _prepare_draw_edge(edge, is_digraph):
     params = {}
     vertex1 = edge.vertex1
     vertex2 = edge.vertex2
     label = vertex1.label + '_' + vertex2.label
+    start_line_points = end_line_point(vertex2, vertex1)
     end_line_points = end_line_point(vertex1, vertex2)
     params['vertex1_x'] = edge.vertex1.x
     params['vertex1_y'] = edge.vertex1.y
@@ -80,6 +84,7 @@ def _prepare_draw_edge(edge, is_digraph):
     params['vertex2_y'] = edge.vertex2.y
     params['label'] = label
     params['end_line_points'] = end_line_points
+    params['start_line_points'] = start_line_points
     if is_digraph:
         apex = apex_point(vertex1, vertex2)
         params['apex'] = apex
@@ -139,6 +144,12 @@ class EdgeDrawer:
     def highlight_edge_color(self, edge):
         if edge is not None:
             self.change_edge_params(edge, edge_color_changed, EDGE_WIDTH_WIDER, weight_color_changed)
+
+    def refresh_edge_color(self, edge):
+        if edge is not None:
+            self.canvas.itemconfig(f"edge_{edge.label}", fill=edge_color, width=EDGE_WIDTH)
+            if edge.weight is not None:
+                self.canvas.itemconfig(f'weight_{edge.weight}_{edge.label}', fill=weight_color)
 
     def erase_edge(self, edge):
         self.canvas.delete(f"edge_{edge.label}")

@@ -26,11 +26,19 @@ class CanvasHandler:
         self.canvas.bind("<Shift-Button-1>", self._on_shift_button_1)
         self._create_popup_menu()
 
+    # def _set_colors(self):
+    #     self.vertex_bg_color = vertex_bg_color
+    #     self.vertex_fg_color = self.drawer.vertex_drawer.vertex_fg_color
+    #     self.vertex_bg_color_changed = self.drawer.vertex_drawer.vertex_bg_color_changed
+    #     self.vertex_fg_color_changed = self.drawer.vertex_drawer.vertex_fg_color_changed
+
     def _create_graph(self, graph):
         if graph is not None:
+            self.graph = graph
             for vertex in graph.V:
-                self.graph = graph
                 self._bind_vertex(vertex)
+            for edge in graph.E:
+                self._bind_edge(edge)
         else:
             if self.is_digraph:
                 self.graph = Digraph([], self.is_weighted)
@@ -67,10 +75,18 @@ class CanvasHandler:
         self.canvas.tag_bind(f"vertex_{vertex.label}", "<Alt-ButtonPress-1>", lambda e, v=vertex: self._on_vertex_click(e, v))
         self.canvas.tag_bind(f"text_{vertex.label}", "<ButtonPress-3>", lambda e, v=vertex: self._on_vertex_right_click(e, v))
         self.canvas.tag_bind(f"vertex_{vertex.label}", "<ButtonPress-3>", lambda e, v=vertex: self._on_vertex_right_click(e, v))
+        self.canvas.tag_bind(f"vertex_{vertex.label}", "<Enter>", lambda e, v=vertex: self._on_enter_vertex(e, v))
+        self.canvas.tag_bind(f"text_{vertex.label}", "<Enter>", lambda e, v=vertex: self._on_enter_vertex(e, v))
+        self.canvas.tag_bind(f"vertex_{vertex.label}", "<Leave>", lambda e, v=vertex: self._on_leave_vertex(e, v))
+        self.canvas.tag_bind(f"text_{vertex.label}", "<Leave>", lambda e, v=vertex: self._on_leave_vertex(e, v))
         self.canvas.tag_bind(f"vertex_{vertex.label}", "<ButtonPress-1>", lambda event: self._start_move_vertex(event))
         self.canvas.tag_bind(f"vertex_{vertex.label}", "<B1-Motion>", lambda event, v=vertex: self._move_vertex(event, v))
         self.canvas.tag_bind(f"text_{vertex.label}", "<ButtonPress-1>", lambda event: self._start_move_vertex(event))
         self.canvas.tag_bind(f"text_{vertex.label}", "<B1-Motion>", lambda event, v=vertex: self._move_vertex(event, v))
+
+    def _bind_edge(self, edge):
+        self.canvas.tag_bind(f"edge_{edge.label}", "<Enter>", lambda event, e=edge: self._on_enter_edge(event, e))
+        self.canvas.tag_bind(f"edge_{edge.label}", "<Leave>", lambda event, e=edge: self._on_leave_edge(event, e))
 
     def _on_vertex_click(self, event, vertex):
         if (vertex.x - RADIUS < event.x < vertex.x + RADIUS and vertex.y - RADIUS < event.y < vertex.y + RADIUS
@@ -107,6 +123,9 @@ class CanvasHandler:
             return
 
     def _move_vertex(self, event, vertex):
+        if (event.x <= RADIUS or event.x >= self.canvas.winfo_width() - RADIUS
+                or event.y <= RADIUS or event.y >= self.canvas.winfo_height() - RADIUS):
+            return
         delta_x = event.x - vertex.x
         delta_y = event.y - vertex.y
         vertex.x = event.x
@@ -119,3 +138,16 @@ class CanvasHandler:
     def _ask_weight(self):
         dialog = AskWeightDialog(self.root)
         return dialog.weight
+
+    def _on_enter_vertex(self, event, vertex):
+        self.drawer.vertex_drawer.highlight_vertex_color(vertex)
+
+    def _on_leave_vertex(self, event, vertex):
+        if vertex not in self.selected_vertexes:
+            self.drawer.vertex_drawer.refresh_vertex_color(vertex)
+
+    def _on_enter_edge(self, event, edge):
+        self.drawer.edge_drawer.highlight_edge_color(edge)
+
+    def _on_leave_edge(self, event, edge):
+        self.drawer.edge_drawer.refresh_edge_color(edge)
