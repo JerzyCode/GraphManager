@@ -28,14 +28,14 @@ def bfs(queue, drawer, visited, vertex, directed, result):
     delay = 0
     visited[vertex] = True
     queue.put(vertex)
-    drawer.color_vertex_delay(vertex, delay)
+    drawer.highlight_vertex_delay(vertex, delay)
     result.append(vertex)
     while not queue.empty():
         v = queue.get()
         for neigh in v.neighbors:
             if not visited[neigh]:
-                drawer.color_edge_delay(v.find_edge(neigh, directed), delay)
-                drawer.color_vertex_delay(neigh, delay)
+                drawer.highlight_edge_delay(v.find_edge(neigh, directed), delay)
+                drawer.highlight_vertex_delay(neigh, delay)
                 delay += 500
                 result.append(neigh)
                 queue.put(neigh)
@@ -55,11 +55,11 @@ def depth_search(graph, drawer):
 def dfs(graph, vertex, visited, drawer, directed, delay):
     visited[vertex] = True
     if drawer is not None:
-        drawer.color_vertex_delay(vertex, delay)
+        drawer.highlight_vertex_delay(vertex, delay)
     for neigh in vertex.neighbors:
         if not visited[neigh]:
             if drawer is not None:
-                drawer.color_edge_delay(vertex.find_edge(neigh, directed), delay)
+                drawer.highlight_edge_delay(vertex.find_edge(neigh, directed), delay)
                 delay += 500
             dfs(graph, neigh, visited, drawer, directed, delay)
 
@@ -90,7 +90,7 @@ def kruskal_algorithm(graph, drawer):
         set_b = sets[1]
         if len(set_a.intersection(set_b)) == 0:
             tree.add(edge)
-            drawer.color_edge_kruskal(edge, delay)
+            drawer.highlight_edge_kruskal(edge, delay)
             delay += 500
             wood.remove(set_a)
             wood.remove(set_b)

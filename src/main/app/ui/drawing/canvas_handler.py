@@ -58,7 +58,7 @@ class CanvasHandler:
             vertex = Vertex(self.prev_label, self.canvas.winfo_width(), self.canvas.winfo_height(), event.x,
                             event.y)
             self.graph.add_vertex(vertex)
-            self.drawer.draw_vertex(vertex, self.graph)
+            self.drawer.vertex_drawer.draw_vertex(vertex)
             self._bind_vertex(vertex)
             self.prev_label = str(int(self.prev_label) + 1)
 
@@ -67,12 +67,16 @@ class CanvasHandler:
         self.canvas.tag_bind(f"vertex_{vertex.label}", "<Alt-ButtonPress-1>", lambda e, v=vertex: self._on_vertex_click(e, v))
         self.canvas.tag_bind(f"text_{vertex.label}", "<ButtonPress-3>", lambda e, v=vertex: self._on_vertex_right_click(e, v))
         self.canvas.tag_bind(f"vertex_{vertex.label}", "<ButtonPress-3>", lambda e, v=vertex: self._on_vertex_right_click(e, v))
+        self.canvas.tag_bind(f"vertex_{vertex.label}", "<ButtonPress-1>", lambda event: self._start_move_vertex(event))
+        self.canvas.tag_bind(f"vertex_{vertex.label}", "<B1-Motion>", lambda event, v=vertex: self._move_vertex(event, v))
+        self.canvas.tag_bind(f"text_{vertex.label}", "<ButtonPress-1>", lambda event: self._start_move_vertex(event))
+        self.canvas.tag_bind(f"text_{vertex.label}", "<B1-Motion>", lambda event, v=vertex: self._move_vertex(event, v))
 
     def _on_vertex_click(self, event, vertex):
         if (vertex.x - RADIUS < event.x < vertex.x + RADIUS and vertex.y - RADIUS < event.y < vertex.y + RADIUS
                 and len(self.selected_vertexes) < 2 and vertex not in self.selected_vertexes):
             self.selected_vertexes.append(vertex)
-            self.drawer.color_vertex(vertex)
+            self.drawer.vertex_drawer.highlight_vertex_color(vertex)
         if len(self.selected_vertexes) == 2 and self.selected_vertexes[0] != self.selected_vertexes[1]:
             weight = None
             if self.is_weighted:
@@ -80,8 +84,8 @@ class CanvasHandler:
                 if weight >= 1000:
                     weight = 999
             edge = self.graph.add_edge(self.selected_vertexes[0], self.selected_vertexes[1], self.is_directed, self.is_digraph, weight)
-            self.drawer.uncolor_vertex(self.selected_vertexes[0])
-            self.drawer.uncolor_vertex(self.selected_vertexes[1])
+            self.drawer.vertex_drawer.refresh_vertex_color(self.selected_vertexes[0])
+            self.drawer.vertex_drawer.refresh_vertex_color(self.selected_vertexes[1])
             self.drawer.edge_drawer.draw_edge(edge, self.graph)
             self.selected_vertexes = []
 
@@ -96,6 +100,21 @@ class CanvasHandler:
         self.drawer.erase_vertex_and_incidental_edges(self.vertex_to_delete)
         self.graph.delete_vertex(self.vertex_to_delete)
         self.vertex_to_delete = None
+
+    def _start_move_vertex(self, event):
+        if (event.x <= RADIUS or event.x >= self.canvas.winfo_width() - RADIUS
+                or event.y <= RADIUS or event.y >= self.canvas.winfo_height() - RADIUS):
+            return
+
+    def _move_vertex(self, event, vertex):
+        delta_x = event.x - vertex.x
+        delta_y = event.y - vertex.y
+        vertex.x = event.x
+        vertex.y = event.y
+        self.canvas.move(f"vertex_{vertex.label}", delta_x, delta_y)
+        self.canvas.move(f"text_{vertex.label}", delta_x, delta_y)
+        self.drawer.edge_drawer.move_edge_incidental(vertex, self.graph)
+        self.drawer.vertex_drawer.raise_all_vertexes(self.graph.V)
 
     def _ask_weight(self):
         dialog = AskWeightDialog(self.root)
