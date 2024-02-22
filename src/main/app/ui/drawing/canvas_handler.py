@@ -26,12 +26,6 @@ class CanvasHandler:
         self.canvas.bind("<Shift-Button-1>", self._on_shift_button_1)
         self._create_popup_menu()
 
-    # def _set_colors(self):
-    #     self.vertex_bg_color = vertex_bg_color
-    #     self.vertex_fg_color = self.drawer.vertex_drawer.vertex_fg_color
-    #     self.vertex_bg_color_changed = self.drawer.vertex_drawer.vertex_bg_color_changed
-    #     self.vertex_fg_color_changed = self.drawer.vertex_drawer.vertex_fg_color_changed
-
     def _create_graph(self, graph):
         if graph is not None:
             self.graph = graph

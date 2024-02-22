@@ -42,7 +42,7 @@ def end_line_point(vertex1, vertex2):
         delta_x = -delta_x
         delta_y = -delta_y
 
-    return delta_x, delta_y
+    return delta_x, delta_y, -delta_x, -delta_y
 
 
 def middle_point(vertex1, vertex2):
@@ -68,16 +68,14 @@ def apex_point(vertex1, vertex2):
     return apex_x, apex_y
 
 
-# TODO ZLE LICZY TE START LINE POINTS, DO PZREROBIENIA TO JEST
-# BO ZLE RYSUJE
-
 def _prepare_draw_edge(edge, is_digraph):
     params = {}
     vertex1 = edge.vertex1
     vertex2 = edge.vertex2
     label = vertex1.label + '_' + vertex2.label
-    start_line_points = end_line_point(vertex2, vertex1)
-    end_line_points = end_line_point(vertex1, vertex2)
+    delta_points = end_line_point(vertex1, vertex2)
+    start_line_points = (delta_points[2], delta_points[3])
+    end_line_points = (delta_points[0], delta_points[1])
     params['vertex1_x'] = edge.vertex1.x
     params['vertex1_y'] = edge.vertex1.y
     params['vertex2_x'] = edge.vertex2.x
@@ -115,7 +113,8 @@ class EdgeDrawer:
     def _draw_graph_edge(self, edge):
         params = _prepare_draw_edge(edge, is_digraph=False)
         line = self.canvas.create_line(
-            params['vertex1_x'], params['vertex1_y'],
+            params['vertex1_x'] + params['start_line_points'][0],
+            params['vertex1_y'] + params['start_line_points'][1],
             params['vertex2_x'] + params['end_line_points'][0],
             params['vertex2_y'] + params['end_line_points'][1],
             fill=edge_color, width=EDGE_WIDTH,
@@ -129,7 +128,8 @@ class EdgeDrawer:
     def _draw_digraph_edge(self, edge):
         params = _prepare_draw_edge(edge, is_digraph=True)
         line = self.canvas.create_line(
-            params['vertex1_x'], params['vertex1_y'],
+            params['vertex1_x'] + params['start_line_points'][0],
+            params['vertex1_y'] + params['start_line_points'][1],
             params['apex'][0], params['apex'][1],
             params['vertex2_x'] + params['end_line_points'][0],
             params['vertex2_y'] + params['end_line_points'][1],
