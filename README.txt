@@ -3,7 +3,7 @@ alt + left m button - check vertex to add edge
 
 
 PLAN:
- - dopisać metode do rysowania wierzchołków na wzór end_line w edge_drawer,
+ - dopisać metode do rysowania krawędzi na wzór end_line w edge_drawer,
    żeby rysowało ładniej
 
  - przy algorytmach, jak się najedzie na pokolorowany wierzchołek, a potem z
