@@ -62,6 +62,4 @@ class AlgorithmsWindow(customtkinter.CTk):
         if self.graph is None:
             return
         else:
-            # self.after(len(self.graph.V) * 500, lambda: self.enable_buttons_method())
-            # self.disable_buttons_method()
             search(self.graph, self.drawer)

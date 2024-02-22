@@ -6,6 +6,7 @@ class Edge:
         self.digraph = digraph
         self.weight = weight
         self.label = vertex1.label + '_' + vertex2.label
+        self.is_highlighted_by_algorithm = False
 
     def __eq__(self, other):
         if self.directed:

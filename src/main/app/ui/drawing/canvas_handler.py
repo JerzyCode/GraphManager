@@ -137,11 +137,12 @@ class CanvasHandler:
         self.drawer.vertex_drawer.highlight_vertex_color(vertex)
 
     def _on_leave_vertex(self, event, vertex):
-        if vertex not in self.selected_vertexes:
+        if vertex not in self.selected_vertexes and not vertex.is_highlighted_by_algorithm:
             self.drawer.vertex_drawer.refresh_vertex_color(vertex)
 
     def _on_enter_edge(self, event, edge):
         self.drawer.edge_drawer.highlight_edge_color(edge)
 
     def _on_leave_edge(self, event, edge):
-        self.drawer.edge_drawer.refresh_edge_color(edge)
+        if not edge.is_highlighted_by_algorithm:
+            self.drawer.edge_drawer.refresh_edge_color(edge)
