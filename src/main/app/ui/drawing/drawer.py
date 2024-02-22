@@ -30,16 +30,18 @@ class Drawer:
         self.vertex_drawer = vertex_drawer
 
     def erase_vertex_and_incidental_edges(self, vertex):
-        self.vertex_drawer.erase_vertex(vertex)
         self.edge_drawer.erase_edges_incidental(vertex, self.graph)
-
-    def highlight_vertex_delay(self, vertex, delay):
-        self.canvas.after(delay, lambda: self.vertex_drawer.highlight_vertex_color(vertex))
 
     def _highlight_edge_algorithm(self, edge):
         self.edge_drawer.highlight_edge_color(edge)
-        self.vertex_drawer.raise_vertex(edge.vertex1)
-        self.vertex_drawer.raise_vertex(edge.vertex2)
+        edge.is_highlighted_by_algorithm = True
+
+    def _highlight_vertex_algorithm(self, vertex):
+        self.vertex_drawer.highlight_vertex_color(vertex)
+        vertex.is_highlighted_by_algorithm = True
+
+    def highlight_vertex_delay(self, vertex, delay):
+        self.canvas.after(delay, lambda: self._highlight_vertex_algorithm(vertex))
 
     def highlight_edge_delay(self, edge, delay):
         self.canvas.after(delay, lambda: self._highlight_edge_algorithm(edge))
@@ -51,6 +53,10 @@ class Drawer:
             self.highlight_edge_delay(edge, delay)
 
     def refresh_all(self, graph):
+        for vertex in graph.V:
+            vertex.is_highlighted_by_algorithm = False
+        for edge in graph.E:
+            edge.is_highlighted_by_algorithm = False
         if graph is not None:
             self.vertex_drawer.erase_all_vertexes(graph.V)
             self.edge_drawer.erase_all_edges(graph.E)

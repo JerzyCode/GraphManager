@@ -1,6 +1,8 @@
 from src.main.app.graph.vertex import Vertex
 from src.main.app.utils.constants import *
 
+global vertex_bg_color, vertex_fg_color, vertex_bg_color_changed, vertex_fg_color_changed
+
 
 def change_vertex_appearance_mode(new_appearance_mode: str):
     global vertex_bg_color, vertex_fg_color, vertex_bg_color_changed, vertex_fg_color_changed

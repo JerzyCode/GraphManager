@@ -13,6 +13,7 @@ class Vertex:
         self.label = label + ''
         self.edges = set()
         self.neighbors = set()
+        self.is_highlighted_by_algorithm = False
 
     def _set_coords(self, max_width, max_height):
         if max_width < 2 * RADIUS or max_height < 2 * RADIUS:
