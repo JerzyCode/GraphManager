@@ -26,7 +26,6 @@ class Graph:
         self.V.append(vertex)
 
     def delete_vertex(self, vertex):
-        logger.debug(f"Delete Vertex: {vertex}")
         self.V.remove(vertex)
         for edge in list(self.E):
             if edge.vertex1 == vertex or edge.vertex2 == vertex:
