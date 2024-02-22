@@ -2,7 +2,7 @@ from src.main.app.ui.drawing.edge_drawer import change_edge_appearance_mode
 from src.main.app.ui.drawing.vertex_drawer import change_vertex_appearance_mode
 from src.main.app.utils.logger import setup_logger
 
-logger = setup_logger("CanvasHandler")
+logger = setup_logger("Drawer")
 
 global vertex_bg_color, vertex_fg_color, vertex_bg_color_changed, vertex_fg_color_changed, edge_color_changed, weight_color_changed
 
@@ -31,6 +31,7 @@ class Drawer:
 
     def erase_vertex_and_incidental_edges(self, vertex):
         self.edge_drawer.erase_edges_incidental(vertex, self.graph)
+        self.vertex_drawer.erase_vertex(vertex)
 
     def _highlight_edge_algorithm(self, edge):
         self.edge_drawer.highlight_edge_color(edge)

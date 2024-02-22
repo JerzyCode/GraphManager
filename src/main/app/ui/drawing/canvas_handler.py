@@ -16,6 +16,7 @@ class CanvasHandler:
         self.canvas = root.canvas
         self.drawer = root.drawer
         self.vertex_to_delete = None
+        self.edge_to_delete = None
         self.root = root
         self.is_directed = is_directed
         self.is_weighted = is_weighted
@@ -24,7 +25,8 @@ class CanvasHandler:
         self._create_graph(graph)
         self.selected_vertexes = []
         self.canvas.bind("<Shift-Button-1>", self._on_shift_button_1)
-        self._create_popup_menu()
+        self._create_vertex_popup_menu()
+        self._create_edge_popup_menu()
 
     def _create_graph(self, graph):
         if graph is not None:
@@ -42,9 +44,13 @@ class CanvasHandler:
                 self.graph = UndirectedGraph([], self.is_weighted)
         self.prev_label = str(len(self.graph.V) + 1)
 
-    def _create_popup_menu(self):
-        self.pop_up = tk.Menu(self.root, tearoff=0)
-        self.pop_up.add_command(label='Delete Vertex', command=self._on_delete_vertex)
+    def _create_vertex_popup_menu(self):
+        self.vertex_pop_up = tk.Menu(self.root, tearoff=0)
+        self.vertex_pop_up.add_command(label='Delete Vertex', command=self._on_delete_vertex)
+
+    def _create_edge_popup_menu(self):
+        self.edge_pop_up = tk.Menu(self.root, tearoff=0)
+        self.edge_pop_up.add_command(label='Delete Edge', command=self._on_delete_edge)
 
     def _on_shift_button_1(self, event):
         self._add_vertex(event)
@@ -81,6 +87,7 @@ class CanvasHandler:
     def _bind_edge(self, edge):
         self.canvas.tag_bind(f"edge_{edge.label}", "<Enter>", lambda event, e=edge: self._on_enter_edge(event, e))
         self.canvas.tag_bind(f"edge_{edge.label}", "<Leave>", lambda event, e=edge: self._on_leave_edge(event, e))
+        self.canvas.tag_bind(f"edge_{edge.label}", "<ButtonPress-3>", lambda event, e=edge: self._on_edge_right_click(event, e))
 
     def _on_vertex_click(self, event, vertex):
         if (vertex.x - RADIUS < event.x < vertex.x + RADIUS and vertex.y - RADIUS < event.y < vertex.y + RADIUS
@@ -99,14 +106,27 @@ class CanvasHandler:
             self.drawer.edge_drawer.draw_edge(edge, self.graph)
             self.selected_vertexes = []
 
+    def _on_edge_right_click(self, event, edge):
+        self.edge_to_delete = edge
+        x = self.canvas.winfo_rootx() + 0.5 * (edge.vertex1.x + edge.vertex2.x)
+        y = self.canvas.winfo_rooty() + 0.5 * (edge.vertex1.y + edge.vertex2.y)
+        self.edge_pop_up.tk_popup(int(x), int(y), 0)
+
+    def _on_delete_edge(self):
+        logger.debug(f"Deleting edge: {self.edge_to_delete}")
+        self.drawer.edge_drawer.erase_edge(self.edge_to_delete)
+        self.graph.delete_edge(self.edge_to_delete)
+        self.edge_to_delete = None
+
     def _on_vertex_right_click(self, event, vertex):
         if vertex.x - RADIUS < event.x < vertex.x + RADIUS and vertex.y - RADIUS < event.y < vertex.y + RADIUS:
             self.vertex_to_delete = vertex
             x = self.canvas.winfo_rootx() + vertex.x - 110
             y = self.canvas.winfo_rooty() + vertex.y
-            self.pop_up.tk_popup(x, y, 0)
+            self.vertex_pop_up.tk_popup(x, y, 0)
 
     def _on_delete_vertex(self):
+        logger.debug(f"Deleting vertex: {self.vertex_to_delete}")
         self.drawer.erase_vertex_and_incidental_edges(self.vertex_to_delete)
         self.graph.delete_vertex(self.vertex_to_delete)
         self.vertex_to_delete = None
