@@ -1,74 +1,149 @@
+import random as rd
 import unittest
 
-from src.main.app.graph.edge import Edge
-from src.main.app.graph.graph import Graph
+import src.main.app.graph.digraph as digraph
+import src.main.app.graph.directed_graph as directed_graph
+import src.main.app.graph.undirected_graph as undirected_graph
+import tests.main.app.graph.graph_factory as factory
 
 
 class TestGraph(unittest.TestCase):
 
-    def setUp(self):
-        matrix = [
-            [1, 1, 0],
-            [0, 1, 0],
-            [0, 1, 1]
-        ]
-        self.graph = Graph(matrix, is_weighted=False, max_width=123, max_height=123)
-        self.vertex1 = self.graph.V[0]
-        self.vertex2 = self.graph.V[1]
-
-    def test__init__(self):
-        matrix = [
-            [1, 1, 0],
-            [0, 1, 0],
-            [0, 1, 1]
-        ]
-
-        self.graph = Graph(matrix, is_weighted=False, max_width=123, max_height=123)
-        vertexes = self.graph.V
-        self.assertEqual(len(vertexes), 3)
-        self.assertEqual(vertexes[0].label, '1')
-        self.assertEqual(vertexes[1].label, '2')
-        self.assertEqual(vertexes[2].label, '3')
-
-    def test_add_edge(self):
+    def test_add_vertex_graph(self):
         # given
-        edge = Edge(self.vertex1, self.vertex2, True, False, False)
-
+        graph = factory.generate_test_empty_graph()
+        vertex = factory.generate_test_vertex('1')
         # when
-        self.graph.add_edge(self.vertex1, self.vertex2, True, False, weight=None)
-
+        graph.add_vertex(vertex)
         # then
-        self.assertTrue(edge in self.graph.E)
-        self.assertTrue(edge in self.vertex1.edges)
-        self.assertTrue(self.vertex2 in self.vertex1.neighbors)
-        self.assertFalse(self.vertex1 in self.vertex2.neighbors)
-        self.assertFalse(edge in self.vertex2.edges)
+        self.assertEqual(len(graph.V), 1)
+        self.assertEqual(graph.V[0], vertex)
 
-    def test_delete_edge(self):
+    def test_delete_vertex_graph(self):
         # given
-        edge = Edge(self.vertex1, self.vertex2, True, False, False)
-        self.graph.add_edge(self.vertex1, self.vertex2, True, False, weight=None)
+        graph = factory.generate_test_two_vertex_graph()
+        vertex1 = graph.V[0]
+        vertex2 = graph.V[1]
         # when
-        self.graph.delete_edge(edge)
-
+        graph.delete_vertex(vertex1)
         # then
-        self.assert_after_edge_deleted(edge)
+        self.assertEqual(len(graph.V), 1)
+        self.assertEqual(len(graph.E), 0)
+        self.assertTrue(vertex1 not in vertex2.neighbors)
+        self.assertTrue(vertex2 not in vertex1.neighbors)
+        self.assertEqual(len(vertex1.edges), 0)
+        self.assertEqual(len(vertex2.edges), 0)
 
-    def test_delete_vertex(self):
+    def test_delete_edge_graph(self):
         # given
-        edge = Edge(self.vertex1, self.vertex2, True, False, False)
-        self.graph.add_edge(self.vertex1, self.vertex2, True, False, weight=None)
-
+        graph = factory.generate_test_two_vertex_graph()
+        vertex1 = graph.V[0]
+        vertex2 = graph.V[1]
+        edge_to_delete = list(graph.E)[0]
         # when
-        self.graph.delete_vertex(self.vertex1)
-
+        graph.delete_edge(edge_to_delete)
         # then
-        self.assertTrue(self.vertex1 not in self.graph.V)
-        self.assert_after_edge_deleted(edge)
+        self.assertEqual(len(graph.V), 2)
+        self.assertEqual(len(graph.E), 0)
+        self.assertTrue(vertex1 not in vertex2.neighbors)
+        self.assertTrue(vertex2 not in vertex1.neighbors)
+        self.assertEqual(len(vertex1.edges), 0)
+        self.assertEqual(len(vertex2.edges), 0)
 
-    def assert_after_edge_deleted(self, edge):
-        self.assertTrue(edge not in self.graph.E)
-        self.assertTrue(self.vertex1 not in self.vertex2.neighbors)
-        self.assertTrue(self.vertex2 not in self.vertex1.neighbors)
-        self.assertTrue(edge not in self.vertex1.edges)
-        self.assertTrue(edge not in self.vertex2.edges)
+    def test_add_edge_undirected_graph(self):
+        # given
+        graph = factory.generate_test_two_vertex_graph()
+        vertex1 = graph.V[0]
+        vertex3 = factory.generate_test_vertex('3')
+        graph.V.append(vertex3)
+        # when
+        added_edge = graph.add_edge(vertex1, vertex3, is_directed=isinstance(graph, directed_graph.DirectedGraph), is_digraph=False, weight=None)
+        # then
+        self.assertEqual(len(graph.E), 2)
+        self.assertEqual(added_edge.vertex1, vertex1)
+        self.assertEqual(added_edge.vertex2, vertex3)
+        self.assertFalse(added_edge.directed)
+        self.assertIsNone(added_edge.weight)
+        self.assertTrue(vertex1 in vertex3.neighbors)
+        self.assertTrue(vertex3 in vertex1.neighbors)
+        self.assertTrue(added_edge in vertex1.edges)
+        self.assertTrue(added_edge in vertex3.edges)
+
+    def test_add_edge_directed_graph(self):
+        # given
+        graph = factory.generate_test_two_vertex_directed_graph()
+        vertex1 = graph.V[0]
+        vertex3 = factory.generate_test_vertex('3')
+        graph.V.append(vertex3)
+        # when
+        added_edge = graph.add_edge(vertex1, vertex3, is_directed=isinstance(graph, directed_graph.DirectedGraph), is_digraph=False, weight=5)
+        # then
+        self.assertEqual(len(graph.E), 2)
+        self.assertEqual(added_edge.vertex1, vertex1)
+        self.assertEqual(added_edge.vertex2, vertex3)
+        self.assertTrue(added_edge.directed)
+        self.assertIsNotNone(added_edge.weight)
+        self.assertTrue(vertex3 in vertex1.neighbors)
+        self.assertFalse(vertex1 in vertex3.neighbors)
+        self.assertTrue(added_edge in vertex1.edges)
+        self.assertFalse(added_edge in vertex3.edges)
+
+    def test_generate_undirected_graph(self):
+        # given
+        probability = 0.5
+        number_of_vertex = rd.randint(0, 100)
+        max_width = rd.randint(100, 500)
+        max_height = rd.randint(100, 500)
+        is_weighted = True
+        # when
+        graph = undirected_graph.generate_graph(number_of_vertex, probability, max_width, max_height, is_weighted)
+        # then
+        self.assertTrue(graph.is_weighted)
+        self.assertEqual(len(graph.V), number_of_vertex)
+        self.assertFalse(isinstance(graph, directed_graph.DirectedGraph))
+        self.assertFalse(isinstance(graph, digraph.Digraph))
+        self.assertTrue(isinstance(graph, undirected_graph.UndirectedGraph))
+        self.assertIsNotNone(graph.E)
+        for edge in graph.E:
+            self.assertTrue(edge.weight is not None)
+            self.assertFalse(edge.directed)
+
+    def test_generate_directed_graph(self):
+        # given
+        probability = 0.5
+        number_of_vertex = rd.randint(0, 100)
+        max_width = rd.randint(100, 500)
+        max_height = rd.randint(100, 500)
+        is_weighted = True
+        # when
+        graph = directed_graph.generate_graph(number_of_vertex, probability, max_width, max_height, is_weighted)
+        # then
+        self.assertTrue(graph.is_weighted)
+        self.assertEqual(len(graph.V), number_of_vertex)
+        self.assertTrue(isinstance(graph, directed_graph.DirectedGraph))
+        self.assertFalse(isinstance(graph, digraph.Digraph))
+        self.assertFalse(isinstance(graph, undirected_graph.UndirectedGraph))
+        self.assertIsNotNone(graph.E)
+        for edge in graph.E:
+            self.assertTrue(edge.weight is not None)
+            self.assertTrue(edge.directed)
+
+    def test_generate_digraph_graph(self):
+        # given
+        probability = 0.5
+        number_of_vertex = rd.randint(0, 100)
+        max_width = rd.randint(100, 500)
+        max_height = rd.randint(100, 500)
+        is_weighted = True
+        # when
+        graph = digraph.generate_graph(number_of_vertex, probability, max_width, max_height, is_weighted)
+        # then
+        self.assertTrue(graph.is_weighted)
+        self.assertEqual(len(graph.V), number_of_vertex)
+        self.assertTrue(isinstance(graph, directed_graph.DirectedGraph))
+        self.assertTrue(isinstance(graph, digraph.Digraph))
+        self.assertFalse(isinstance(graph, undirected_graph.UndirectedGraph))
+        self.assertIsNotNone(graph.E)
+        for edge in graph.E:
+            self.assertTrue(edge.weight is not None)
+            self.assertTrue(edge.directed)
