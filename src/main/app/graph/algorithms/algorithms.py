@@ -45,15 +45,18 @@ def bfs(queue, drawer, visited, vertex, directed, result):
 def depth_search(graph, drawer):
     directed = isinstance(graph, DirectedGraph)
     visited = {}
+    result = []
     for v in graph.V:
         visited[v] = False
     for vertex in graph.V:
         if not visited[vertex]:
-            dfs(graph, vertex, visited, drawer, directed, 0)
+            dfs(graph, vertex, visited, drawer, directed, 0, result)
+    return result
 
 
-def dfs(graph, vertex, visited, drawer, directed, delay):
+def dfs(graph, vertex, visited, drawer, directed, delay, result):
     visited[vertex] = True
+    result.append(vertex)
     if drawer is not None:
         drawer.highlight_vertex_delay(vertex, delay)
     for neigh in vertex.neighbors:
@@ -61,7 +64,7 @@ def dfs(graph, vertex, visited, drawer, directed, delay):
             if drawer is not None:
                 drawer.highlight_edge_delay(vertex.find_edge(neigh, directed), delay)
                 delay += 500
-            dfs(graph, neigh, visited, drawer, directed, delay)
+            dfs(graph, neigh, visited, drawer, directed, delay, result)
 
 
 def is_graph_connected(graph):

@@ -3,6 +3,7 @@ import customtkinter
 import src.main.app.graph.digraph as digraph
 import src.main.app.graph.directed_graph as directed_graph
 import src.main.app.graph.undirected_graph as undirected_graph
+import tests.main.app.graph.graph_factory as factory
 from src.main.app.graph.graph import Graph
 from src.main.app.ui.drawing.canvas_handler import CanvasHandler
 from src.main.app.ui.utils.params_checkbox_frame import ParamsCheckboxFrame
@@ -80,6 +81,17 @@ class GenerateGraphWindow(customtkinter.CTk):
 
     def _on_generate_graph(self):
         self._generate_graph()
+        self.canvas_handler = CanvasHandler(self.root,
+                                            self.is_directed,
+                                            self.is_digraph,
+                                            self.is_weighted,
+                                            self.graph)
+        self.root.canvas_handler = self.canvas_handler
+        self.root.on_graph_generated_hook()
+
+    def generate_graph_mock(self):
+        self.graph = factory.generate_test_undirected_graph()
+        self.drawer.draw_graph(self.graph)
         self.canvas_handler = CanvasHandler(self.root,
                                             self.is_directed,
                                             self.is_digraph,

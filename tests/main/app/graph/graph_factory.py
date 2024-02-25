@@ -83,19 +83,19 @@ def generate_test_two_vertex_directed_graph():
     return graph
 
 
-def generate_test_undirected_graph_bfs():
+def generate_test_undirected_graph():
     max_width = rd.randint(150, 500)
     max_height = rd.randint(150, 500)
     return UndirectedGraph(undirected_graph_matrix_bfs, is_weighted=False, max_width=max_width, max_height=max_height)
 
 
-def generate_test_directed_graph_bfs():
+def generate_test_directed_graph():
     max_width = rd.randint(150, 500)
     max_height = rd.randint(150, 500)
     return DirectedGraph(directed_graph_matrix_bfs, is_weighted=False, max_width=max_width, max_height=max_height)
 
 
-def generate_test_no_connected_graph_bfs():
+def generate_test_no_connected_graph():
     max_width = rd.randint(150, 500)
     max_height = rd.randint(150, 500)
     return UndirectedGraph(graph_not_connected_matrix, is_weighted=False, max_width=max_width, max_height=max_height)
