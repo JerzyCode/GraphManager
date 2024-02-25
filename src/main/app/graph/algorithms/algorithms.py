@@ -3,7 +3,7 @@ from queue import Queue
 from src.main.app.graph.directed_graph import DirectedGraph
 
 
-def sort_edges_by_weights(edges):
+def _sort_edges_by_weights(edges):
     sorted_edges = sorted(edges, key=lambda e: e.weight)
     queue = Queue()
     for edge in sorted_edges:
@@ -68,8 +68,9 @@ def dfs(graph, vertex, visited, drawer, directed, delay, result):
 
 
 def is_graph_connected(graph):
+    result = []
     visited = [False] * len(graph.V)
-    dfs(graph, graph.V[0], visited, None, None, 0)
+    dfs(graph, graph.V[0], visited, None, None, 0, result)
     for v in visited:
         if not v:
             return False
@@ -85,7 +86,7 @@ def kruskal_algorithm(graph, drawer):
     delay = 0
     for vertex in graph.V:
         wood.add(frozenset({vertex}))
-    queue = sort_edges_by_weights(graph.E)
+    queue = _sort_edges_by_weights(graph.E)
     while len(wood) > 1:
         edge = queue.get()
         sets = different_sets(edge.vertex1, edge.vertex2, wood)

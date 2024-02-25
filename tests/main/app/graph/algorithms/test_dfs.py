@@ -9,7 +9,7 @@ from src.main.app.ui.drawing.edge_drawer import EdgeDrawer
 from src.main.app.ui.drawing.vertex_drawer import VertexDrawer
 
 
-class TestBfs(unittest.TestCase):
+class TestDfs(unittest.TestCase):
     def setUp(self):
         self.canvas_mock = Mock(spec=tkinter.Canvas)
         self.edge_drawer_mock = EdgeDrawer(self.canvas_mock)
