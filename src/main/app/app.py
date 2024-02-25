@@ -45,6 +45,7 @@ class App(customtkinter.CTk):
         self._configure_window()
         self._create_sidebar_frame()
         self._create_graph_display_frame()
+        self.generate_graph_window.generate_graph_mock()
 
     def _configure_window(self):
         logger.debug("Configuring Window...")

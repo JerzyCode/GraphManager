@@ -3,7 +3,7 @@ from queue import Queue
 from src.main.app.graph.directed_graph import DirectedGraph
 
 
-def sort_edges_by_weights(edges):
+def _sort_edges_by_weights(edges):
     sorted_edges = sorted(edges, key=lambda e: e.weight)
     queue = Queue()
     for edge in sorted_edges:
@@ -45,15 +45,18 @@ def bfs(queue, drawer, visited, vertex, directed, result):
 def depth_search(graph, drawer):
     directed = isinstance(graph, DirectedGraph)
     visited = {}
+    result = []
     for v in graph.V:
         visited[v] = False
     for vertex in graph.V:
         if not visited[vertex]:
-            dfs(graph, vertex, visited, drawer, directed, 0)
+            dfs(graph, vertex, visited, drawer, directed, 0, result)
+    return result
 
 
-def dfs(graph, vertex, visited, drawer, directed, delay):
+def dfs(graph, vertex, visited, drawer, directed, delay, result):
     visited[vertex] = True
+    result.append(vertex)
     if drawer is not None:
         drawer.highlight_vertex_delay(vertex, delay)
     for neigh in vertex.neighbors:
@@ -61,12 +64,13 @@ def dfs(graph, vertex, visited, drawer, directed, delay):
             if drawer is not None:
                 drawer.highlight_edge_delay(vertex.find_edge(neigh, directed), delay)
                 delay += 500
-            dfs(graph, neigh, visited, drawer, directed, delay)
+            dfs(graph, neigh, visited, drawer, directed, delay, result)
 
 
 def is_graph_connected(graph):
+    result = []
     visited = [False] * len(graph.V)
-    dfs(graph, graph.V[0], visited, None, None, 0)
+    dfs(graph, graph.V[0], visited, None, None, 0, result)
     for v in visited:
         if not v:
             return False
@@ -82,7 +86,7 @@ def kruskal_algorithm(graph, drawer):
     delay = 0
     for vertex in graph.V:
         wood.add(frozenset({vertex}))
-    queue = sort_edges_by_weights(graph.E)
+    queue = _sort_edges_by_weights(graph.E)
     while len(wood) > 1:
         edge = queue.get()
         sets = different_sets(edge.vertex1, edge.vertex2, wood)

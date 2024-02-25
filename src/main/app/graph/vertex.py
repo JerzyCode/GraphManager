@@ -28,11 +28,7 @@ class Vertex:
             edge = self.find_edge_directed(neigh)
         else:
             edge = self.find_edge_undirected(neigh)
-        # print(edge)
         return edge
-
-    def remove_neighbor(self, neigh):
-        self.neighbors.remove(neigh)
 
     def find_edge_directed(self, neigh):
         for edge in self.edges:

@@ -101,6 +101,7 @@ class CanvasHandler:
                 if weight >= 1000:
                     weight = 999
             edge = self.graph.add_edge(self.selected_vertexes[0], self.selected_vertexes[1], self.is_directed, self.is_digraph, weight)
+            self._bind_edge(edge)
             self.drawer.vertex_drawer.refresh_vertex_color(self.selected_vertexes[0])
             self.drawer.vertex_drawer.refresh_vertex_color(self.selected_vertexes[1])
             self.drawer.edge_drawer.draw_edge(edge, self.graph)

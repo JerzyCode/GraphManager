@@ -1,35 +1,80 @@
 import unittest
 
+import tests.main.app.graph.graph_factory as factory
 from src.main.app.graph.edge import Edge
-from src.main.app.graph.vertex import Vertex
 
 
 class TestEdge(unittest.TestCase):
-    def setUp(self):
-        vertex1 = Vertex('1', 120, 120)
-        vertex2 = Vertex('2', 120, 120)
-        vertex3 = Vertex('3', 120, 120)
-        vertex4 = Vertex('2', 120, 120)
-        self.edge_directed1 = Edge(vertex1, vertex2, True, False, None)
-        self.edge_directed2 = Edge(vertex2, vertex1, True, False, None)
-        self.edge_directed3 = Edge(vertex2, vertex3, True, False, None)
-        self.edge_directed4 = Edge(vertex1, vertex2, True, False, None)
 
-        self.edge_undirected1 = Edge(vertex1, vertex2, False, False, None)
-        self.edge_undirected2 = Edge(vertex2, vertex1, False, False, None)
-        self.edge_undirected3 = Edge(vertex2, vertex3, False, False, None)
-        self.edge_undirected4 = Edge(vertex1, vertex2, True, False, None)
+    def test_create_edge_undirected(self):
+        # given
+        vertex1 = factory.generate_test_vertex('1')
+        vertex2 = factory.generate_test_vertex('2')
+        label = vertex1.label + '_' + vertex2.label
+        # when
+        edge = Edge(vertex1, vertex2, directed=False, digraph=False, weight=None)
+        # then
+        self.assertFalse(edge.directed)
+        self.assertFalse(edge.digraph)
+        self.assertIsNone(edge.weight)
+        self.assertEqual(edge.label, label)
 
-    def test_edge_directed(self):
-        self.assertEqual(self.edge_directed1 == self.edge_directed2, False)
-        self.assertEqual(self.edge_directed1 == self.edge_directed3, False)
-        self.assertEqual(self.edge_directed1 == self.edge_directed4, True)
+    def test_create_edge_directed(self):
+        # given
+        vertex1 = factory.generate_test_vertex('1')
+        vertex2 = factory.generate_test_vertex('2')
+        label = vertex1.label + '_' + vertex2.label
+        # when
+        edge = Edge(vertex1, vertex2, directed=True, digraph=False, weight=None)
+        # then
+        self.assertTrue(edge.directed)
+        self.assertFalse(edge.digraph)
+        self.assertIsNone(edge.weight)
+        self.assertEqual(edge.label, label)
 
-    def test_edge_undirected(self):
-        self.assertEqual(self.edge_undirected1 == self.edge_undirected2, True)
-        self.assertEqual(self.edge_undirected1 == self.edge_undirected3, False)
-        self.assertEqual(self.edge_undirected1 == self.edge_undirected4, True)
+    def test_create_edge_weighted(self):
+        # given
+        weight = 100
+        vertex1 = factory.generate_test_vertex('1')
+        vertex2 = factory.generate_test_vertex('2')
+        label = vertex1.label + '_' + vertex2.label
+        # when
+        edge = Edge(vertex1, vertex2, directed=False, digraph=False, weight=weight)
+        # then
+        self.assertFalse(edge.directed)
+        self.assertFalse(edge.digraph)
+        self.assertEqual(edge.weight, weight)
+        self.assertEqual(edge.label, label)
 
+    def test_equal_undirected_should_not_equal(self):
+        # given
+        vertex1 = factory.generate_test_vertex('1')
+        vertex2 = factory.generate_test_vertex('2')
+        vertex3 = factory.generate_test_vertex('3')
+        edge1 = Edge(vertex1, vertex2, directed=False, digraph=False, weight=None)
+        edge2 = Edge(vertex1, vertex3, directed=False, digraph=False, weight=None)
+        # when
+        result = edge1 == edge2
+        # then
+        self.assertFalse(result)
 
-if __name__ == '__main__':
-    unittest.main()
+    def test_equal_undirected_should_equal(self):
+        # given
+        vertex1 = factory.generate_test_vertex('1')
+        vertex2 = factory.generate_test_vertex('2')
+        edge1 = Edge(vertex1, vertex2, directed=False, digraph=False, weight=None)
+        edge2 = Edge(vertex2, vertex1, directed=False, digraph=False, weight=None)
+        # when
+        result = edge1 == edge2
+        # then
+        self.assertTrue(result)
+
+    def test_equal_directed_should_not_equal(self):
+        vertex1 = factory.generate_test_vertex('1')
+        vertex2 = factory.generate_test_vertex('2')
+        edge1 = Edge(vertex1, vertex2, directed=True, digraph=False, weight=None)
+        edge2 = Edge(vertex2, vertex1, directed=True, digraph=False, weight=None)
+        # when
+        result = edge1 == edge2
+        # then
+        self.assertFalse(result)
