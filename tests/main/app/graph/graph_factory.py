@@ -6,6 +6,38 @@ from src.main.app.graph.graph import Graph
 from src.main.app.graph.undirected_graph import UndirectedGraph
 from src.main.app.graph.vertex import Vertex
 
+undirected_graph_matrix_bfs = [
+    [0, 0, 0, 1, 1, 0, 1, 1, 0, 0],
+    [0, 0, 1, 0, 0, 0, 1, 1, 1, 0],
+    [0, 1, 0, 1, 0, 1, 0, 0, 0, 0],
+    [1, 0, 1, 0, 0, 0, 1, 1, 0, 1],
+    [1, 0, 0, 0, 0, 1, 0, 1, 1, 1],
+    [0, 0, 1, 0, 1, 0, 0, 0, 1, 0],
+    [1, 1, 0, 1, 0, 0, 0, 1, 1, 1],
+    [1, 1, 0, 1, 1, 0, 1, 0, 1, 0],
+    [0, 1, 0, 0, 1, 1, 1, 1, 0, 0],
+    [0, 0, 0, 1, 1, 0, 1, 0, 0, 0]]
+
+directed_graph_matrix_bfs = [
+    [0, 1, 1, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 1, 1, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 1, 1, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 1, 0, 0, 1, 0, 0, 0, 1, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 1, 0, 0, 0, 0]]
+
+graph_not_connected_matrix = [
+    [0, 1, 1, 0, 0],
+    [1, 0, 1, 0, 1],
+    [1, 1, 0, 0, 0],
+    [0, 0, 0, 0, 0],
+    [0, 1, 0, 0, 0]
+]
+
 
 def generate_test_vertex(label: str):
     max_width = rd.randint(150, 500)
@@ -49,3 +81,21 @@ def generate_test_two_vertex_directed_graph():
     graph.V.append(vertex1)
     graph.V.append(vertex2)
     return graph
+
+
+def generate_test_undirected_graph_bfs():
+    max_width = rd.randint(150, 500)
+    max_height = rd.randint(150, 500)
+    return UndirectedGraph(undirected_graph_matrix_bfs, is_weighted=False, max_width=max_width, max_height=max_height)
+
+
+def generate_test_directed_graph_bfs():
+    max_width = rd.randint(150, 500)
+    max_height = rd.randint(150, 500)
+    return DirectedGraph(directed_graph_matrix_bfs, is_weighted=False, max_width=max_width, max_height=max_height)
+
+
+def generate_test_no_connected_graph_bfs():
+    max_width = rd.randint(150, 500)
+    max_height = rd.randint(150, 500)
+    return UndirectedGraph(graph_not_connected_matrix, is_weighted=False, max_width=max_width, max_height=max_height)

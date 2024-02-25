@@ -1,8 +1,8 @@
 from abc import abstractmethod
 
-from src.main.app.utils.logger import setup_logger
 from src.main.app.graph.edge import Edge
 from src.main.app.graph.vertex import Vertex
+from src.main.app.utils.logger import setup_logger
 
 logger = setup_logger("Graph")
 
@@ -54,6 +54,11 @@ class Graph:
             vertex2.add_neighbor(vertex1, edge)
         self.E.add(edge)
         return edge
+
+    def get_vertex_by_label(self, label):
+        for vertex in self.V:
+            if vertex.label == label:
+                return vertex
 
     @abstractmethod
     def __create_edges__(self, is_weighted):
