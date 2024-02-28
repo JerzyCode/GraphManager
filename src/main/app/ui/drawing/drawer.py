@@ -1,3 +1,6 @@
+from src.main.app.graph.edge import Edge
+from src.main.app.graph.vertex import Vertex
+
 from src.main.app.ui.drawing.edge_drawer import change_edge_appearance_mode
 from src.main.app.ui.drawing.vertex_drawer import change_vertex_appearance_mode
 from src.main.app.utils.logger import setup_logger
@@ -52,6 +55,12 @@ class Drawer:
         self.highlight_vertex_delay(edge.vertex2, delay)
         if edge is not None:
             self.highlight_edge_delay(edge, delay)
+
+    def color_element(self, element, delay):
+        if isinstance(element, Vertex):
+            self.highlight_vertex_delay(element, delay)
+        elif isinstance(element, Edge):
+            self.highlight_edge_delay(element, delay)
 
     def refresh_all(self, graph):
         for vertex in graph.V:
