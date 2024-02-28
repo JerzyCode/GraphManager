@@ -1,5 +1,7 @@
 import tkinter as tk
 
+from src.main.app.graph.edge import Edge
+from src.main.app.graph.vertex import Vertex
 from src.main.app.utils.constants import *
 
 
@@ -24,3 +26,17 @@ def create_input(parent, text, input_width):
     return entry
 
 
+def get_colored_vertexes(elements):
+    result = []
+    for element in elements:
+        if isinstance(element, Vertex):
+            result.append(element)
+    return result
+
+
+def get_colored_edges(elements):
+    result = []
+    for element in elements:
+        if isinstance(element, Edge):
+            result.append(element)
+    return result

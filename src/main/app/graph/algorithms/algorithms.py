@@ -1,6 +1,7 @@
 from queue import Queue
 
 from src.main.app.graph.directed_graph import DirectedGraph
+from src.main.app.utils.constants import COLOR_DELAY
 
 
 def _sort_edges_by_weights(edges):
@@ -13,31 +14,31 @@ def _sort_edges_by_weights(edges):
 
 def binary_search(graph, drawer):
     visited = {}
+    elements_to_color = list()
+    delay = 0
     for v in graph.V:
         visited[v] = False
     queue = Queue()
     directed = isinstance(graph, DirectedGraph)
-    result = []
     for vertex in graph.V:
         if not visited[vertex]:
-            bfs(queue, drawer, visited, vertex, directed, result)
-    return result
+            bfs(queue, visited, vertex, directed, elements_to_color)
+    for element in elements_to_color:
+        drawer.color_element(element, delay)
+        delay += COLOR_DELAY
+    return elements_to_color
 
 
-def bfs(queue, drawer, visited, vertex, directed, result):
-    delay = 0
+def bfs(queue, visited, vertex, directed, elements_to_color):
     visited[vertex] = True
     queue.put(vertex)
-    drawer.highlight_vertex_delay(vertex, delay)
-    result.append(vertex)
+    elements_to_color.append(vertex)
     while not queue.empty():
         v = queue.get()
         for neigh in v.neighbors:
             if not visited[neigh]:
-                drawer.highlight_edge_delay(v.find_edge(neigh, directed), delay)
-                drawer.highlight_vertex_delay(neigh, delay)
-                delay += 500
-                result.append(neigh)
+                elements_to_color.append(v.find_edge(neigh, directed))
+                elements_to_color.append(neigh)
                 queue.put(neigh)
                 visited[neigh] = True
 
@@ -45,36 +46,35 @@ def bfs(queue, drawer, visited, vertex, directed, result):
 def depth_search(graph, drawer):
     directed = isinstance(graph, DirectedGraph)
     visited = {}
-    result = []
+    elements_to_color = list()
+    delay = 0
     for v in graph.V:
         visited[v] = False
     for vertex in graph.V:
         if not visited[vertex]:
-            dfs(graph, vertex, visited, drawer, directed, 0, result)
-    return result
+            dfs(graph, vertex, visited, drawer, directed, elements_to_color)
+    for element in elements_to_color:
+        drawer.color_element(element, delay)
+        delay += COLOR_DELAY
+    return elements_to_color
 
 
-def dfs(graph, vertex, visited, drawer, directed, delay, result):
+def dfs(graph, vertex, visited, drawer, directed, elements_to_color):
     visited[vertex] = True
-    result.append(vertex)
-    if drawer is not None:
-        drawer.highlight_vertex_delay(vertex, delay)
+    elements_to_color.append(vertex)
     for neigh in vertex.neighbors:
         if not visited[neigh]:
-            if drawer is not None:
-                drawer.highlight_edge_delay(vertex.find_edge(neigh, directed), delay)
-                delay += 500
-            dfs(graph, neigh, visited, drawer, directed, delay, result)
+            elements_to_color.append(vertex.find_edge(neigh, directed))
+            dfs(graph, neigh, visited, drawer, directed, elements_to_color)
 
 
 def is_graph_connected(graph):
     result = []
     visited = [False] * len(graph.V)
-    dfs(graph, graph.V[0], visited, None, None, 0, result)
+    dfs(graph, graph.V[0], visited, None, None, result)
     for v in visited:
         if not v:
             return False
-
     return True
 
 
