@@ -1,5 +1,6 @@
 import customtkinter
 
+from src.main.app.repositories import graph_repository
 from src.main.app.utils.constants import *
 from src.main.app.utils.logger import setup_logger
 
@@ -42,4 +43,17 @@ class SaveGraphWindow(customtkinter.CTk):
         self.deiconify()
 
     def _on_save_graph(self):
-        logger.debug('saving graph...name=' + self.name_entry.get())
+        if self._is_valid_name() and self.graph is not None:
+            logger.debug('saving graph...name=' + self.name_entry.get())
+            graph_repository.graphs[self.name_entry.get()] = self.graph
+        self._on_close()
+
+    def _is_valid_name(self):
+        name = self.name_entry.get()
+        logger.debug('_is_valid_name graph...name=' + name)
+        if len(name) < 3 or len(name) > 20:
+            return False
+        for key in graph_repository.graphs.keys():
+            if name == key:
+                return False
+        return True

@@ -8,3 +8,5 @@ testy do dopisania są:
  - drawer do zmockowania i sprawdzania czy metody są wywoływane
 
  wszystkie testy są do przerobienia
+
+przy wybieraniu grafu do wczytania, usunać możliwość, że można kilka checkboxów na raz
