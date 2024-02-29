@@ -1,5 +1,6 @@
 import customtkinter
 
+from src.main.app.ui.windows.save_graph_window import SaveGraphWindow
 from src.main.app.ui.drawing.canvas_handler import CanvasHandler
 from src.main.app.ui.drawing.drawer import Drawer, change_appearance_mode
 from src.main.app.ui.drawing.edge_drawer import EdgeDrawer
@@ -26,8 +27,6 @@ def change_appearance_mode_event(new_appearance_mode: str):
     customtkinter.set_appearance_mode(new_appearance_mode)
 
 
-def _on_save_graph_btn():
-    print('save graph')
 
 
 def _on_load_graph_btn():
@@ -45,6 +44,7 @@ class App(customtkinter.CTk):
         self._configure_window()
         self._create_sidebar_frame()
         self._create_graph_display_frame()
+        self.save_graph_window = SaveGraphWindow()
         self.generate_graph_window.generate_graph_mock()
 
     def _configure_window(self):
@@ -71,7 +71,7 @@ class App(customtkinter.CTk):
         self.generate_graph_button = customtkinter.CTkButton(self.sidebar_frame, text='Generate Graph', command=self._on_generate_graph_btn)
         self.generate_graph_button.grid(row=2, column=0, padx=20, pady=10)
 
-        self.save_graph_button = customtkinter.CTkButton(self.sidebar_frame, text='Save Graph', command=_on_save_graph_btn)
+        self.save_graph_button = customtkinter.CTkButton(self.sidebar_frame, text='Save Graph', command=self._on_save_graph_btn)
         self.save_graph_button.grid(row=3, column=0, padx=20, pady=10)
 
         self.load_graph_button = customtkinter.CTkButton(self.sidebar_frame, text='Load Graph', command=_on_load_graph_btn)
@@ -143,6 +143,7 @@ class App(customtkinter.CTk):
         self.add_graph_window.destroy()
         self.generate_graph_window.destroy()
         self.algorithms_window.destroy()
+        self.save_graph_window.destroy()
         self.destroy()
 
     def _on_clear_graph_btn(self):
@@ -172,3 +173,7 @@ class App(customtkinter.CTk):
             change_generate_graph_window_appearance_mode("Dark")
             change_set_weight_window_appearance_mode("Dark")
         self.drawer.refresh_all(self.graph)
+
+    def _on_save_graph_btn(self):
+        self.save_graph_window.show_save_graph_window_visible()
+        print('save graph')
