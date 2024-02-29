@@ -10,3 +10,5 @@ testy do dopisania są:
  wszystkie testy są do przerobienia
 
 przy wybieraniu grafu do wczytania, usunać możliwość, że można kilka checkboxów na raz
+
+save_graph na razie zapisuje referencje, wiec po zmianach w grafie, nie ten zapisany też się zmieni
