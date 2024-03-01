@@ -147,6 +147,7 @@ class CanvasHandler:
         vertex.y = event.y
         self.canvas.move(f"vertex_{vertex.label}", delta_x, delta_y)
         self.canvas.move(f"text_{vertex.label}", delta_x, delta_y)
+        self.canvas.move(f'distance_{vertex.label}', delta_x, delta_y)
         self.drawer.edge_drawer.move_edge_incidental(vertex, self.graph)
         self.drawer.vertex_drawer.raise_all_vertexes(self.graph.V)
 
