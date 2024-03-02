@@ -150,6 +150,7 @@ class EdgeDrawer:
             self.canvas.itemconfig(f"edge_{edge.label}", fill=edge_color, width=EDGE_WIDTH)
             if edge.weight is not None:
                 self.canvas.itemconfig(f'weight_{edge.weight}_{edge.label}', fill=weight_color)
+                edge.is_highlighted_by_algorithm = False
 
     def erase_edge(self, edge):
         self.canvas.delete(f"edge_{edge.label}")

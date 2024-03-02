@@ -37,6 +37,9 @@ class AlgorithmsWindow(customtkinter.CTk):
         self.kruskal_button = customtkinter.CTkButton(self, text=KRUSKAL_ALGORITHM, command=self._on_kruskal_algorithm_btn)
         self.kruskal_button.grid(row=3, column=0, padx=20, pady=10)
 
+        self.dijkstra_button = customtkinter.CTkButton(self, text=DIJKSTRA_ALGORITHM, command=self._on_dijkstra_algorithm_btn)
+        self.dijkstra_button.grid(row=4, column=0, padx=20, pady=10)
+
     def _on_close(self):
         self.withdraw()
 
@@ -57,6 +60,13 @@ class AlgorithmsWindow(customtkinter.CTk):
         else:
             logger.debug("Running Kruskal")
             algorithm.kruskal_algorithm(self.graph, self.drawer)
+
+    def _on_dijkstra_algorithm_btn(self):
+        if self.graph is None:
+            return
+        else:
+            logger.debug("Running Dijkstra")
+            algorithm.run_dijkstra_algorithm(self.graph, self.graph.V[0], self.drawer)
 
     def _run_search(self, search):
         if self.graph is None:

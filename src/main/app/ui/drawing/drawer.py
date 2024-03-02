@@ -47,6 +47,12 @@ class Drawer:
     def highlight_vertex_delay(self, vertex, delay):
         self.canvas.after(delay, lambda: self._highlight_vertex_algorithm(vertex))
 
+    def refresh_vertex_delay(self, vertex, delay):
+        self.vertex_drawer.refresh_vertex_delay(vertex, delay)
+
+    def refresh_edge_delay(self, edge, delay):
+        self.canvas.after(delay, lambda: self.edge_drawer.refresh_edge_color(edge))
+
     def highlight_edge_delay(self, edge, delay):
         self.canvas.after(delay, lambda: self._highlight_edge_algorithm(edge))
 
@@ -55,6 +61,12 @@ class Drawer:
         self.highlight_vertex_delay(edge.vertex2, delay)
         if edge is not None:
             self.highlight_edge_delay(edge, delay)
+
+    def draw_dijkstra_distance(self, vertex, distance, delay):
+        self.canvas.after(delay, lambda: self.vertex_drawer.draw_current_distance(vertex, int(distance)))
+
+    def erase_dijkstra_distance(self, vertex, delay):
+        self.canvas.after(delay, lambda: self.vertex_drawer.erase_current_distance(vertex))
 
     def color_element(self, element, delay):
         if isinstance(element, Vertex):
@@ -65,6 +77,7 @@ class Drawer:
     def refresh_all(self, graph):
         for vertex in graph.V:
             vertex.is_highlighted_by_algorithm = False
+            self.vertex_drawer.erase_current_distance(vertex)
         for edge in graph.E:
             edge.is_highlighted_by_algorithm = False
         if graph is not None:

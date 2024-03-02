@@ -1,3 +1,5 @@
+import sys
+
 from src.main.app.graph.vertex import Vertex
 from src.main.app.utils.constants import *
 
@@ -45,6 +47,19 @@ class VertexDrawer:
     def refresh_vertex_color(self, vertex: Vertex):
         if vertex is not None:
             self._change_vertex_color(vertex, vertex_bg_color, vertex_fg_color)
+
+    def draw_current_distance(self, vertex, distance):
+        self.erase_current_distance(vertex)
+        if distance >= sys.maxsize / 2:
+            distance = "∞"
+        font_size = WEIGHT_FONT_SIZE
+        if distance == "∞":
+            font_size += 5
+        self.canvas.create_text(vertex.x, vertex.y - RADIUS - 8, fill='red', font=("Arial", font_size, "bold"),
+                                text=distance, anchor="center", tags=f'distance_{vertex.label}')
+
+    def erase_current_distance(self, vertex: Vertex):
+        self.canvas.delete(f"distance_{vertex.label}")
 
     def _change_vertex_color(self, vertex: Vertex, bg_color, fg_color):
         self.canvas.itemconfig(f"vertex_{vertex.label}", fill=bg_color)

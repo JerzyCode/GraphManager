@@ -1,5 +1,6 @@
 from queue import Queue
 
+from src.main.app.graph.algorithms.dijkstra_algorithm import dijkstra_algorithm
 from src.main.app.graph.directed_graph import DirectedGraph
 from src.main.app.utils.constants import COLOR_DELAY
 
@@ -114,3 +115,7 @@ def different_sets(vertex1, vertex2, wood):
             set_b = set2
             break
     return [set_a, set_b]
+
+
+def run_dijkstra_algorithm(graph, start, drawer):
+    dijkstra_algorithm(graph, start, drawer)
