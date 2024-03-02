@@ -26,6 +26,7 @@ change_generate_graph_window_appearance_mode("Dark")
 class GenerateGraphWindow(customtkinter.CTk):
     def __init__(self, root):
         super().__init__()
+        self.canvas_handler = None
         self.is_directed = False
         self.is_digraph = False
         self.is_weighted = False
@@ -90,7 +91,7 @@ class GenerateGraphWindow(customtkinter.CTk):
         self.root.on_graph_generated_hook()
 
     def generate_graph_mock(self):
-        self.graph = factory.generate_test_undirected_graph()
+        self.graph = factory.generate_test_weighted_directed_graph()
         self.drawer.draw_graph(self.graph)
         self.canvas_handler = CanvasHandler(self.root,
                                             self.is_directed,

@@ -31,6 +31,7 @@ class Vertex:
         return edge
 
     def find_edge_directed(self, neigh):
+        print(f'neigh={neigh}')
         for edge in self.edges:
             if edge.vertex2 == neigh:
                 return edge

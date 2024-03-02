@@ -37,7 +37,7 @@ class TestKruskal(unittest.TestCase):
 
     def test_kruskal(self):
         # given
-        graph = factory.generate_test_kruskal_graph()
+        graph = factory.generate_test_weighted_undirected_graph()
         # when
         result = sut.kruskal_algorithm(graph, self.drawer_mock)
         # then
