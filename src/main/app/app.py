@@ -29,10 +29,10 @@ def change_appearance_mode_event(new_appearance_mode: str):
 
 
 class App(customtkinter.CTk):
-    def __init__(self):
+    def __init__(self, db_url):
         super().__init__()
         logger.debug("App starting...")
-        db.start_database('database/graph_manager.db')
+        db.start_database(db_url)
         self.canvas_handler = None
         self.graph = None
         self.weight_hidden = False

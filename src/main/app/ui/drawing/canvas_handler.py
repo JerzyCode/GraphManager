@@ -62,6 +62,7 @@ class CanvasHandler:
         self.enabled_vertex_select = True
 
     def _add_vertex(self, event):
+        logger.debug("Add Vertex")
         if len(self.graph.V) < 50:
             vertex = Vertex(self.prev_label, self.canvas.winfo_width(), self.canvas.winfo_height(), event.x,
                             event.y)
@@ -100,6 +101,7 @@ class CanvasHandler:
                 weight = self._ask_weight()
                 if weight >= 1000:
                     weight = 999
+            logger.debug("Add Edge")
             edge = self.graph.add_edge(self.selected_vertexes[0], self.selected_vertexes[1], self.is_directed, self.is_digraph, weight)
             self._bind_edge(edge)
             self.drawer.vertex_drawer.refresh_vertex_color(self.selected_vertexes[0])
