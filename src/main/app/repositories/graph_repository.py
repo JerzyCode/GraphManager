@@ -14,8 +14,7 @@ def update_graph_save(old_save_name, new_save_name, new_graph):
     global graphs
     for i, graph in enumerate(graphs):
         if old_save_name in graph:
-            del graphs[i]
-            graphs.append({new_save_name: new_graph})
+            graphs[i] = {new_save_name: new_graph}
             break
 
 
