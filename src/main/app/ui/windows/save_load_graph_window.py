@@ -13,8 +13,9 @@ class GraphScrollableFrame(customtkinter.CTkScrollableFrame):
         self.command = command
         self.frames = []
         self.load_graph = None
+        self.save_name = None
 
-    def add_item(self, item, mode):
+    def add_item(self, item):
         checkbox = customtkinter.CTkCheckBox(self, width=200, text=item, command=self._on_check_box)
         checkbox.grid(row=len(self.frames), column=0, pady=(0, 10), sticky='w')
         remove_button = customtkinter.CTkButton(self, text='X', width=5, command=lambda: self.remove_item(item))
@@ -27,6 +28,7 @@ class GraphScrollableFrame(customtkinter.CTkScrollableFrame):
             checkbox = frame[0]
             if checkbox.get() == 1:
                 selected = checkbox
+                self.save_name = checkbox.cget('text')
                 break
 
         for frame in self.frames:
@@ -35,7 +37,7 @@ class GraphScrollableFrame(customtkinter.CTkScrollableFrame):
                 if checkbox != selected:
                     checkbox.configure(state='disabled')
                 else:
-                    self.load_graph = graph_repository.graphs.get(checkbox.cget('text'))
+                    self.load_graph = graph_repository.get_graph_by_save_name(self.save_name)
             else:
                 checkbox.configure(state='normal')
         if selected is None:
@@ -53,17 +55,17 @@ class GraphScrollableFrame(customtkinter.CTkScrollableFrame):
                 frame[0].destroy()
                 frame[1].destroy()
                 self.frames.remove(frame)
-                graph_repository.graphs.pop(name, None)
+                graph_repository.delete_graph_by_save_name(name)
                 return
 
-    def reload_graphs(self, mode):
+    def reload_graphs(self):
         for frame in self.frames:
             if frame[0] is not None:
                 frame[0].destroy()
             frame[1].destroy()
         self.frames.clear()
-        for key in graph_repository.graphs.keys():
-            self.add_item(key, mode=mode)
+        for key in graph_repository.get_save_names():
+            self.add_item(key)
 
     def get_selected_graph(self):
         graph = self.load_graph
@@ -103,7 +105,7 @@ class SaveLoadGraphWindow(customtkinter.CTk):
         self.withdraw()
 
     def show_load_graph_window_visible(self, mode, load_hook=None):
-        self.scrollable_frame.reload_graphs(mode=mode)
+        self.scrollable_frame.reload_graphs()
         self.load_hook = load_hook
         if mode == 'save':
             self.entry = customtkinter.CTkEntry(self, placeholder_text='Save name')
@@ -126,18 +128,20 @@ class SaveLoadGraphWindow(customtkinter.CTk):
             self._on_close()
 
     def _on_save_graph(self):
-        if self._is_valid_name() and self.graph is not None:
-            logger.debug('saving graph, name=' + self.entry.get())
-            graph_repository.graphs[self.entry.get()] = self.graph
-            self.scrollable_frame.reload_graphs(mode='save')
+        if self._is_valid_name():
+            save_name = self.entry.get()
+            logger.debug('saving graph, name=' + save_name)
+            if self.graph is not None:
+                if self.scrollable_frame.get_selected_graph() is not None:
+                    old_save_name = self.scrollable_frame.save_name
+                    graph_repository.update_graph_save(old_save_name, save_name, self.graph)
+                else:
+                    graph_repository.create_graph(self.graph, save_name)
+                self.scrollable_frame.reload_graphs()
 
     def _is_valid_name(self):
         name = self.entry.get()
-        if len(name) < 3 or len(name) > 20:
+        if len(name) < 3 or len(name) > 20 or graph_repository.is_save_name_in_repository(name):
             logger.debug('name is invalid, name=' + name)
             return False
-        for key in graph_repository.graphs.keys():
-            if name == key:
-                logger.debug('name is invalid, name=' + name)
-                return False
         return True
