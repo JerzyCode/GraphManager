@@ -7,8 +7,7 @@ from src.main.app.ui.drawing.vertex_drawer import VertexDrawer
 from src.main.app.ui.windows.add_graph_window import AddGraphWindow
 from src.main.app.ui.windows.algorithms_window import AlgorithmsWindow
 from src.main.app.ui.windows.generate_graph_window import GenerateGraphWindow, change_generate_graph_window_appearance_mode
-from src.main.app.ui.windows.load_graph_window import LoadGraphWindow
-from src.main.app.ui.windows.save_graph_window import SaveGraphWindow
+from src.main.app.ui.windows.save_load_graph_window import SaveLoadGraphWindow
 from src.main.app.ui.windows.set_weight_window import change_set_weight_window_appearance_mode
 from src.main.app.utils.constants import *
 from src.main.app.utils.logger import setup_logger
@@ -39,8 +38,7 @@ class App(customtkinter.CTk):
         self._configure_window()
         self._create_sidebar_frame()
         self._create_graph_display_frame()
-        self.save_graph_window = SaveGraphWindow()
-        self.load_graph_window = LoadGraphWindow()
+        self.save_load_graph_window = SaveLoadGraphWindow()
         self.generate_graph_window.generate_graph_mock()
 
     def _configure_window(self):
@@ -130,7 +128,8 @@ class App(customtkinter.CTk):
     def set_graph(self, graph):
         self.graph = graph
         self.algorithms_window.graph = graph
-        self.save_graph_window.graph = graph
+        self.save_load_graph_window.graph = graph
+        # self.save_graph_window.graph = graph
         self.drawer.graph = graph
 
     def _set_params_add_graph(self, is_directed, is_digraph, is_weighted):
@@ -149,8 +148,7 @@ class App(customtkinter.CTk):
         self.add_graph_window.destroy()
         self.generate_graph_window.destroy()
         self.algorithms_window.destroy()
-        self.save_graph_window.destroy()
-        self.load_graph_window.destroy()
+        self.save_load_graph_window.destroy()
         self.destroy()
 
     def _on_clear_graph_btn(self):
@@ -161,7 +159,6 @@ class App(customtkinter.CTk):
         self.generate_graph_window.canvas_handler = None
         self.generate_graph_window.graph = None
         self.algorithms_window.graph = None
-        self.save_graph_window.graph = None
         self.graph = None
         self.canvas_handler.enabled = False
         if self.canvas_handler is not None:
@@ -183,12 +180,10 @@ class App(customtkinter.CTk):
         self.drawer.refresh_all(self.graph)
 
     def _on_save_graph_btn(self):
-        self.save_graph_window.show_save_graph_window_visible()
-        print('save graph')
+        self.save_load_graph_window.show_load_graph_window_visible('save')
 
     def _on_load_graph_btn(self):
-        self.load_graph_window.show_load_graph_window_visible(self.load_graph_hook)
-        print('load graph')
+        self.save_load_graph_window.show_load_graph_window_visible('load', load_hook=self.load_graph_hook)
 
     def load_graph_hook(self, graph):
         self._on_clear_graph_btn()
