@@ -1,3 +1,4 @@
+import uuid
 from abc import abstractmethod
 
 from src.main.app.graph.edge import Edge

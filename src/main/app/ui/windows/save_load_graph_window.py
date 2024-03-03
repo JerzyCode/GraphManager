@@ -1,5 +1,6 @@
 import customtkinter
 
+import src.main.app.data.database as db
 from src.main.app.repositories import graph_repository
 from src.main.app.utils.constants import *
 from src.main.app.utils.logger import setup_logger
@@ -55,6 +56,7 @@ class GraphScrollableFrame(customtkinter.CTkScrollableFrame):
                 frame[0].destroy()
                 frame[1].destroy()
                 self.frames.remove(frame)
+                db.delete_save(name)
                 graph_repository.delete_graph_by_save_name(name)
                 return
 
@@ -130,13 +132,15 @@ class SaveLoadGraphWindow(customtkinter.CTk):
     def _on_save_graph(self):
         if self._is_valid_name():
             save_name = self.entry.get()
-            logger.debug('saving graph, name=' + save_name)
+            # logger.debug('saving graph, name=' + save_name)
             if self.graph is not None:
                 if self.scrollable_frame.get_selected_graph() is not None:
                     old_save_name = self.scrollable_frame.save_name
                     graph_repository.update_graph_save(old_save_name, save_name, self.graph)
+                    db.update_graph(self.graph, old_save_name, save_name)
                 else:
                     graph_repository.create_graph(self.graph, save_name)
+                    db.save_graph(self.graph, save_name)
                 self.scrollable_frame.reload_graphs()
 
     def _is_valid_name(self):

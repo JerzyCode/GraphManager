@@ -1,4 +1,5 @@
 import customtkinter
+import src.main.app.data.database as db
 
 from src.main.app.ui.drawing.canvas_handler import CanvasHandler
 from src.main.app.ui.drawing.drawer import Drawer, change_appearance_mode
@@ -31,10 +32,10 @@ class App(customtkinter.CTk):
     def __init__(self):
         super().__init__()
         logger.debug("App starting...")
+        db.start_database('database/graph_manager.db')
         self.canvas_handler = None
         self.graph = None
         self.weight_hidden = False
-
         self._configure_window()
         self._create_sidebar_frame()
         self._create_graph_display_frame()
@@ -120,31 +121,23 @@ class App(customtkinter.CTk):
     def on_graph_generated_hook(self):
         graph = self.generate_graph_window.graph
         self.set_graph(graph)
-        # self.graph = graph
-        # self.algorithms_window.graph = graph
-        # self.save_graph_window.graph = graph
         self.add_graph_button.configure(state='disabled')
 
     def set_graph(self, graph):
         self.graph = graph
         self.algorithms_window.graph = graph
         self.save_load_graph_window.graph = graph
-        # self.save_graph_window.graph = graph
         self.drawer.graph = graph
 
     def _set_params_add_graph(self, is_directed, is_digraph, is_weighted):
         logger.debug("Clearing Graph")
         self.canvas_handler = CanvasHandler(self, is_directed, is_digraph, is_weighted)
         graph = self.canvas_handler.graph
-        # self.graph = graph
         self.set_graph(graph)
-        # self.drawer.graph = graph
-        # self.algorithms_window.graph = graph
-        # self.save_graph_window.graph = graph
-        # self.canvas_handler.enabled = True
 
     def _on_close_btn(self):
         logger.debug("Closing App")
+        db.clear_tables()
         self.add_graph_window.destroy()
         self.generate_graph_window.destroy()
         self.algorithms_window.destroy()

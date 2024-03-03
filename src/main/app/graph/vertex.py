@@ -1,10 +1,11 @@
 import random
+import uuid
 
 from src.main.app.utils.constants import *
 
 
 class Vertex:
-    def __init__(self, label, max_width, max_height, x=None, y=None):
+    def __init__(self, label, max_width=None, max_height=None, x=None, y=None):
         if x is None and y is None:
             self._set_coords(max_width, max_height)
         else:
@@ -46,7 +47,7 @@ class Vertex:
         self.edges.add(edge)
 
     def __str__(self):
-        return self.label
+        return f'label={self.label}'
 
     def __eq__(self, other):
         if isinstance(other, Vertex):

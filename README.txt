@@ -9,4 +9,7 @@ testy do dopisania są:
 
  wszystkie testy są do przerobienia
 
-save_graph na razie zapisuje referencje, wiec po zmianach w grafie, nie ten zapisany też się zmieni
+przy zapisywaniu grafu, który już istnieje na razie jest to robione po id,
+tzn jeśli graf nr1 istnieje już w bazie,
+to po zmianie np pozycji wierzchołków w przyszłości chce aby można było to zapisac na oddzielnym
+save, ale na razie się nie da bo graf ma to samo uuid
