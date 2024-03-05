@@ -1,6 +1,8 @@
 import customtkinter
-import src.main.app.data.database as db
 
+import src.main.app.data.database as db
+from src.main.app.graph.digraph import Digraph
+from src.main.app.graph.directed_graph import DirectedGraph
 from src.main.app.ui.drawing.canvas_handler import CanvasHandler
 from src.main.app.ui.drawing.drawer import Drawer, change_appearance_mode
 from src.main.app.ui.drawing.edge_drawer import EdgeDrawer
@@ -40,7 +42,7 @@ class App(customtkinter.CTk):
         self._create_sidebar_frame()
         self._create_graph_display_frame()
         self.save_load_graph_window = SaveLoadGraphWindow()
-        self.generate_graph_window.generate_graph_mock()
+        # self.generate_graph_window.generate_graph_mock()
 
     def _configure_window(self):
         logger.debug("Configuring Window...")
@@ -128,6 +130,7 @@ class App(customtkinter.CTk):
         self.algorithms_window.graph = graph
         self.save_load_graph_window.graph = graph
         self.drawer.graph = graph
+        self.canvas_handler.set_graph(graph)
 
     def _set_params_add_graph(self, is_directed, is_digraph, is_weighted):
         logger.debug("Clearing Graph")
@@ -137,7 +140,7 @@ class App(customtkinter.CTk):
 
     def _on_close_btn(self):
         logger.debug("Closing App")
-        db.clear_tables()
+        # db.clear_tables()
         self.add_graph_window.destroy()
         self.generate_graph_window.destroy()
         self.algorithms_window.destroy()
@@ -153,8 +156,8 @@ class App(customtkinter.CTk):
         self.generate_graph_window.graph = None
         self.algorithms_window.graph = None
         self.graph = None
-        self.canvas_handler.enabled = False
         if self.canvas_handler is not None:
+            self.canvas_handler.enabled = False
             self.canvas_handler.unbind()
 
     def _change_appearance_mode(self, new_appearance_mode: str):
@@ -173,12 +176,13 @@ class App(customtkinter.CTk):
         self.drawer.refresh_all(self.graph)
 
     def _on_save_graph_btn(self):
-        self.save_load_graph_window.show_load_graph_window_visible('save')
+        self.save_load_graph_window.show_save_load_graph_window_visible('save')
 
     def _on_load_graph_btn(self):
-        self.save_load_graph_window.show_load_graph_window_visible('load', load_hook=self.load_graph_hook)
+        self.save_load_graph_window.show_save_load_graph_window_visible('load', load_hook=self.load_graph_hook)
 
     def load_graph_hook(self, graph):
+        self.canvas_handler = CanvasHandler(self, isinstance(graph, DirectedGraph), isinstance(graph, Digraph), graph.is_weighted)
         self._on_clear_graph_btn()
         self.graph = graph
         self.set_graph(graph)

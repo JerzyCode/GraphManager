@@ -13,6 +13,7 @@ logger = setup_logger("CanvasHandler")
 
 class CanvasHandler:
     def __init__(self, root, is_directed=False, is_digraph=False, is_weighted=False, graph=None):
+        self.graph = None
         self.canvas = root.canvas
         self.drawer = root.drawer
         self.vertex_to_delete = None
@@ -27,6 +28,13 @@ class CanvasHandler:
         self.canvas.bind("<Shift-Button-1>", self._on_shift_button_1)
         self._create_vertex_popup_menu()
         self._create_edge_popup_menu()
+
+    def set_graph(self, graph):
+        self.graph = graph
+        for vertex in self.graph.V:
+            self._bind_vertex(vertex)
+        for edge in self.graph.E:
+            self._bind_edge(edge)
 
     def _create_graph(self, graph):
         if graph is not None:
@@ -126,7 +134,7 @@ class CanvasHandler:
             self.vertex_to_delete = vertex
             x = self.canvas.winfo_rootx() + vertex.x - 110
             y = self.canvas.winfo_rooty() + vertex.y
-            self.vertex_pop_up.tk_popup(x, y, 0)
+            self.vertex_pop_up.tk_popup(int(x), int(y), 0)
 
     def _on_delete_vertex(self):
         logger.debug(f"Deleting vertex: {self.vertex_to_delete}")

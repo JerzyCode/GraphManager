@@ -6,9 +6,10 @@ from src.main.app.graph.edge import Edge
 
 
 class Digraph(DirectedGraph, ABC):
-    def __init__(self, matrix, is_weighted, max_width=None, max_height=None):
+    def __init__(self, matrix=None, is_weighted=None, max_width=None, max_height=None):
         super().__init__(matrix, is_weighted, max_width, max_height)
-        self.__create_edges__(self.is_weighted)
+        if matrix is not None:
+            self.__create_edges__(self.is_weighted)
 
     def __create_edges__(self, is_weighted):
         size = len(self.matrix)

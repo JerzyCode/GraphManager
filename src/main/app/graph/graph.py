@@ -1,4 +1,3 @@
-import uuid
 from abc import abstractmethod
 
 from src.main.app.graph.edge import Edge
@@ -14,8 +13,9 @@ class Graph:
         self.is_weighted = is_weighted
         self.V = []
         self.E = set()
-        self._create_vertexes(max_width, max_height)
-        self.__create_edges__(is_weighted)
+        if matrix is not None:
+            self._create_vertexes(max_width, max_height)
+            self.__create_edges__(is_weighted)
 
     def _create_vertexes(self, max_width, max_height):
         size = len(self.matrix)

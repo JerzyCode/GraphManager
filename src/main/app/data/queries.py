@@ -32,8 +32,6 @@ NEW_SAVE_QUERY = 'INSERT INTO save_table (save_name) VALUES (?)'
 SAVE_EDGE_QUERY = 'INSERT INTO edge_table (save_name, vertex1_label, vertex2_label, weight) VALUES (?, ?, ?, ?);'
 SAVE_VERTEX_QUERY = 'INSERT INTO vertex_table (save_name,label, x, y) VALUES (?, ?, ?, ?)'
 SAVE_GRAPH_QUERY = 'INSERT INTO graph_table (save_name, weighted, directed, digraph) VALUES (?, ?, ?, ?)'
-DELETE_VERTEXES_BY_GRAPH_QUERY = 'DELETE FROM vertex_table WHERE save_name = (?)'
-DELETE_EDGES_BY_GRAPH_QUERY = 'DELETE FROM edge_table WHERE save_name = (?)'
 UPDATE_SAVE_QUERY = 'UPDATE save_table SET save_name = ? WHERE save_name = ?;'
 UPDATE_GRAPH_QUERY = '''
 UPDATE graph_table
@@ -44,23 +42,11 @@ SET
   digraph = ?
 WHERE save_name = ?;'''
 
-UPDATE_VERTEX_QUERY = '''
-UPDATE vertex_table
-SET
-  save_name = ?,
-  x = ?,
-  y = ?
-WHERE save_name = ?;'''
-
-UPDATE_EDGE_QUERY = '''
-UPDATE edge_table
-SET
-  save_name = ?,
-WHERE save_name = ?;'''
 
 CLEAR_EDGE_TABLE_BY_NAME_QUERY = 'DELETE FROM edge_table WHERE save_name = ?'
 CLEAR_VERTEX_TABLE_BY_NAME_QUERY = 'DELETE FROM vertex_table WHERE save_name = ?'
 CLEAR_GRAPH_TABLE_BY_NAME_QUERY = 'DELETE FROM graph_table WHERE save_name = ?'
+CLEAR_SAVE_TABLE_BY_NAME_QUERY = 'DELETE FROM save_table WHERE save_name = ?'
 
 CLEAR_GRAPH_TABLE_QUERY = 'DELETE FROM graph_table'
 CLEAR_VERTEX_TABLE_QUERY = 'DELETE FROM vertex_table'
@@ -72,14 +58,18 @@ DROP_VERTEX_TABLE_QUERY = 'DROP TABLE if exists vertex_table'
 DROP_EDGE_TABLE_QUERY = 'DROP TABLE if exists edge_table'
 DROP_SAVE_TABLE_QUERY = 'DROP TABLE if exists save_table'
 
-SELECT_GRAPH_QUERY = "SELECT 1 FROM graph_table WHERE save_name = (?);"
-
 CHECK_IF_TABLE_EXISTS_BY_NAME = "SELECT name FROM sqlite_master WHERE type='table' AND name=?"
 COUNT_SAVES_QUERY = 'SELECT COUNT(*) FROM save_table WHERE save_name=?;'
-SELECT_SAVE_BY_NAME_QUERY = 'SELECT * FROM save_table WHERE save_name=?;'
 COUNT_EDGES_QUERY = 'SELECT COUNT(*) FROM edge_table WHERE save_name = ?;'
 COUNT_VERTEXES_QUERY = 'SELECT COUNT(*) FROM vertex_table WHERE save_name = ?;'
 COUNT_GRAPHS_QUERY = 'SELECT COUNT(*) FROM graph_table WHERE save_name = ?;'
 SELECT_DIRECTED_QUERY = 'SELECT directed FROM graph_table WHERE save_name = ?;'
 SELECT_DIGRAPH_QUERY = 'SELECT digraph FROM graph_table WHERE save_name = ?;'
 SELECT_WEIGHTED_QUERY = 'SELECT weighted FROM graph_table WHERE save_name = ?;'
+SELECT_SAVE_BY_SAVE_NAME_QUERY = 'SELECT save_name FROM save_table WHERE save_name=?;'
+
+SELECT_VERTEXES_BY_SAVE_NAME_QUERY = 'SELECT * FROM vertex_table WHERE save_name = ?;'
+SELECT_EDGES_BY_SAVE_NAME_QUERY = 'SELECT * FROM edge_table WHERE save_name = ?;'
+SELECT_GRAPH_BY_SAVE_NAME_QUERY = 'SELECT * FROM graph_table WHERE save_name = ?'
+SELECT_ALL_SAVES = 'SELECT * FROM save_table;'
+

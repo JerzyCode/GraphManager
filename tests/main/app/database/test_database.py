@@ -61,7 +61,7 @@ class DatabaseTest(TestCase):
         db_graph_directed = self.cursor.execute(queries.SELECT_DIRECTED_QUERY, (save_name,)).fetchone()[0]
         db_graph_digraph = self.cursor.execute(queries.SELECT_DIGRAPH_QUERY, (save_name,)).fetchone()[0]
         db_graph_weighted = self.cursor.execute(queries.SELECT_WEIGHTED_QUERY, (save_name,)).fetchone()[0]
-        saved_name = self.cursor.execute(queries.SELECT_SAVE_BY_NAME_QUERY, (save_name,)).fetchone()[0]
+        saved_name = self.cursor.execute(queries.SELECT_SAVE_BY_SAVE_NAME_QUERY, (save_name,)).fetchone()[0]
         self.assertEqual(len(graph.E), edge_count)
         self.assertEqual(len(graph.V), vertex_count)
         self.assertEqual(saved_name, save_name)
@@ -77,6 +77,7 @@ class DatabaseTest(TestCase):
         new_save_name = 'test_save_2'
         graph = factory.generate_test_weighted_directed_graph()
         sut.save_graph(graph, save_name)
+        graph.V[0].x = 123
         graph.delete_vertex(graph.V[2])
         # when
         sut.update_graph(graph, save_name, new_save_name)
@@ -88,7 +89,7 @@ class DatabaseTest(TestCase):
         db_graph_directed = self.cursor.execute(queries.SELECT_DIRECTED_QUERY, (new_save_name,)).fetchone()[0]
         db_graph_digraph = self.cursor.execute(queries.SELECT_DIGRAPH_QUERY, (new_save_name,)).fetchone()[0]
         db_graph_weighted = self.cursor.execute(queries.SELECT_WEIGHTED_QUERY, (new_save_name,)).fetchone()[0]
-        saved_name = self.cursor.execute(queries.SELECT_SAVE_BY_NAME_QUERY, (new_save_name,)).fetchone()[0]
+        saved_name = self.cursor.execute(queries.SELECT_SAVE_BY_SAVE_NAME_QUERY, (new_save_name,)).fetchone()[0]
         self.assertEqual(saved_name, new_save_name)
         self.assertEqual(len(graph.E), edge_count)
         self.assertEqual(len(graph.V), vertex_count)
@@ -97,3 +98,45 @@ class DatabaseTest(TestCase):
         self.assertEqual(db_graph_directed, isinstance(graph, DirectedGraph))
         self.assertEqual(db_graph_digraph, isinstance(graph, Digraph))
         self.assertEqual(db_graph_weighted, graph.is_weighted)
+
+    def test_get_vertexes(self):
+        # given
+        save_name = 'test_save_1'
+        graph = factory.generate_test_weighted_directed_graph()
+        vertexes = graph.V
+        sut.save_graph(graph, save_name)
+        # when
+        result = sut.get_vertexes(save_name)
+        # then
+        index = 0
+        for vertex in result:
+            expected = vertexes[index]
+            self.assertEqual(vertex, expected)
+            self.assertEqual(vertex.x, expected.x)
+            self.assertEqual(vertex.y, expected.y)
+            index += 1
+
+    def test_get_edges(self):
+        # given
+        save_name = 'test_save_1'
+        graph = factory.generate_test_weighted_directed_graph()
+        vertexes = graph.V
+        sut.save_graph(graph, save_name)
+        # when
+        result = sut.get_edges(save_name, vertexes, is_directed=isinstance(graph, DirectedGraph), is_digraph=isinstance(graph, Digraph))
+        # then
+        self.assertEqual(set(result), graph.E)
+
+    def test_get_graph(self):
+        # given
+        save_name = 'test_save_1'
+        graph = factory.generate_test_weighted_directed_graph()
+        sut.save_graph(graph, save_name)
+        # when
+        result = sut.get_graph(save_name)
+        # then
+        self.assertEqual(set(graph.V), set(result.V))
+        self.assertEqual(graph.E, result.E)
+        self.assertEqual(graph.is_weighted, result.is_weighted)
+        self.assertEqual(isinstance(graph, DirectedGraph), isinstance(result, DirectedGraph))
+        self.assertEqual(isinstance(graph, Digraph), isinstance(result, Digraph))
