@@ -8,5 +8,7 @@ testy do dopisania są:
  - drawer do zmockowania i sprawdzania czy metody są wywoływane
 
  wszystkie testy są do przerobienia
+przetestować
+ale najpierw przeleciec dotychzcasowe zmiany i zakomitować
 
-save_graph na razie zapisuje referencje, wiec po zmianach w grafie, nie ten zapisany też się zmieni
+problem jak się otworzy graf który wystaje po za małe okno, to do poprawy jest

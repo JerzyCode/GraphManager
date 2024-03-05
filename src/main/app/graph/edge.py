@@ -1,5 +1,8 @@
+import uuid
+
+
 class Edge:
-    def __init__(self, vertex1, vertex2, directed, digraph, weight):
+    def __init__(self, vertex1, vertex2, directed=False, digraph=False, weight=None):
         self.vertex1 = vertex1
         self.vertex2 = vertex2
         self.directed = directed

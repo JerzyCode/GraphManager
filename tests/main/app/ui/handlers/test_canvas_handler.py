@@ -9,10 +9,11 @@ from src.main.app.graph.vertex import Vertex
 
 
 class TestCanvasHandler(TestCase):
+    app = None
 
     @classmethod
     def setUpClass(cls):
-        cls.app = App()
+        cls.app = App('../database/test_database.db')
 
     @classmethod
     def tearDownClass(cls):
@@ -63,7 +64,7 @@ class TestCanvasHandler(TestCase):
         self.assertEqual(edge.label, '1_2')
         self.assertEqual(len(self.app.graph.V), 3)
 
-# TODO TEN TEST NIE DZIALA NA DOLE
+    # TODO TEN TEST NIE DZIALA NA DOLE
     def add_vertex_to_existing_with_weight(self):
         self._create_graph(is_weighted=True, is_directed=False, is_digraph=False)
         self.app.canvas_handler._on_shift_button_1(Event(120, 120))

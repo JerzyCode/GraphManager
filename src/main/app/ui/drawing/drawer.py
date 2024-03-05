@@ -75,6 +75,8 @@ class Drawer:
             self.highlight_edge_delay(element, delay)
 
     def refresh_all(self, graph):
+        if graph is None:
+            return
         for vertex in graph.V:
             vertex.is_highlighted_by_algorithm = False
             self.vertex_drawer.erase_current_distance(vertex)
