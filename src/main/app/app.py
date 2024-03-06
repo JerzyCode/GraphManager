@@ -48,16 +48,23 @@ class App(customtkinter.CTk):
         logger.debug("Configuring Window...")
         self.title("Graph Manager")
         self.minsize(WINDOW_WIDTH, WINDOW_HEIGHT)
-        self.geometry(f"{WINDOW_WIDTH}x{WINDOW_HEIGHT}+0+0")
+        screen_width = self.winfo_screenwidth()
+        screen_height = self.winfo_screenheight()
+        center_x = int((screen_width - WINDOW_WIDTH) / 2)
+        center_y = int((screen_height - WINDOW_HEIGHT) / 2)
+
+        self.geometry(f"{WINDOW_WIDTH}x{WINDOW_HEIGHT}+{center_x}+{center_y}")
+
         self.protocol("WM_DELETE_WINDOW", self._on_close_btn)
+        self.grid_columnconfigure(0, weight=0)
         self.grid_columnconfigure(1, weight=1)
-        self.grid_rowconfigure((1, 2), weight=1)
-        # self.iconbitmap(r'assets/graph_icon_144306.ico')
+        self.grid_rowconfigure((0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10), weight=1)
 
     def _create_sidebar_frame(self):
         logger.debug("Creating Sidebar Frame...")
         self.sidebar_frame = customtkinter.CTkFrame(self, width=140, corner_radius=0)
-        self.sidebar_frame.grid(row=1, column=0, rowspan=4, sticky="nsew")
+        self.sidebar_frame.grid(row=0, column=0, rowspan=11, sticky="nsew")
+        self.sidebar_frame.grid_rowconfigure(8, weight=1)
 
         self.logo_label = customtkinter.CTkLabel(self.sidebar_frame, text="Graph Manager", font=customtkinter.CTkFont(size=20, weight="bold"))
         self.logo_label.grid(row=0, column=0, padx=20, pady=(20, 10))
@@ -84,12 +91,12 @@ class App(customtkinter.CTk):
         self.clear_button.grid(row=7, column=0, padx=20, pady=10)
 
         self.appearance_mode_label = customtkinter.CTkLabel(self.sidebar_frame, text="Appearance Mode:", anchor="w")
-        self.appearance_mode_label.grid(row=8, column=0, padx=20, pady=(10, 0))
+        self.appearance_mode_label.grid(row=9, column=0, padx=20, pady=(10, 0))
         self.appearance_mode_option_menu = customtkinter.CTkOptionMenu(self.sidebar_frame,
                                                                        values=["Light", "Dark"],
                                                                        command=self._change_appearance_mode)
         self.appearance_mode_option_menu.set("Dark")
-        self.appearance_mode_option_menu.grid(row=9, column=0, padx=20, pady=(10, 10))
+        self.appearance_mode_option_menu.grid(row=10, column=0, padx=20, pady=(10, 20))
 
     def _create_graph_display_frame(self):
         logger.debug("Creating Graph Display Frame...")
