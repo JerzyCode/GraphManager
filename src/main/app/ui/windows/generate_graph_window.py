@@ -77,7 +77,6 @@ class GenerateGraphWindow(customtkinter.CTk):
 
     def _on_close(self):
         self.withdraw()
-        self.root.add_graph_window.enable_options()
         # self.enable_options()
 
     def _on_generate_graph(self):

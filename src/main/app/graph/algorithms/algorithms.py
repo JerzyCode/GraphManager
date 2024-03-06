@@ -70,6 +70,8 @@ def dfs(graph, vertex, visited, drawer, directed, elements_to_color):
 
 
 def is_graph_connected(graph):
+    if len(graph.V) == 0:
+        return True
     result = []
     visited = [False] * len(graph.V)
     dfs(graph, graph.V[0], visited, None, None, result)
@@ -80,7 +82,7 @@ def is_graph_connected(graph):
 
 
 def kruskal_algorithm(graph, drawer):
-    if not graph.is_weighted:
+    if not graph.is_weighted or not is_graph_connected(graph):
         return
     tree = set()
     wood = set()

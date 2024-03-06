@@ -7,8 +7,8 @@ from src.main.app.ui.drawing.canvas_handler import CanvasHandler
 from src.main.app.ui.drawing.drawer import Drawer, change_appearance_mode
 from src.main.app.ui.drawing.edge_drawer import EdgeDrawer
 from src.main.app.ui.drawing.vertex_drawer import VertexDrawer
+from src.main.app.ui.frames.add_graph_frame import AddGraphFrame
 from src.main.app.ui.frames.algorithms_frame import AlgorithmsFrame
-from src.main.app.ui.windows.add_graph_window import AddGraphWindow
 from src.main.app.ui.windows.generate_graph_window import GenerateGraphWindow, change_generate_graph_window_appearance_mode
 from src.main.app.ui.windows.save_load_graph_window import SaveLoadGraphWindow
 from src.main.app.ui.windows.set_weight_window import change_set_weight_window_appearance_mode
@@ -87,7 +87,7 @@ class App(customtkinter.CTk):
         self.refresh_button = customtkinter.CTkButton(self.sidebar_frame, text='Refresh Graph', command=self._on_refresh_graph_btn)
         self.refresh_button.grid(row=6, column=0, padx=20, pady=10)
 
-        self.clear_button = customtkinter.CTkButton(self.sidebar_frame, text='Clear Graph', command=self._on_clear_graph_btn)
+        self.clear_button = customtkinter.CTkButton(self.sidebar_frame, text='Clear Graph', command=self.on_clear_graph)
         self.clear_button.grid(row=7, column=0, padx=20, pady=10)
 
         self.appearance_mode_label = customtkinter.CTkLabel(self.sidebar_frame, text="Appearance Mode:", anchor="w")
@@ -104,7 +104,6 @@ class App(customtkinter.CTk):
         self.edge_drawer = EdgeDrawer(self.canvas)
         self.vertex_drawer = VertexDrawer(self.canvas)
         self.drawer = Drawer(self.canvas, self.edge_drawer, self.vertex_drawer)
-        self.add_graph_window = AddGraphWindow(self._set_params_add_graph)
         self.generate_graph_window = GenerateGraphWindow(self)
         self.canvas.grid(row=0, column=1, rowspan=11, columnspan=2, padx=5, pady=5, sticky="nsew")
 
@@ -117,11 +116,11 @@ class App(customtkinter.CTk):
     def _on_generate_graph_btn(self):
         logger.debug("On Generate Graph")
         self.generate_graph_window.show_generate_graph_window_visible()
-        self.add_graph_window.disable_options()
 
     def _on_add_graph_btn(self):
         logger.debug("On Add Graph")
-        self.add_graph_window.show_add_graph_window()
+        frame = AddGraphFrame(self, self.graph)
+        self.open_frame(frame)
 
     def _on_algorithms_button(self):
         frame = AlgorithmsFrame(self, self.graph)
@@ -147,15 +146,13 @@ class App(customtkinter.CTk):
     def _on_close_btn(self):
         logger.debug("Closing App")
         # db.clear_tables()
-        self.add_graph_window.destroy()
         self.generate_graph_window.destroy()
         self.save_load_graph_window.destroy()
         self.destroy()
 
-    def _on_clear_graph_btn(self):
+    def on_clear_graph(self):
         logger.debug("Clearing Graph")
         self.add_graph_button.configure(state='normal')
-        self.add_graph_window.set_params_button_state_normal()
         self.drawer.erase_all()
         self.generate_graph_window.canvas_handler = None
         self.generate_graph_window.graph = None
@@ -187,7 +184,7 @@ class App(customtkinter.CTk):
 
     def load_graph_hook(self, graph):
         self.canvas_handler = CanvasHandler(self, isinstance(graph, DirectedGraph), isinstance(graph, Digraph), graph.is_weighted)
-        self._on_clear_graph_btn()
+        self.on_clear_graph()
         self.graph = graph
         self.set_graph(graph)
         self.drawer.draw_graph(graph)

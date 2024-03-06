@@ -46,3 +46,5 @@ class TestKruskal(unittest.TestCase):
         self.assertEqual(num_of_colored_kruskal, len(result))
         self.assertEqual(set(labels), {'1_2', '1_5', '2_6', '2_7', '2_4', '3_7', '4_8'})
         # in future check if tree connected and if there is a cycle
+
+    # TEST UNCONNECTED GRAPH

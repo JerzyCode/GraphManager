@@ -18,7 +18,11 @@ def get_edge_from_edge_data(edge_data, vertexes, is_directed, is_digraph):
     edge_weight = edge_data[3]
     vertex1 = find_vertex_by_label(edge_vertex1_label, vertexes)
     vertex2 = find_vertex_by_label(edge_vertex2_label, vertexes)
-    return Edge(vertex1, vertex2, directed=is_directed, digraph=is_digraph, weight=int(edge_weight))
+    if edge_weight is not None:
+        weight = int(edge_weight)
+    else:
+        weight = None
+    return Edge(vertex1, vertex2, directed=is_directed, digraph=is_digraph, weight=weight)
 
 
 def get_graph_from_graph_data(graph_data):
