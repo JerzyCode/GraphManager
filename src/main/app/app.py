@@ -7,8 +7,8 @@ from src.main.app.ui.drawing.canvas_handler import CanvasHandler
 from src.main.app.ui.drawing.drawer import Drawer, change_appearance_mode
 from src.main.app.ui.drawing.edge_drawer import EdgeDrawer
 from src.main.app.ui.drawing.vertex_drawer import VertexDrawer
+from src.main.app.ui.frames.algorithms_frame import AlgorithmsFrame
 from src.main.app.ui.windows.add_graph_window import AddGraphWindow
-from src.main.app.ui.windows.algorithms_window import AlgorithmsWindow
 from src.main.app.ui.windows.generate_graph_window import GenerateGraphWindow, change_generate_graph_window_appearance_mode
 from src.main.app.ui.windows.save_load_graph_window import SaveLoadGraphWindow
 from src.main.app.ui.windows.set_weight_window import change_set_weight_window_appearance_mode
@@ -62,7 +62,7 @@ class App(customtkinter.CTk):
 
     def _create_sidebar_frame(self):
         logger.debug("Creating Sidebar Frame...")
-        self.sidebar_frame = customtkinter.CTkFrame(self, width=140, corner_radius=0)
+        self.sidebar_frame = customtkinter.CTkFrame(self, width=LEFT_FRAME_WIDTH, corner_radius=0)
         self.sidebar_frame.grid(row=0, column=0, rowspan=11, sticky="nsew")
         self.sidebar_frame.grid_rowconfigure(8, weight=1)
 
@@ -106,8 +106,7 @@ class App(customtkinter.CTk):
         self.drawer = Drawer(self.canvas, self.edge_drawer, self.vertex_drawer)
         self.add_graph_window = AddGraphWindow(self._set_params_add_graph)
         self.generate_graph_window = GenerateGraphWindow(self)
-        self.algorithms_window = AlgorithmsWindow(self.drawer)
-        self.canvas.grid(row=1, column=1, rowspan=5, columnspan=2, padx=5, pady=5, sticky="nsew")
+        self.canvas.grid(row=0, column=1, rowspan=11, columnspan=2, padx=5, pady=5, sticky="nsew")
 
     def _on_refresh_graph_btn(self):
         logger.debug("Refreshing Graph")
@@ -125,7 +124,8 @@ class App(customtkinter.CTk):
         self.add_graph_window.show_add_graph_window()
 
     def _on_algorithms_button(self):
-        self.algorithms_window.show_algorithms_window_visible()
+        frame = AlgorithmsFrame(self, self.graph)
+        self.open_frame(frame)
 
     def on_graph_generated_hook(self):
         graph = self.generate_graph_window.graph
@@ -134,7 +134,6 @@ class App(customtkinter.CTk):
 
     def set_graph(self, graph):
         self.graph = graph
-        self.algorithms_window.graph = graph
         self.save_load_graph_window.graph = graph
         self.drawer.graph = graph
         self.canvas_handler.set_graph(graph)
@@ -150,7 +149,6 @@ class App(customtkinter.CTk):
         # db.clear_tables()
         self.add_graph_window.destroy()
         self.generate_graph_window.destroy()
-        self.algorithms_window.destroy()
         self.save_load_graph_window.destroy()
         self.destroy()
 
@@ -161,7 +159,6 @@ class App(customtkinter.CTk):
         self.drawer.erase_all()
         self.generate_graph_window.canvas_handler = None
         self.generate_graph_window.graph = None
-        self.algorithms_window.graph = None
         self.graph = None
         if self.canvas_handler is not None:
             self.canvas_handler.enabled = False
@@ -194,3 +191,6 @@ class App(customtkinter.CTk):
         self.graph = graph
         self.set_graph(graph)
         self.drawer.draw_graph(graph)
+
+    def open_frame(self, frame):
+        frame.grid(row=0, column=0, rowspan=11, sticky="nsew")
