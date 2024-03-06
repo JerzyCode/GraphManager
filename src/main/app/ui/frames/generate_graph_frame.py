@@ -7,25 +7,15 @@ import tests.main.app.graph.graph_factory as factory
 from src.main.app.graph.graph import Graph
 from src.main.app.ui.drawing.canvas_handler import CanvasHandler
 from src.main.app.ui.utils.params_checkbox_frame import ParamsCheckboxFrame
+from src.main.app.ui.utils.slider_frame import SliderFrame
 from src.main.app.utils.constants import *
 
 global input_box_bg_color, input_box_fg_color
 
 
-def change_generate_graph_window_appearance_mode(new_appearance_mode: str):
-    global input_box_bg_color, input_box_fg_color
-    if new_appearance_mode == "Light":
-        input_box_fg_color = GRAPH_BG_COLOR_LIGHT
-    elif new_appearance_mode == "Dark":
-        input_box_fg_color = GRAPH_BG_COLOR_DARK
-
-
-change_generate_graph_window_appearance_mode("Dark")
-
-
-class GenerateGraphWindow(customtkinter.CTk):
+class GenerateGraphFrame(customtkinter.CTkFrame):
     def __init__(self, root):
-        super().__init__()
+        super().__init__(root, width=LEFT_FRAME_WIDTH)
         self.canvas_handler = None
         self.is_directed = False
         self.is_digraph = False
@@ -37,47 +27,38 @@ class GenerateGraphWindow(customtkinter.CTk):
         self.graph = Graph([], self.is_weighted,
                            self.canvas.winfo_width(),
                            self.canvas.winfo_height())
-        self._configure_window()
-        self.checkbox_frame = ParamsCheckboxFrame(self)
+        # self._configure_window()
+        self.grid_rowconfigure(5, weight=1)
         self._create_params_frame()
 
     def _configure_window(self):
-        self.title(GENERATE_GRAPH)
-        self.minsize(GENERATE_GRAPH_WINDOW_WIDTH, GENERATE_GRAPH_WINDOW_HEIGHT)
-        self.geometry(f"{GENERATE_GRAPH_WINDOW_WIDTH}x{GENERATE_GRAPH_WINDOW_HEIGHT}+0+{WINDOW_HEIGHT + 150}")
-        self.protocol("WM_DELETE_WINDOW", self._on_close)
         self.grid_columnconfigure(1, weight=1)
         self.grid_columnconfigure((2, 3), weight=0)
         self.grid_rowconfigure((0, 1, 2), weight=1)
-        self.withdraw()
+
+    def _create_params_frame(self):
+
+        self.frame_label = customtkinter.CTkLabel(self, text='GENERATE GRAPH', font=customtkinter.CTkFont(size=20, weight="bold"))
+        self.frame_label.grid(row=0, column=0, pady=10, padx=20)
+
+        self.checkbox_frame = ParamsCheckboxFrame(self)
+        self.checkbox_frame.grid(row=5, column=0, pady=10, padx=20)
+
+        self.vertex_slider_frame = SliderFrame(self, "Number of vertexes: ")
+        self.vertex_slider_frame.grid(row=2, column=0, pady=10, padx=20, sticky='nsew')
+
+        self.density_slider_frame = SliderFrame(self, "Density of edges: ")
+        self.density_slider_frame.grid(row=3, column=0, pady=10, padx=20, sticky='nsew')
 
         self.generate_button = customtkinter.CTkButton(master=self, fg_color="transparent", border_width=2, text='Generate Graph',
                                                        text_color=("gray10", "#DCE4EE"), command=self._on_generate_graph)
-        self.generate_button.grid(row=3, column=0, padx=(20, 20), pady=(20, 20), sticky="nsew")
+        self.generate_button.grid(row=6, column=0, padx=20, pady=(20, 10))
 
-    def _create_params_frame(self):
-        self.params_frame = customtkinter.CTkFrame(self)
-        self.params_frame.grid(row=0, column=1, rowspan=3, padx=(20, 30), pady=(20, 0), sticky="nsew")
-        self.frame_label = customtkinter.CTkLabel(self.params_frame, text='GRAPH PARAMS', font=customtkinter.CTkFont(size=20, weight="bold"))
-        self.frame_label.grid(row=0, column=2, pady=10, padx=(120, 0))
+        close_button = customtkinter.CTkButton(self, text="Close", command=self.close_modal)
+        close_button.grid(row=7, column=0, padx=20, pady=(10, 20))
 
-        self.size_label = customtkinter.CTkLabel(self.params_frame, text='Enter number of vertexes:',
-                                                 font=customtkinter.CTkFont(size=20, weight="bold"))
-        self.size_label.grid(row=1, column=2, padx=(10, 0), pady=(20, 0), sticky="nsew")
-        self.size_entry = customtkinter.CTkEntry(self.params_frame, placeholder_text="size", width=100, bg_color=input_box_fg_color)
-        self.size_entry.insert(0, '10')
-        self.size_entry.grid(row=1, column=3, rowspan=1, padx=(20, 20), pady=(20, 0))
-
-        self.density_label = customtkinter.CTkLabel(self.params_frame, text='Edges density (0 to 1):',
-                                                    font=customtkinter.CTkFont(size=20, weight="bold"))
-        self.density_label.grid(row=2, column=2, padx=(10, 0), pady=(20, 0), sticky="nsew")
-        self.density_entry = customtkinter.CTkEntry(self.params_frame, placeholder_text="size", width=100, bg_color=input_box_fg_color)
-        self.density_entry.insert(0, '0.5')
-        self.density_entry.grid(row=2, column=3, rowspan=1, padx=(20, 20), pady=(20, 0))
-
-    def _on_close(self):
-        self.withdraw()
-        # self.enable_options()
+    def close_modal(self):
+        self.destroy()
 
     def _on_generate_graph(self):
         self._generate_graph()
@@ -101,29 +82,28 @@ class GenerateGraphWindow(customtkinter.CTk):
         self.root.on_graph_generated_hook()
 
     def _generate_graph(self):
-        size = self.size_entry.get()
-        p = self.density_entry.get()
-        if len(p) == 0:
-            p = 0.5
-        if size and size.isdigit() and int(size) <= 100:
+        size = self.vertex_slider_frame.get_value()
+        p = self.density_slider_frame.get_value()
+        if not p or not p.isdigit() or int(p) < 0 or int(p) > 100:
+            return
+        p = int(p) * 0.01
+        if size and size.isdigit() and 100 >= int(size) >= 0:
             self.canvas.delete('all')
             graph_size = int(size)
             if self.is_digraph:
-                self.graph = digraph.generate_graph(graph_size, float(p),
+                self.graph = digraph.generate_graph(graph_size, p,
                                                     self.canvas.winfo_width(),
                                                     self.canvas.winfo_height(),
                                                     self.is_weighted)
             elif self.is_directed:
-                self.graph = directed_graph.generate_graph(graph_size, float(p),
+                self.graph = directed_graph.generate_graph(graph_size, p,
                                                            self.canvas.winfo_width(),
                                                            self.canvas.winfo_height(),
                                                            self.is_weighted)
             else:
-                self.graph = undirected_graph.generate_graph(graph_size, float(p),
+                self.graph = undirected_graph.generate_graph(graph_size, p,
                                                              self.canvas.winfo_width(),
                                                              self.canvas.winfo_height(),
                                                              self.is_weighted)
+            self.root.graph = self.graph
             self.drawer.draw_graph(self.graph)
-
-    def show_generate_graph_window_visible(self):
-        self.deiconify()
