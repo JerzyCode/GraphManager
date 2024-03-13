@@ -84,7 +84,7 @@ def is_graph_connected(graph):
 
 
 def kruskal_algorithm(graph, drawer):
-    if not graph.is_weighted or not is_graph_connected(graph):
+    if not graph.is_weighted or is_graph_connected(graph):
         return
     tree = set()
     wood = set()
