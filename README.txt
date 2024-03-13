@@ -13,6 +13,6 @@ ale najpierw przeleciec dotychzcasowe zmiany i zakomitować
 
 problem jak się otworzy graf który wystaje po za małe okno, to do poprawy jest
 
-w algorith frame, kiedyś scrollable zamiast po prostu guzików
-
-do kruskala dodać ifa że musi być spójny
+można dodać opcje włączenia kratek na płótnie, i przyciąganie do rogów tych kratek
+przy przesuwaniu wiezrchołków
+łatwiej będzie można wzorki rysować

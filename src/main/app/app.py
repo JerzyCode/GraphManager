@@ -10,8 +10,7 @@ from src.main.app.ui.drawing.vertex_drawer import VertexDrawer
 from src.main.app.ui.frames.add_graph_frame import AddGraphFrame
 from src.main.app.ui.frames.algorithms_frame import AlgorithmsFrame
 from src.main.app.ui.frames.generate_graph_frame import GenerateGraphFrame
-# from src.main.app.ui.windows.generate_graph_window import
-from src.main.app.ui.windows.save_load_graph_window import SaveLoadGraphWindow
+from src.main.app.ui.frames.save_load_graph_frame import SaveLoadGraphFrame
 from src.main.app.ui.windows.set_weight_window import change_set_weight_window_appearance_mode
 from src.main.app.utils.constants import *
 from src.main.app.utils.logger import setup_logger
@@ -46,19 +45,13 @@ class App(customtkinter.CTk):
         self._configure_window()
         self._create_sidebar_frame()
         self._create_graph_display_frame()
-        self.save_load_graph_window = SaveLoadGraphWindow()
         # self.generate_graph_window.generate_graph_mock()
 
     def _configure_window(self):
         logger.debug("Configuring Window...")
         self.title("Graph Manager")
         self.minsize(WINDOW_WIDTH, WINDOW_HEIGHT)
-        screen_width = self.winfo_screenwidth()
-        screen_height = self.winfo_screenheight()
-        center_x = int((screen_width - WINDOW_WIDTH) / 2)
-        center_y = int((screen_height - WINDOW_HEIGHT) / 2)
-
-        self.geometry(f"{WINDOW_WIDTH}x{WINDOW_HEIGHT}+{center_x}+{center_y}")
+        self.set_window_size(0, 0)
 
         self.protocol("WM_DELETE_WINDOW", self._on_close_btn)
         self.grid_columnconfigure(0, weight=0)
@@ -137,7 +130,6 @@ class App(customtkinter.CTk):
 
     def set_graph(self, graph):
         self.graph = graph
-        self.save_load_graph_window.graph = graph
         self.drawer.graph = graph
         self.canvas_handler.set_graph(graph)
 
@@ -150,7 +142,6 @@ class App(customtkinter.CTk):
     def _on_close_btn(self):
         logger.debug("Closing App")
         # db.clear_tables()
-        self.save_load_graph_window.destroy()
         self.destroy()
 
     def on_clear_graph(self):
@@ -176,14 +167,23 @@ class App(customtkinter.CTk):
         self.drawer.refresh_all(self.graph)
 
     def _on_save_graph_btn(self):
-        self.save_load_graph_window.show_save_load_graph_window_visible('save')
+        frame = SaveLoadGraphFrame(self, 'save')
+        open_frame(frame)
 
     def _on_load_graph_btn(self):
-        self.save_load_graph_window.show_save_load_graph_window_visible('load', load_hook=self.load_graph_hook)
+        frame = SaveLoadGraphFrame(self, 'load')
+        open_frame(frame)
 
     def load_graph_hook(self, graph):
-        self.canvas_handler = CanvasHandler(self, isinstance(graph, DirectedGraph), isinstance(graph, Digraph), graph.is_weighted)
         self.on_clear_graph()
-        self.graph = graph
+        self.canvas_handler = CanvasHandler(self, isinstance(graph, DirectedGraph), isinstance(graph, Digraph), graph.is_weighted, graph)
         self.set_graph(graph)
         self.drawer.draw_graph(graph)
+
+    def set_window_size(self, expand_width, expand_height):
+        screen_width = self.winfo_screenwidth()
+        screen_height = self.winfo_screenheight()
+        center_x = int((screen_width - WINDOW_WIDTH) / 2)
+        center_y = int((screen_height - WINDOW_HEIGHT) / 2)
+
+        self.geometry(f"{WINDOW_WIDTH + expand_width}x{WINDOW_HEIGHT + expand_height}+{center_x}+{center_y}")
