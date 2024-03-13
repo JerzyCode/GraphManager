@@ -107,6 +107,7 @@ class App(customtkinter.CTk):
     def _on_refresh_graph_btn(self):
         logger.debug("Refreshing Graph")
         graph = self.graph
+        self.canvas_handler.selected_vertexes = []
         if self.drawer:
             self.drawer.refresh_all(graph)
 
