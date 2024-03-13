@@ -30,6 +30,8 @@ class CanvasHandler:
         self._create_edge_popup_menu()
 
     def set_graph(self, graph):
+        if graph is None:
+            return
         self.graph = graph
         for vertex in self.graph.V:
             self._bind_vertex(vertex)
