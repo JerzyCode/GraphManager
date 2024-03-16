@@ -27,14 +27,8 @@ class GenerateGraphFrame(customtkinter.CTkFrame):
         self.graph = Graph([], self.is_weighted,
                            self.canvas.winfo_width(),
                            self.canvas.winfo_height())
-        # self._configure_window()
         self.grid_rowconfigure(5, weight=1)
         self._create_params_frame()
-
-    def _configure_window(self):
-        self.grid_columnconfigure(1, weight=1)
-        self.grid_columnconfigure((2, 3), weight=0)
-        self.grid_rowconfigure((0, 1, 2), weight=1)
 
     def _create_params_frame(self):
 

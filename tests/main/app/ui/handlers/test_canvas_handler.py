@@ -1,11 +1,6 @@
-from unittest import TestCase, mock
+from unittest import TestCase
 
 from src.main.app.app import App
-from src.main.app.graph.digraph import Digraph
-from src.main.app.graph.directed_graph import DirectedGraph
-from src.main.app.graph.edge import Edge
-from src.main.app.graph.undirected_graph import UndirectedGraph
-from src.main.app.graph.vertex import Vertex
 
 
 class TestCanvasHandler(TestCase):
