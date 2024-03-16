@@ -1,7 +1,8 @@
 import sys
 
 from src.main.app.graph.vertex import Vertex
-from src.main.app.utils.constants import *
+from src.main.app.utils.constants import VERTEX_BG_COLOR_LIGHT, VERTEX_FG_COLOR_LIGHT, VERTEX_COLOR_CHANGE_BG_LIGHT, VERTEX_COLOR_CHANGE_FG_LIGHT, \
+    VERTEX_BG_COLOR_DARK, VERTEX_FG_COLOR_DARK, VERTEX_COLOR_CHANGE_BG_DARK, VERTEX_COLOR_CHANGE_FG_DARK, RADIUS, VERTEX_FONT_SIZE, WEIGHT_FONT_SIZE
 
 global vertex_bg_color, vertex_fg_color, vertex_bg_color_changed, vertex_fg_color_changed
 

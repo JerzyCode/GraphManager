@@ -65,7 +65,7 @@ def dijkstra_algorithm(graph, start, drawer):
             prev_edge[vertex] = None
             for_drawer.append([vertex, distance[vertex], None])
 
-    for count in range(len(graph.V)):
+    for _ in range(len(graph.V)):
         min_dist_vertex = _minimum_distance_vertex(graph, distance, done_vertexes, start)
         done_vertexes[min_dist_vertex] = True
         for_drawer.append([min_dist_vertex, distance[min_dist_vertex], 'set_vertex'])

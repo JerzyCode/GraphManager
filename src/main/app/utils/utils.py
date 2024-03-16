@@ -2,7 +2,8 @@ import tkinter as tk
 
 from src.main.app.graph.edge import Edge
 from src.main.app.graph.vertex import Vertex
-from src.main.app.utils.constants import *
+from src.main.app.utils.constants import BUTTONS_VIEW_WIDTH, BUTTON_BG_COLOR, BUTTON_FG_COLOR, BUTTONS_PANEL_SIZE_FG_COLOR, BUTTONS_PANEL_BG_COLOR, \
+    BUTTONS_PANEL_SIZE_BG_COLOR, FONT
 
 
 def create_button(parent, image, text, command):

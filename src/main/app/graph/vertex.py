@@ -1,6 +1,6 @@
 import random
 
-from src.main.app.utils.constants import *
+from src.main.app.utils.constants import RADIUS, GRAPH_VIEW_WIDTH, GRAPH_VIEW_HEIGHT
 
 
 class Vertex:

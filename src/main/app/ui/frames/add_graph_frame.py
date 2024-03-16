@@ -2,7 +2,7 @@ import customtkinter
 
 from src.main.app.ui.drawing.canvas_handler import CanvasHandler
 from src.main.app.ui.utils.params_checkbox_frame import ParamsCheckboxFrame
-from src.main.app.utils.constants import *
+from src.main.app.utils.constants import LEFT_FRAME_WIDTH
 from src.main.app.utils.logger import setup_logger
 
 logger = setup_logger("AddGraphFrame")

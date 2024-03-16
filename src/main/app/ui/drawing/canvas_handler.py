@@ -5,10 +5,17 @@ from src.main.app.graph.directed_graph import DirectedGraph
 from src.main.app.graph.undirected_graph import UndirectedGraph
 from src.main.app.graph.vertex import Vertex
 from src.main.app.ui.windows.set_weight_window import AskWeightDialog
-from src.main.app.utils.constants import *
+from src.main.app.utils.constants import RADIUS
 from src.main.app.utils.logger import setup_logger
 
 logger = setup_logger("CanvasHandler")
+
+BUTTON_PRESS_1 = "<ButtonPress-1>"
+BUTTON_1_MOTION = "<B1-Motion>"
+BUTTON_PRESS_3 = "<ButtonPress-3>"
+ALT_BUTTON_PRESS_1 = "<Alt-ButtonPress-1>"
+ENTER = "<Enter>"
+LEAVE = "<Leave>"
 
 
 class CanvasHandler:
@@ -82,23 +89,23 @@ class CanvasHandler:
             self.prev_label = str(int(self.prev_label) + 1)
 
     def _bind_vertex(self, vertex):
-        self.canvas.tag_bind(f"text_{vertex.label}", "<Alt-ButtonPress-1>", lambda e, v=vertex: self._on_vertex_click(e, v))
-        self.canvas.tag_bind(f"vertex_{vertex.label}", "<Alt-ButtonPress-1>", lambda e, v=vertex: self._on_vertex_click(e, v))
-        self.canvas.tag_bind(f"text_{vertex.label}", "<ButtonPress-3>", lambda e, v=vertex: self._on_vertex_right_click(e, v))
-        self.canvas.tag_bind(f"vertex_{vertex.label}", "<ButtonPress-3>", lambda e, v=vertex: self._on_vertex_right_click(e, v))
-        self.canvas.tag_bind(f"vertex_{vertex.label}", "<Enter>", lambda e, v=vertex: self._on_enter_vertex(e, v))
-        self.canvas.tag_bind(f"text_{vertex.label}", "<Enter>", lambda e, v=vertex: self._on_enter_vertex(e, v))
-        self.canvas.tag_bind(f"vertex_{vertex.label}", "<Leave>", lambda e, v=vertex: self._on_leave_vertex(e, v))
-        self.canvas.tag_bind(f"text_{vertex.label}", "<Leave>", lambda e, v=vertex: self._on_leave_vertex(e, v))
-        self.canvas.tag_bind(f"vertex_{vertex.label}", "<ButtonPress-1>", lambda event: self._start_move_vertex(event))
-        self.canvas.tag_bind(f"vertex_{vertex.label}", "<B1-Motion>", lambda event, v=vertex: self._move_vertex(event, v))
-        self.canvas.tag_bind(f"text_{vertex.label}", "<ButtonPress-1>", lambda event: self._start_move_vertex(event))
-        self.canvas.tag_bind(f"text_{vertex.label}", "<B1-Motion>", lambda event, v=vertex: self._move_vertex(event, v))
+        self.canvas.tag_bind(f"text_{vertex.label}", ALT_BUTTON_PRESS_1, lambda event, v=vertex: self._on_vertex_click(event, v))
+        self.canvas.tag_bind(f"vertex_{vertex.label}", ALT_BUTTON_PRESS_1, lambda event, v=vertex: self._on_vertex_click(event, v))
+        self.canvas.tag_bind(f"text_{vertex.label}", BUTTON_PRESS_3, lambda event, v=vertex: self._on_vertex_right_click(event, v))
+        self.canvas.tag_bind(f"vertex_{vertex.label}", BUTTON_PRESS_3, lambda event, v=vertex: self._on_vertex_right_click(event, v))
+        self.canvas.tag_bind(f"vertex_{vertex.label}", ENTER, lambda event, v=vertex: self._on_enter_vertex(v))
+        self.canvas.tag_bind(f"text_{vertex.label}", ENTER, lambda event, v=vertex: self._on_enter_vertex(v))
+        self.canvas.tag_bind(f"vertex_{vertex.label}", LEAVE, lambda event, v=vertex: self._on_leave_vertex(v))
+        self.canvas.tag_bind(f"text_{vertex.label}", LEAVE, lambda event, v=vertex: self._on_leave_vertex(v))
+        self.canvas.tag_bind(f"vertex_{vertex.label}", BUTTON_PRESS_1, lambda event: self._start_move_vertex(event))
+        self.canvas.tag_bind(f"vertex_{vertex.label}", BUTTON_1_MOTION, lambda event, v=vertex: self._move_vertex(event, v))
+        self.canvas.tag_bind(f"text_{vertex.label}", BUTTON_PRESS_1, lambda event: self._start_move_vertex(event))
+        self.canvas.tag_bind(f"text_{vertex.label}", BUTTON_1_MOTION, lambda event, v=vertex: self._move_vertex(event, v))
 
     def _bind_edge(self, edge):
-        self.canvas.tag_bind(f"edge_{edge.label}", "<Enter>", lambda event, e=edge: self._on_enter_edge(event, e))
-        self.canvas.tag_bind(f"edge_{edge.label}", "<Leave>", lambda event, e=edge: self._on_leave_edge(event, e))
-        self.canvas.tag_bind(f"edge_{edge.label}", "<ButtonPress-3>", lambda event, e=edge: self._on_edge_right_click(event, e))
+        self.canvas.tag_bind(f"edge_{edge.label}", ENTER, lambda event, e=edge: self._on_enter_edge(e))
+        self.canvas.tag_bind(f"edge_{edge.label}", LEAVE, lambda event, e=edge: self._on_leave_edge(e))
+        self.canvas.tag_bind(f"edge_{edge.label}", BUTTON_PRESS_3, lambda event, e=edge: self._on_edge_right_click(e))
 
     def _on_vertex_click(self, event, vertex):
         if (vertex.x - RADIUS < event.x < vertex.x + RADIUS and vertex.y - RADIUS < event.y < vertex.y + RADIUS
@@ -119,7 +126,7 @@ class CanvasHandler:
             self.drawer.edge_drawer.draw_edge(edge, self.graph)
             self.selected_vertexes = []
 
-    def _on_edge_right_click(self, event, edge):
+    def _on_edge_right_click(self, edge):
         self.edge_to_delete = edge
         x = self.canvas.winfo_rootx() + 0.5 * (edge.vertex1.x + edge.vertex2.x)
         y = self.canvas.winfo_rooty() + 0.5 * (edge.vertex1.y + edge.vertex2.y)
@@ -132,6 +139,7 @@ class CanvasHandler:
         self.edge_to_delete = None
 
     def _on_vertex_right_click(self, event, vertex):
+        print('_on_vertex_right_click')
         if vertex.x - RADIUS < event.x < vertex.x + RADIUS and vertex.y - RADIUS < event.y < vertex.y + RADIUS:
             self.vertex_to_delete = vertex
             x = self.canvas.winfo_rootx() + vertex.x - 110
@@ -167,16 +175,16 @@ class CanvasHandler:
         dialog = AskWeightDialog(self.root)
         return dialog.weight
 
-    def _on_enter_vertex(self, event, vertex):
+    def _on_enter_vertex(self, vertex):
         self.drawer.vertex_drawer.highlight_vertex_color(vertex)
 
-    def _on_leave_vertex(self, event, vertex):
+    def _on_leave_vertex(self, vertex):
         if vertex not in self.selected_vertexes and not vertex.is_highlighted_by_algorithm:
             self.drawer.vertex_drawer.refresh_vertex_color(vertex)
 
-    def _on_enter_edge(self, event, edge):
+    def _on_enter_edge(self, edge):
         self.drawer.edge_drawer.highlight_edge_color(edge)
 
-    def _on_leave_edge(self, event, edge):
+    def _on_leave_edge(self, edge):
         if not edge.is_highlighted_by_algorithm:
             self.drawer.edge_drawer.refresh_edge_color(edge)
