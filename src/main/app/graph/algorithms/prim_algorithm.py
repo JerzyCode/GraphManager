@@ -5,7 +5,7 @@ from src.main.app.graph.edge import Edge
 
 def prim_algorithm(graph, drawer):
     from src.main.app.graph.algorithms.algorithms import is_graph_connected
-    if not graph.is_weighted or not is_graph_connected(graph):
+    if not graph.is_weighted or not is_graph_connected(graph) or len(graph.V) == 0:
         return
     start_vertex = graph.V[0]
     mst = []
