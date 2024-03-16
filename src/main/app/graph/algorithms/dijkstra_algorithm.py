@@ -3,6 +3,7 @@ import sys
 from src.main.app.graph.directed_graph import DirectedGraph
 from src.main.app.graph.edge import Edge
 from src.main.app.graph.vertex import Vertex
+from src.main.app.utils.utils import differ_in_weights
 
 max_size = sys.maxsize / 2
 
@@ -14,16 +15,6 @@ def _is_valid_graph(graph):
         if edge.weight < 0:
             return False
     return True
-
-
-def _differ_in_weights(graph):
-    edge_weight = {}
-    for edge in graph.E:
-        if edge.weight not in edge_weight.values():
-            edge_weight[edge] = edge.weight
-        else:
-            edge_weight[edge] = edge.weight + 0.01
-    return edge_weight
 
 
 def _minimum_distance_vertex(graph, distance, done_vertexes, start):
@@ -61,7 +52,7 @@ def _draw_dijkstra(drawer, for_drawer):
 def dijkstra_algorithm(graph, start, drawer):
     if not _is_valid_graph(graph):
         return
-    weights = _differ_in_weights(graph)
+    weights = differ_in_weights(graph)
     for_drawer = []
     prev_edge = {}
     done_vertexes = {}

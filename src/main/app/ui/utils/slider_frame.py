@@ -8,7 +8,6 @@ class SliderFrame(customtkinter.CTkFrame):
         self.label.grid(row=0, column=0, padx=(20, 5), pady=(10, 0))
 
         self.entry = customtkinter.CTkEntry(self, placeholder_text="size", width=100)
-        self.entry.insert(0, '10')
         self.entry.grid(row=1, column=1, padx=(0, 20), pady=10, sticky='w')
 
         self.slider = customtkinter.CTkSlider(self, from_=0, to=100, number_of_steps=100)
@@ -21,3 +20,6 @@ class SliderFrame(customtkinter.CTkFrame):
 
     def get_value(self):
         return self.entry.get()
+
+    def insert_value(self, value):
+        self.entry.insert(0, value)

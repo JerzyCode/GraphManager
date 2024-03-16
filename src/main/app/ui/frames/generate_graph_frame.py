@@ -46,9 +46,12 @@ class GenerateGraphFrame(customtkinter.CTkFrame):
 
         self.vertex_slider_frame = SliderFrame(self, "Number of vertexes: ")
         self.vertex_slider_frame.grid(row=2, column=0, pady=10, padx=20, sticky='nsew')
+        self.vertex_slider_frame.slider.set(10)
+        self.vertex_slider_frame.insert_value('10')
 
         self.density_slider_frame = SliderFrame(self, "Density of edges: ")
         self.density_slider_frame.grid(row=3, column=0, pady=10, padx=20, sticky='nsew')
+        self.density_slider_frame.insert_value(50)
 
         self.generate_button = customtkinter.CTkButton(master=self, fg_color="transparent", border_width=2, text='Generate Graph',
                                                        text_color=("gray10", "#DCE4EE"), command=self._on_generate_graph)

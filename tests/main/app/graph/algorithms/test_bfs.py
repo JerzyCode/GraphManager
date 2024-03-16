@@ -67,7 +67,7 @@ class TestBfs(unittest.TestCase):
 
     def test_bfs_no_connected(self):
         # given
-        graph = factory.generate_test_no_connected_graph()
+        graph = factory.generate_test_no_connected_no_weighted_graph()
         # when
         result = sut.binary_search(graph, self.drawer_mock)
         colored_vertexes = get_colored_vertexes(result)
