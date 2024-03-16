@@ -23,7 +23,6 @@ class Graph:
             self.V.append(Vertex(str(i + 1), max_width, max_height))
 
     def add_vertex(self, vertex):
-        # logger.debug("Add Vertex")
         self.V.append(vertex)
 
     def delete_vertex(self, vertex):
@@ -46,7 +45,6 @@ class Graph:
             vertex1.neighbors.remove(vertex2)
 
     def add_edge(self, vertex1, vertex2, is_directed, is_digraph, weight):
-        # logger.debug("Add Edge")
         if is_digraph:
             is_directed = True
         edge = Edge(vertex1, vertex2, is_directed, digraph=is_digraph, weight=weight)
