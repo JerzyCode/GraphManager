@@ -85,7 +85,7 @@ class GenerateGraphFrame(customtkinter.CTkFrame):
             return
         p = int(p) * 0.01
         if size and size.isdigit() and 100 >= int(size) >= 0:
-            self.canvas.delete('all')
+            self.drawer.erase_all_no_grid()
             graph_size = int(size)
             if self.is_digraph:
                 self.graph = digraph.generate_graph(graph_size, p,

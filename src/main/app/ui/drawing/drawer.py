@@ -31,6 +31,7 @@ class Drawer:
         self.canvas = canvas
         self.edge_drawer = edge_drawer
         self.vertex_drawer = vertex_drawer
+        self.grid_lines = []
 
     def erase_vertex_and_incidental_edges(self, vertex):
         self.edge_drawer.erase_edges_incidental(vertex, self.graph)
@@ -90,7 +91,30 @@ class Drawer:
     def erase_all(self):
         self.canvas.delete('all')
 
+    def erase_all_no_grid(self):
+        if self.graph is not None:
+            self.vertex_drawer.erase_all_vertexes(self.graph.V)
+            self.edge_drawer.erase_all_edges(self.graph.E)
+
     def draw_graph(self, graph):
         self.graph = graph
         self.edge_drawer.draw_all_edges(graph)
         self.vertex_drawer.draw_all_vertexes(graph.V)
+
+    def draw_grid(self, width, height):
+        line_distance = 50
+
+        # horizontal lines
+        for x in range(0, width, line_distance):
+            line_id = self.canvas.create_line(x, 0, x, height, fill='gray')
+            self.grid_lines.append(line_id)
+        # vertical lines
+        for y in range(0, height, line_distance):
+            line_id = self.canvas.create_line(0, y, width, y, fill='gray')
+            self.grid_lines.append(line_id)
+        # print(f'width: {width}, height: {height}')
+
+    def erase_grid(self):
+        for line_id in self.grid_lines:
+            self.canvas.delete(line_id)
+        self.grid_lines.clear()
