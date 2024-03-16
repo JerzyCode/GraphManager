@@ -36,7 +36,7 @@ class Drawer:
         self.edge_drawer.erase_edges_incidental(vertex, self.graph)
         self.vertex_drawer.erase_vertex(vertex)
 
-    def _highlight_edge_algorithm(self, edge):
+    def highlight_edge_algorithm(self, edge):
         self.edge_drawer.highlight_edge_color(edge)
         edge.is_highlighted_by_algorithm = True
 
@@ -54,7 +54,7 @@ class Drawer:
         self.canvas.after(delay, lambda: self.edge_drawer.refresh_edge_color(edge))
 
     def highlight_edge_delay(self, edge, delay):
-        self.canvas.after(delay, lambda: self._highlight_edge_algorithm(edge))
+        self.canvas.after(delay, lambda: self.highlight_edge_algorithm(edge))
 
     def highlight_edge_kruskal(self, edge, delay):
         self.highlight_vertex_delay(edge.vertex1, delay)

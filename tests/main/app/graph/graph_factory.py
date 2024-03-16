@@ -115,10 +115,16 @@ def generate_test_directed_graph():
     return DirectedGraph(directed_graph_matrix_bfs, is_weighted=False, max_width=max_width, max_height=max_height)
 
 
-def generate_test_no_connected_graph():
+def generate_test_no_connected_no_weighted_graph():
     max_width = rd.randint(150, 500)
     max_height = rd.randint(150, 500)
     return UndirectedGraph(graph_not_connected_matrix, is_weighted=False, max_width=max_width, max_height=max_height)
+
+
+def generate_test_no_connected_weighted_graph():
+    max_width = rd.randint(150, 500)
+    max_height = rd.randint(150, 500)
+    return UndirectedGraph(graph_not_connected_matrix, is_weighted=True, max_width=max_width, max_height=max_height)
 
 
 def generate_test_graph_negative_weight():

@@ -1,6 +1,7 @@
 from queue import Queue
 
 from src.main.app.graph.algorithms.dijkstra_algorithm import dijkstra_algorithm
+from src.main.app.graph.algorithms.prim_algorithm import prim_algorithm
 from src.main.app.graph.directed_graph import DirectedGraph
 from src.main.app.utils.constants import COLOR_DELAY
 
@@ -75,16 +76,16 @@ def is_graph_connected(graph):
     visited = {}
     result = []
     for vertex in graph.V:
-        visited[vertex] = True
+        visited[vertex] = False
     dfs(graph, graph.V[0], visited, None, None, result)
-    for v in visited:
+    for v in visited.values():
         if not v:
             return False
     return True
 
 
 def kruskal_algorithm(graph, drawer):
-    if not graph.is_weighted or is_graph_connected(graph):
+    if not graph.is_weighted or not is_graph_connected(graph):
         return
     tree = set()
     wood = set()
@@ -123,3 +124,7 @@ def different_sets(vertex1, vertex2, wood):
 
 def run_dijkstra_algorithm(graph, start, drawer):
     dijkstra_algorithm(graph, start, drawer)
+
+
+def run_prim_algorithm(graph, drawer):
+    prim_algorithm(graph, drawer)

@@ -40,3 +40,13 @@ def get_colored_edges(elements):
         if isinstance(element, Edge):
             result.append(element)
     return result
+
+
+def differ_in_weights(graph):
+    edge_weight = {}
+    for edge in graph.E:
+        if edge.weight not in edge_weight.values():
+            edge_weight[edge] = edge.weight
+        else:
+            edge_weight[edge] = edge.weight + 0.01
+    return edge_weight

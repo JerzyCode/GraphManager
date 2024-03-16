@@ -11,7 +11,7 @@ class AlgorithmsFrame(customtkinter.CTkFrame):
     def __init__(self, master, graph):
         super().__init__(master, width=LEFT_FRAME_WIDTH)
         self.drawer = master.drawer
-        self.grid_rowconfigure(5, weight=1)
+        self.grid_rowconfigure(6, weight=1)
         self._create_buttons()
         self.graph = graph
 
@@ -31,8 +31,11 @@ class AlgorithmsFrame(customtkinter.CTkFrame):
         dijkstra_button = customtkinter.CTkButton(self, text=DIJKSTRA_ALGORITHM, command=self._on_dijkstra_algorithm_btn)
         dijkstra_button.grid(row=4, column=0, padx=20, pady=10)
 
+        prim_button = customtkinter.CTkButton(self, text=PRIM_ALGORITHM, command=self._on_prim_algorithm_btn)
+        prim_button.grid(row=5, column=0, padx=20, pady=10)
+
         close_button = customtkinter.CTkButton(self, text="Close", command=self.close_modal)
-        close_button.grid(row=6, column=0, padx=20, pady=(10, 20))
+        close_button.grid(row=7, column=0, padx=20, pady=(10, 20))
 
     def _on_run_dfs_btn(self):
         logger.debug("Running DFS")
@@ -55,6 +58,13 @@ class AlgorithmsFrame(customtkinter.CTkFrame):
         else:
             logger.debug("Running Dijkstra")
             algorithm.run_dijkstra_algorithm(self.graph, self.graph.V[0], self.drawer)
+
+    def _on_prim_algorithm_btn(self):
+        if self.graph is None:
+            return
+        else:
+            logger.debug("Running Prim")
+            algorithm.run_prim_algorithm(self.graph, self.drawer)
 
     def _run_search(self, search):
         if self.graph is None:

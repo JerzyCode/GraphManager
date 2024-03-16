@@ -45,6 +45,11 @@ class TestKruskal(unittest.TestCase):
         labels = {edge.label for edge in result}
         self.assertEqual(num_of_colored_kruskal, len(result))
         self.assertEqual(set(labels), {'1_2', '1_5', '2_6', '2_7', '2_4', '3_7', '4_8'})
-        # in future check if tree connected and if there is a cycle
 
-    # TEST UNCONNECTED GRAPH
+    def test_kruskal_no_connected_graph(self):
+        # given
+        graph = factory.generate_test_no_connected_weighted_graph()
+        # when
+        result = sut.kruskal_algorithm(graph, self.drawer_mock)
+        # then
+        self.assertIsNone(result)

@@ -1,6 +1,3 @@
-import uuid
-
-
 class Edge:
     def __init__(self, vertex1, vertex2, directed=False, digraph=False, weight=None):
         self.vertex1 = vertex1
@@ -21,4 +18,9 @@ class Edge:
         return hash(self.label)
 
     def __str__(self):
-        return self.label
+        string = f'Edge(label={self.label}'
+        if self.weight is not None:
+            string += f', weight={self.weight})'
+        else:
+            string += ')'
+        return string

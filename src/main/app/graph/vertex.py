@@ -1,5 +1,4 @@
 import random
-import uuid
 
 from src.main.app.utils.constants import *
 
