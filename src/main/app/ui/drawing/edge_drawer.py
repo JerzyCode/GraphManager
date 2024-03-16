@@ -1,7 +1,8 @@
 import tkinter
 
 from src.main.app.graph.digraph import Digraph
-from src.main.app.utils.constants import *
+from src.main.app.utils.constants import EDGE_COLOR_LIGHT, EDGE_COLOR_CHANGE_LIGHT, WEIGHT_COLOR_LIGHT, WEIGHT_COLOR_CHANGE_LIGHT, EDGE_COLOR_DARK, \
+    EDGE_COLOR_CHANGE_DARK, WEIGHT_COLOR_DARK, WEIGHT_COLOR_CHANGE_DARK, RADIUS, APEX_DISTANCE, EDGE_WIDTH, WEIGHT_FONT_SIZE, EDGE_WIDTH_WIDER
 
 global edge_color, edge_color_changed, weight_color, weight_color_changed
 

@@ -42,7 +42,6 @@ SET
   digraph = ?
 WHERE save_name = ?;'''
 
-
 CLEAR_EDGE_TABLE_BY_NAME_QUERY = 'DELETE FROM edge_table WHERE save_name = ?'
 CLEAR_VERTEX_TABLE_BY_NAME_QUERY = 'DELETE FROM vertex_table WHERE save_name = ?'
 CLEAR_GRAPH_TABLE_BY_NAME_QUERY = 'DELETE FROM graph_table WHERE save_name = ?'
@@ -72,4 +71,3 @@ SELECT_VERTEXES_BY_SAVE_NAME_QUERY = 'SELECT * FROM vertex_table WHERE save_name
 SELECT_EDGES_BY_SAVE_NAME_QUERY = 'SELECT * FROM edge_table WHERE save_name = ?;'
 SELECT_GRAPH_BY_SAVE_NAME_QUERY = 'SELECT * FROM graph_table WHERE save_name = ?'
 SELECT_ALL_SAVES = 'SELECT * FROM save_table;'
-

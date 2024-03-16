@@ -8,7 +8,7 @@ from src.main.app.graph.graph import Graph
 from src.main.app.ui.drawing.canvas_handler import CanvasHandler
 from src.main.app.ui.utils.params_checkbox_frame import ParamsCheckboxFrame
 from src.main.app.ui.utils.slider_frame import SliderFrame
-from src.main.app.utils.constants import *
+from src.main.app.utils.constants import LEFT_FRAME_WIDTH
 
 global input_box_bg_color, input_box_fg_color
 

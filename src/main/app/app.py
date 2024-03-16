@@ -12,7 +12,7 @@ from src.main.app.ui.frames.algorithms_frame import AlgorithmsFrame
 from src.main.app.ui.frames.generate_graph_frame import GenerateGraphFrame
 from src.main.app.ui.frames.save_load_graph_frame import SaveLoadGraphFrame
 from src.main.app.ui.windows.set_weight_window import change_set_weight_window_appearance_mode
-from src.main.app.utils.constants import *
+from src.main.app.utils.constants import WINDOW_WIDTH, WINDOW_HEIGHT, LEFT_FRAME_WIDTH, GRAPH_BG_COLOR_DARK, GRAPH_BG_COLOR_LIGHT
 from src.main.app.utils.logger import setup_logger
 
 logger = setup_logger("App")

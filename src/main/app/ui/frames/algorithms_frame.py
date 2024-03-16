@@ -1,7 +1,7 @@
 import customtkinter
 
 import src.main.app.graph.algorithms.algorithms as algorithm
-from src.main.app.utils.constants import *
+from src.main.app.utils.constants import LEFT_FRAME_WIDTH, ALGORITHMS, BFS, KRUSKAL_ALGORITHM, DFS, DIJKSTRA_ALGORITHM, PRIM_ALGORITHM
 from src.main.app.utils.logger import setup_logger
 
 logger = setup_logger("AlgorithmsFrame")

@@ -2,7 +2,7 @@ import tkinter
 
 import customtkinter
 
-from src.main.app.utils.constants import *
+from src.main.app.utils.constants import GRAPH_BG_COLOR_LIGHT, GRAPH_BG_COLOR_DARK, ADD_WEIGHT_HEIGHT, ADD_WEIGHT_WIDTH
 from src.main.app.utils.logger import setup_logger
 
 logger = setup_logger("SetWeightWindow")
@@ -51,7 +51,7 @@ class AskWeightDialog(tkinter.Toplevel):
         self.submit_button = customtkinter.CTkButton(self, text='Submit', command=self.validate)
         self.submit_button.grid(row=1, column=0, columnspan=3, padx=5, pady=10)
 
-    def validate(self, event=None):
+    def validate(self):
         try:
             self.weight = int(self.weight_entry.get())
             self.destroy()

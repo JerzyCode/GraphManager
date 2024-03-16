@@ -23,13 +23,6 @@ class DatabaseTest(TestCase):
         self.cursor.execute(queries.CHECK_IF_TABLE_EXISTS_BY_NAME, (table_name,))
         return self.cursor.fetchone()
 
-    def drop_test_db(self):
-        self.cursor.execute(queries.DROP_EDGE_TABLE_QUERY)
-        self.cursor.execute(queries.DROP_GRAPH_TABLE_QUERY)
-        self.cursor.execute(queries.DROP_VERTEX_TABLE_QUERY)
-        self.cursor.execute(queries.DROP_SAVE_TABLE_QUERY)
-        self.cursor.connection.commit()
-
     def clear_test_db(self):
         self.cursor.execute(queries.CLEAR_EDGE_TABLE_QUERY)
         self.cursor.execute(queries.CLEAR_GRAPH_TABLE_QUERY)

@@ -3,6 +3,15 @@ import heapq
 from src.main.app.graph.edge import Edge
 
 
+def _choose_new_vertex(edge, visited):
+    new_vertex = None
+    if edge.vertex1 not in visited:
+        new_vertex = edge.vertex1
+    elif edge.vertex2 not in visited:
+        new_vertex = edge.vertex2
+    return new_vertex
+
+
 def prim_algorithm(graph, drawer):
     from src.main.app.graph.algorithms.algorithms import is_graph_connected
     if not graph.is_weighted or not is_graph_connected(graph) or len(graph.V) == 0:
@@ -18,13 +27,8 @@ def prim_algorithm(graph, drawer):
     visited.add(start_vertex)
 
     while edges_heap:
-        weight, _, edge = heapq.heappop(edges_heap)
-        new_vertex = None
-
-        if edge.vertex1 not in visited:
-            new_vertex = edge.vertex1
-        elif edge.vertex2 not in visited:
-            new_vertex = edge.vertex2
+        _, _, edge = heapq.heappop(edges_heap)
+        new_vertex = _choose_new_vertex(edge, visited)
 
         if new_vertex is not None:
             visited.add(new_vertex)

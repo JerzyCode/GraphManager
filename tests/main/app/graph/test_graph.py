@@ -29,8 +29,8 @@ class TestGraph(unittest.TestCase):
         # then
         self.assertEqual(len(graph.V), 1)
         self.assertEqual(len(graph.E), 0)
-        self.assertTrue(vertex1 not in vertex2.neighbors)
-        self.assertTrue(vertex2 not in vertex1.neighbors)
+        self.assertNotIn(vertex1, vertex2.neighbors)
+        self.assertNotIn(vertex2, vertex1.neighbors)
         self.assertEqual(len(vertex1.edges), 0)
         self.assertEqual(len(vertex2.edges), 0)
 
@@ -45,8 +45,8 @@ class TestGraph(unittest.TestCase):
         # then
         self.assertEqual(len(graph.V), 2)
         self.assertEqual(len(graph.E), 0)
-        self.assertTrue(vertex1 not in vertex2.neighbors)
-        self.assertTrue(vertex2 not in vertex1.neighbors)
+        self.assertNotIn(vertex1, vertex2.neighbors)
+        self.assertNotIn(vertex2, vertex1.neighbors)
         self.assertEqual(len(vertex1.edges), 0)
         self.assertEqual(len(vertex2.edges), 0)
 
@@ -64,10 +64,10 @@ class TestGraph(unittest.TestCase):
         self.assertEqual(added_edge.vertex2, vertex3)
         self.assertFalse(added_edge.directed)
         self.assertIsNone(added_edge.weight)
-        self.assertTrue(vertex1 in vertex3.neighbors)
-        self.assertTrue(vertex3 in vertex1.neighbors)
-        self.assertTrue(added_edge in vertex1.edges)
-        self.assertTrue(added_edge in vertex3.edges)
+        self.assertIn(vertex1, vertex3.neighbors)
+        self.assertIn(vertex3, vertex1.neighbors)
+        self.assertIn(added_edge, vertex1.edges)
+        self.assertIn(added_edge, vertex3.edges)
 
     def test_add_edge_directed_graph(self):
         # given
@@ -83,10 +83,10 @@ class TestGraph(unittest.TestCase):
         self.assertEqual(added_edge.vertex2, vertex3)
         self.assertTrue(added_edge.directed)
         self.assertIsNotNone(added_edge.weight)
-        self.assertTrue(vertex3 in vertex1.neighbors)
-        self.assertFalse(vertex1 in vertex3.neighbors)
-        self.assertTrue(added_edge in vertex1.edges)
-        self.assertFalse(added_edge in vertex3.edges)
+        self.assertIn(vertex3, vertex1.neighbors)
+        self.assertNotIn(vertex1, vertex3.neighbors)
+        self.assertIn(added_edge, vertex1.edges)
+        self.assertNotIn(added_edge, vertex3.edges)
 
     def test_generate_undirected_graph(self):
         # given
@@ -100,12 +100,12 @@ class TestGraph(unittest.TestCase):
         # then
         self.assertTrue(graph.is_weighted)
         self.assertEqual(len(graph.V), number_of_vertex)
-        self.assertFalse(isinstance(graph, directed_graph.DirectedGraph))
-        self.assertFalse(isinstance(graph, digraph.Digraph))
-        self.assertTrue(isinstance(graph, undirected_graph.UndirectedGraph))
+        self.assertNotIsInstance(graph, directed_graph.DirectedGraph)
+        self.assertNotIsInstance(graph, digraph.Digraph)
+        self.assertIsInstance(graph, undirected_graph.UndirectedGraph)
         self.assertIsNotNone(graph.E)
         for edge in graph.E:
-            self.assertTrue(edge.weight is not None)
+            self.assertIsNotNone(edge.weight)
             self.assertFalse(edge.directed)
 
     def test_generate_directed_graph(self):
@@ -120,12 +120,12 @@ class TestGraph(unittest.TestCase):
         # then
         self.assertTrue(graph.is_weighted)
         self.assertEqual(len(graph.V), number_of_vertex)
-        self.assertTrue(isinstance(graph, directed_graph.DirectedGraph))
-        self.assertFalse(isinstance(graph, digraph.Digraph))
-        self.assertFalse(isinstance(graph, undirected_graph.UndirectedGraph))
+        self.assertIsInstance(graph, directed_graph.DirectedGraph)
+        self.assertNotIsInstance(graph, digraph.Digraph)
+        self.assertNotIsInstance(graph, undirected_graph.UndirectedGraph)
         self.assertIsNotNone(graph.E)
         for edge in graph.E:
-            self.assertTrue(edge.weight is not None)
+            self.assertIsNotNone(edge.weight)
             self.assertTrue(edge.directed)
 
     def test_generate_digraph_graph(self):
@@ -140,10 +140,10 @@ class TestGraph(unittest.TestCase):
         # then
         self.assertTrue(graph.is_weighted)
         self.assertEqual(len(graph.V), number_of_vertex)
-        self.assertTrue(isinstance(graph, directed_graph.DirectedGraph))
-        self.assertTrue(isinstance(graph, digraph.Digraph))
-        self.assertFalse(isinstance(graph, undirected_graph.UndirectedGraph))
+        self.assertIsInstance(graph, directed_graph.DirectedGraph)
+        self.assertIsInstance(graph, digraph.Digraph)
+        self.assertNotIsInstance(graph, undirected_graph.UndirectedGraph)
         self.assertIsNotNone(graph.E)
         for edge in graph.E:
-            self.assertTrue(edge.weight is not None)
+            self.assertIsNotNone(edge.weight)
             self.assertTrue(edge.directed)
