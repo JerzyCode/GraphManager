@@ -12,6 +12,7 @@ class TestEdgeDrawer(TestCase):
         self.canvas_mock = Mock(spec=tkinter.Canvas)
         self.config_mock = Mock(spec=Config)
         self.config_mock.edge_width = 1.25
+        self.config_mock.vertex_radius = 14
         change_edge_appearance_mode('Dark')
         self.sut = EdgeDrawer(self.canvas_mock, self.config_mock)
 

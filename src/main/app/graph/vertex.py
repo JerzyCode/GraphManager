@@ -1,6 +1,6 @@
 import random
 
-from src.main.app.utils.constants import RADIUS, GRAPH_VIEW_WIDTH, GRAPH_VIEW_HEIGHT
+from src.main.app.utils.constants import GRAPH_VIEW_WIDTH, GRAPH_VIEW_HEIGHT, MAX_RADIUS
 
 
 class Vertex:
@@ -16,12 +16,12 @@ class Vertex:
         self.is_highlighted_by_algorithm = False
 
     def _set_coords(self, max_width, max_height):
-        if max_width < 2 * RADIUS or max_height < 2 * RADIUS:
-            self.x = random.randint(2 * RADIUS, GRAPH_VIEW_WIDTH - 2 * RADIUS)
-            self.y = random.randint(2 * RADIUS, GRAPH_VIEW_HEIGHT - 2 * RADIUS)
+        if max_width < 2 * MAX_RADIUS or max_height < 2 * MAX_RADIUS:
+            self.x = random.randint(2 * MAX_RADIUS, GRAPH_VIEW_WIDTH - 2 * MAX_RADIUS)
+            self.y = random.randint(2 * MAX_RADIUS, GRAPH_VIEW_HEIGHT - 2 * MAX_RADIUS)
         else:
-            self.x = random.randint(2 * RADIUS, max_width - 2 * RADIUS)
-            self.y = random.randint(2 * RADIUS, max_height - 2 * RADIUS)
+            self.x = random.randint(2 * MAX_RADIUS, max_width - 2 * MAX_RADIUS)
+            self.y = random.randint(2 * MAX_RADIUS, max_height - 2 * MAX_RADIUS)
 
     def find_edge(self, neigh, is_directed):
         if is_directed:

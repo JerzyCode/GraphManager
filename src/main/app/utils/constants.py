@@ -2,6 +2,7 @@ from math import sqrt
 
 # GRAPH
 RADIUS = 12
+MAX_RADIUS = 30
 RADIUS_SQRT = sqrt(RADIUS)
 VERTEX_FONT_SIZE = RADIUS
 EDGE_WIDTH = 1.35
