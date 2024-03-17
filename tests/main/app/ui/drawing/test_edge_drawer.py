@@ -4,13 +4,16 @@ from unittest.mock import Mock
 
 import tests.main.app.graph.graph_factory as factory
 from src.main.app.ui.drawing.edge_drawer import EdgeDrawer, change_edge_appearance_mode
+from src.main.app.utils.config import Config
 
 
 class TestEdgeDrawer(TestCase):
     def setUp(self):
         self.canvas_mock = Mock(spec=tkinter.Canvas)
+        self.config_mock = Mock(spec=Config)
+        self.config_mock.edge_width = 1.25
         change_edge_appearance_mode('Dark')
-        self.sut = EdgeDrawer(self.canvas_mock)
+        self.sut = EdgeDrawer(self.canvas_mock, self.config_mock)
 
     def test_draw_edge_digraph(self):
         # given

@@ -2,7 +2,7 @@ import tkinter
 
 from src.main.app.graph.digraph import Digraph
 from src.main.app.utils.constants import EDGE_COLOR_LIGHT, EDGE_COLOR_CHANGE_LIGHT, WEIGHT_COLOR_LIGHT, WEIGHT_COLOR_CHANGE_LIGHT, EDGE_COLOR_DARK, \
-    EDGE_COLOR_CHANGE_DARK, WEIGHT_COLOR_DARK, WEIGHT_COLOR_CHANGE_DARK, RADIUS, APEX_DISTANCE, EDGE_WIDTH, WEIGHT_FONT_SIZE, EDGE_WIDTH_WIDER
+    EDGE_COLOR_CHANGE_DARK, WEIGHT_COLOR_DARK, WEIGHT_COLOR_CHANGE_DARK, RADIUS, APEX_DISTANCE, WEIGHT_FONT_SIZE, EDGE_WIDTH_WIDER
 
 global edge_color, edge_color_changed, weight_color, weight_color_changed
 
@@ -93,8 +93,9 @@ def _prepare_draw_edge(edge, is_digraph):
 
 
 class EdgeDrawer:
-    def __init__(self, canvas):
+    def __init__(self, canvas, config):
         self.canvas = canvas
+        self.config = config
 
     def draw_edge_params(self, edge, graph, color, width, previous_weight_color):
         self.draw_edge(edge, graph)
@@ -120,7 +121,7 @@ class EdgeDrawer:
             params['vertex1_y'] + params['start_line_points'][1],
             params['vertex2_x'] + params['end_line_points'][0],
             params['vertex2_y'] + params['end_line_points'][1],
-            fill=edge_color, width=EDGE_WIDTH,
+            fill=edge_color, width=self.config.edge_width,
             tags=f"edge_{params['label']}", smooth=True)
         if edge.weight is not None:
             self._draw_weight(edge)
@@ -136,7 +137,7 @@ class EdgeDrawer:
             params['apex'][0], params['apex'][1],
             params['vertex2_x'] + params['end_line_points'][0],
             params['vertex2_y'] + params['end_line_points'][1],
-            fill=edge_color, width=EDGE_WIDTH,
+            fill=edge_color, width=self.config.edge_width,
             tags=f"edge_{params['label']}", smooth=True)
         if edge.weight is not None:
             self._draw_weight(edge)
@@ -146,11 +147,11 @@ class EdgeDrawer:
 
     def highlight_edge_color(self, edge):
         if edge is not None:
-            self.change_edge_params(edge, edge_color_changed, EDGE_WIDTH_WIDER, weight_color_changed)
+            self.change_edge_params(edge, edge_color_changed, self.config.edge_width, weight_color_changed)
 
     def refresh_edge_color(self, edge):
         if edge is not None:
-            self.canvas.itemconfig(f"edge_{edge.label}", fill=edge_color, width=EDGE_WIDTH)
+            self.canvas.itemconfig(f"edge_{edge.label}", fill=edge_color, width=self.config.edge_width)
             if edge.weight is not None:
                 self.canvas.itemconfig(f'weight_{edge.weight}_{edge.label}', fill=weight_color)
                 edge.is_highlighted_by_algorithm = False

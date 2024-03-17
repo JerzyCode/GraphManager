@@ -110,7 +110,7 @@ class App(customtkinter.CTk):
     def _create_graph_display_frame(self):
         logger.debug("Creating Graph Display Frame...")
         self.canvas = customtkinter.CTkCanvas(self, bg=GRAPH_BG_COLOR_DARK, bd=0, highlightthickness=0, relief='ridge')
-        self.edge_drawer = EdgeDrawer(self.canvas)
+        self.edge_drawer = EdgeDrawer(self.canvas, self.config)
         self.vertex_drawer = VertexDrawer(self.canvas)
         self.drawer = Drawer(self.canvas, self.edge_drawer, self.vertex_drawer)
         self.canvas.grid(row=0, column=1, rowspan=11, columnspan=2, padx=5, pady=5, sticky="nsew")
