@@ -18,6 +18,18 @@ ENTER = "<Enter>"
 LEAVE = "<Leave>"
 
 
+def attract(event_x, event_y):
+    delta_x = None
+    delta_y = None
+    potential_x = int(event_x / 50)
+    potential_y = int(event_y / 50)
+    if potential_x - potential_x * 50 <= 25:
+        delta_x = event_x - potential_x * 50
+    if potential_y - potential_y * 50 <= 25:
+        delta_y = event_y - potential_y * 50
+    return delta_x, delta_y
+
+
 class CanvasHandler:
     def __init__(self, root, is_directed=False, is_digraph=False, is_weighted=False, graph=None):
         self.graph = None
@@ -30,6 +42,7 @@ class CanvasHandler:
         self.is_weighted = is_weighted
         self.is_digraph = is_digraph
         self.enabled = True
+        self.attract_to_grid = True
         self._create_graph(graph)
         self.selected_vertexes = []
         self.canvas.bind("<Shift-Button-1>", self._on_shift_button_1)
@@ -161,10 +174,22 @@ class CanvasHandler:
         if (event.x <= RADIUS or event.x >= self.canvas.winfo_width() - RADIUS
                 or event.y <= RADIUS or event.y >= self.canvas.winfo_height() - RADIUS):
             return
-        delta_x = event.x - vertex.x
-        delta_y = event.y - vertex.y
-        vertex.x = event.x
-        vertex.y = event.y
+        delta_x = 0
+        delta_y = 0
+        if not self.attract_to_grid:
+            delta_x = event.x - vertex.x
+            delta_y = event.y - vertex.y
+            vertex.x = event.x
+            vertex.y = event.y
+        else:
+            x, y = attract(event.x, event.y)
+            if x is not None and y is not None:
+                prev_x = vertex.x
+                prev_y = vertex.y
+                vertex.x = event.x - x
+                vertex.y = event.y - y
+                delta_x = vertex.x - prev_x
+                delta_y = vertex.y - prev_y
         self.canvas.move(f"vertex_{vertex.label}", delta_x, delta_y)
         self.canvas.move(f"text_{vertex.label}", delta_x, delta_y)
         self.canvas.move(f'distance_{vertex.label}', delta_x, delta_y)

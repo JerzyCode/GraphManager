@@ -103,7 +103,7 @@ class App(customtkinter.CTk):
                                                                        values=["Light", "Dark"],
                                                                        command=self._change_appearance_mode)
         self.appearance_mode_option_menu.set("Dark")
-        self.appearance_mode_option_menu.grid(row=10, column=0, padx=20, pady=(10, 20))
+        self.appearance_mode_option_menu.grid(row=11, column=0, padx=20, pady=(10, 20))
 
     def _create_graph_display_frame(self):
         logger.debug("Creating Graph Display Frame...")
@@ -202,11 +202,15 @@ class App(customtkinter.CTk):
 
     def on_window_resize(self, event):
         if event.width != self.winfo_width() or event.height != self.winfo_height():
+            self.drawer.erase_grid()
             self.draw_grid()
 
     def on_grid_checkbox(self):
         self.grid_on = not self.grid_on
         if self.grid_on:
             self.draw_grid()
+            self.canvas_handler.attract_to_grid = True
         else:
             self.drawer.erase_grid()
+            if self.canvas_handler is not None:
+                self.canvas_handler.attract_to_grid = False

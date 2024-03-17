@@ -112,7 +112,9 @@ class Drawer:
         for y in range(0, height, line_distance):
             line_id = self.canvas.create_line(0, y, width, y, fill='gray')
             self.grid_lines.append(line_id)
-        # print(f'width: {width}, height: {height}')
+        if self.graph is not None:
+            self.edge_drawer.raise_all_edges(self.graph.E)
+            self.vertex_drawer.raise_all_vertexes(self.graph.V)
 
     def erase_grid(self):
         for line_id in self.grid_lines:
