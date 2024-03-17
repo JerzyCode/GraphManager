@@ -18,6 +18,12 @@ class SliderFrame(customtkinter.CTkFrame):
         self.entry.delete(0, customtkinter.END)
         self.entry.insert(0, str(int(value)))
 
+    def hide_entry(self):
+        self.entry.grid_forget()
+
+    def set_value_step(self, steps):
+        self.slider.configure(number_of_steps=int(100 / steps))
+
     def get_value(self):
         return self.entry.get()
 

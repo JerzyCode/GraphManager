@@ -13,7 +13,9 @@ from src.main.app.ui.frames.add_graph_frame import AddGraphFrame
 from src.main.app.ui.frames.algorithms_frame import AlgorithmsFrame
 from src.main.app.ui.frames.generate_graph_frame import GenerateGraphFrame
 from src.main.app.ui.frames.save_load_graph_frame import SaveLoadGraphFrame
+from src.main.app.ui.frames.settings_frame import SettingsFrame
 from src.main.app.ui.windows.set_weight_window import change_set_weight_window_appearance_mode
+from src.main.app.utils.config import Config
 from src.main.app.utils.constants import WINDOW_WIDTH, WINDOW_HEIGHT, LEFT_FRAME_WIDTH, GRAPH_BG_COLOR_DARK, GRAPH_BG_COLOR_LIGHT
 from src.main.app.utils.logger import setup_logger
 
@@ -41,6 +43,7 @@ class App(customtkinter.CTk):
         super().__init__()
         logger.debug("App starting...")
         db.start_database(db_url)
+        self.config = Config(self)
         self.canvas_handler = None
         self.graph = None
         self.weight_hidden = False
@@ -48,8 +51,8 @@ class App(customtkinter.CTk):
         self._configure_window()
         self._create_sidebar_frame()
         self._create_graph_display_frame()
-        self.bind("<Configure>", lambda event: self.on_window_resize(event))
-        self.draw_grid()
+        self.bind("<Configure>", lambda event: self.config.change_window_size(event))
+        # self.draw_grid()
 
     def _configure_window(self):
         logger.debug("Configuring Window...")
@@ -67,7 +70,7 @@ class App(customtkinter.CTk):
         logger.debug("Creating Sidebar Frame...")
         self.sidebar_frame = customtkinter.CTkFrame(self, width=LEFT_FRAME_WIDTH, corner_radius=0)
         self.sidebar_frame.grid(row=0, column=0, rowspan=11, sticky="nsew")
-        self.sidebar_frame.grid_rowconfigure(8, weight=1)
+        self.sidebar_frame.grid_rowconfigure(9, weight=1)
 
         self.logo_label = customtkinter.CTkLabel(self.sidebar_frame, text="Graph Manager", font=customtkinter.CTkFont(size=20, weight="bold"))
         self.logo_label.grid(row=0, column=0, padx=20, pady=(20, 10))
@@ -93,9 +96,8 @@ class App(customtkinter.CTk):
         self.clear_button = customtkinter.CTkButton(self.sidebar_frame, text='Clear Graph', command=self.on_clear_graph)
         self.clear_button.grid(row=7, column=0, padx=20, pady=10)
 
-        self.on_grid_checkbox = customtkinter.CTkCheckBox(master=self.sidebar_frame, text="Grid",
-                                                          variable=self.grid_on, command=self.on_grid_checkbox)
-        self.on_grid_checkbox.grid(row=8, column=0, pady=20, padx=10)
+        self.settings_button = customtkinter.CTkButton(self.sidebar_frame, text='Settings', command=self._on_settings_button)
+        self.settings_button.grid(row=8, column=0, padx=20, pady=10)
 
         self.appearance_mode_label = customtkinter.CTkLabel(self.sidebar_frame, text="Appearance Mode:", anchor="w")
         self.appearance_mode_label.grid(row=10, column=0, padx=20, pady=(10, 0))
@@ -132,6 +134,10 @@ class App(customtkinter.CTk):
 
     def _on_algorithms_button(self):
         frame = AlgorithmsFrame(self, self.graph)
+        open_frame(frame)
+
+    def _on_settings_button(self):
+        frame = SettingsFrame(self)
         open_frame(frame)
 
     def on_graph_generated_hook(self):
@@ -195,22 +201,3 @@ class App(customtkinter.CTk):
         center_x = int((screen_width - WINDOW_WIDTH) / 2)
         center_y = int((screen_height - WINDOW_HEIGHT) / 2)
         self.geometry(f"{WINDOW_WIDTH + expand_width}x{WINDOW_HEIGHT + expand_height}+{center_x}+{center_y}")
-
-    def draw_grid(self):
-        if self.grid_on:
-            self.after(50, lambda: self.drawer.draw_grid(self.canvas.winfo_width(), self.canvas.winfo_height()))
-
-    def on_window_resize(self, event):
-        if event.width != self.winfo_width() or event.height != self.winfo_height():
-            self.drawer.erase_grid()
-            self.draw_grid()
-
-    def on_grid_checkbox(self):
-        self.grid_on = not self.grid_on
-        if self.grid_on:
-            self.draw_grid()
-            self.canvas_handler.attract_to_grid = True
-        else:
-            self.drawer.erase_grid()
-            if self.canvas_handler is not None:
-                self.canvas_handler.attract_to_grid = False

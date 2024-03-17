@@ -35,6 +35,7 @@ class CanvasHandler:
         self.graph = None
         self.canvas = root.canvas
         self.drawer = root.drawer
+        self.config = root.config
         self.vertex_to_delete = None
         self.edge_to_delete = None
         self.root = root
@@ -42,7 +43,6 @@ class CanvasHandler:
         self.is_weighted = is_weighted
         self.is_digraph = is_digraph
         self.enabled = True
-        self.attract_to_grid = True
         self._create_graph(graph)
         self.selected_vertexes = []
         self.canvas.bind("<Shift-Button-1>", self._on_shift_button_1)
@@ -176,7 +176,7 @@ class CanvasHandler:
             return
         delta_x = 0
         delta_y = 0
-        if not self.attract_to_grid:
+        if not self.config.is_grid_enabled:
             delta_x = event.x - vertex.x
             delta_y = event.y - vertex.y
             vertex.x = event.x
