@@ -42,6 +42,8 @@ def end_line_point(vertex1, vertex2):
     if vertex2.x - vertex1.x > 0:
         delta_x = -delta_x
         delta_y = -delta_y
+    if vertex2.y - vertex1.y > 0 and vertex2.x == vertex1.x:
+        delta_y = -delta_y
 
     return delta_x, delta_y, -delta_x, -delta_y
 
@@ -177,6 +179,12 @@ class EdgeDrawer:
                     erased_edges_params[edge]["weight_color"] = fill_color_weight
                 self.erase_edge(edge)
         return erased_edges_params
+
+    def raise_all_edges(self, edges):
+        for edge in edges:
+            self.canvas.tag_raise(f"edge_{edge.label}")
+            if edge.weight is not None:
+                self.canvas.tag_raise(f"weight_{edge.label}")
 
     def _draw_edges_incidental(self, graph, edges):
         for edge in edges:

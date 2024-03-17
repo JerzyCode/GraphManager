@@ -1,3 +1,5 @@
+import tkinter
+
 import customtkinter
 
 import src.main.app.data.database as db
@@ -42,13 +44,17 @@ class App(customtkinter.CTk):
         self.canvas_handler = None
         self.graph = None
         self.weight_hidden = False
+        self.grid_on = tkinter.BooleanVar(value=True)
         self._configure_window()
         self._create_sidebar_frame()
         self._create_graph_display_frame()
+        self.bind("<Configure>", lambda event: self.on_window_resize(event))
+        self.draw_grid()
 
     def _configure_window(self):
         logger.debug("Configuring Window...")
         self.title("Graph Manager")
+        self.geometry(f'{WINDOW_WIDTH}x{WINDOW_HEIGHT}')
         self.minsize(WINDOW_WIDTH, WINDOW_HEIGHT)
         self.set_window_size(0, 0)
 
@@ -87,13 +93,17 @@ class App(customtkinter.CTk):
         self.clear_button = customtkinter.CTkButton(self.sidebar_frame, text='Clear Graph', command=self.on_clear_graph)
         self.clear_button.grid(row=7, column=0, padx=20, pady=10)
 
+        self.on_grid_checkbox = customtkinter.CTkCheckBox(master=self.sidebar_frame, text="Grid",
+                                                          variable=self.grid_on, command=self.on_grid_checkbox)
+        self.on_grid_checkbox.grid(row=8, column=0, pady=20, padx=10)
+
         self.appearance_mode_label = customtkinter.CTkLabel(self.sidebar_frame, text="Appearance Mode:", anchor="w")
-        self.appearance_mode_label.grid(row=9, column=0, padx=20, pady=(10, 0))
+        self.appearance_mode_label.grid(row=10, column=0, padx=20, pady=(10, 0))
         self.appearance_mode_option_menu = customtkinter.CTkOptionMenu(self.sidebar_frame,
                                                                        values=["Light", "Dark"],
                                                                        command=self._change_appearance_mode)
         self.appearance_mode_option_menu.set("Dark")
-        self.appearance_mode_option_menu.grid(row=10, column=0, padx=20, pady=(10, 20))
+        self.appearance_mode_option_menu.grid(row=11, column=0, padx=20, pady=(10, 20))
 
     def _create_graph_display_frame(self):
         logger.debug("Creating Graph Display Frame...")
@@ -141,13 +151,12 @@ class App(customtkinter.CTk):
 
     def _on_close_btn(self):
         logger.debug("Closing App")
-        # db.clear_tables()
         self.destroy()
 
     def on_clear_graph(self):
         logger.debug("Clearing Graph")
         self.add_graph_button.configure(state='normal')
-        self.drawer.erase_all()
+        self.drawer.erase_all_no_grid()
         self.graph = None
         if self.canvas_handler is not None:
             self.canvas_handler.enabled = False
@@ -167,12 +176,12 @@ class App(customtkinter.CTk):
         self.drawer.refresh_all(self.graph)
 
     def _on_save_graph_btn(self):
-        frame = SaveLoadGraphFrame(self, 'save')
-        open_frame(frame)
+        self.frame = SaveLoadGraphFrame(self, 'save')
+        open_frame(self.frame)
 
     def _on_load_graph_btn(self):
-        frame = SaveLoadGraphFrame(self, 'load')
-        open_frame(frame)
+        self.frame = SaveLoadGraphFrame(self, 'load')
+        open_frame(self.frame)
 
     def load_graph_hook(self, graph):
         self.on_clear_graph()
@@ -185,5 +194,23 @@ class App(customtkinter.CTk):
         screen_height = self.winfo_screenheight()
         center_x = int((screen_width - WINDOW_WIDTH) / 2)
         center_y = int((screen_height - WINDOW_HEIGHT) / 2)
-
         self.geometry(f"{WINDOW_WIDTH + expand_width}x{WINDOW_HEIGHT + expand_height}+{center_x}+{center_y}")
+
+    def draw_grid(self):
+        if self.grid_on:
+            self.after(50, lambda: self.drawer.draw_grid(self.canvas.winfo_width(), self.canvas.winfo_height()))
+
+    def on_window_resize(self, event):
+        if event.width != self.winfo_width() or event.height != self.winfo_height():
+            self.drawer.erase_grid()
+            self.draw_grid()
+
+    def on_grid_checkbox(self):
+        self.grid_on = not self.grid_on
+        if self.grid_on:
+            self.draw_grid()
+            self.canvas_handler.attract_to_grid = True
+        else:
+            self.drawer.erase_grid()
+            if self.canvas_handler is not None:
+                self.canvas_handler.attract_to_grid = False
