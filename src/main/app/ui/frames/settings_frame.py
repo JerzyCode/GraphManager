@@ -30,7 +30,13 @@ class SettingsFrame(customtkinter.CTkFrame):
         self.grid_switch_var.set(self.config.is_grid_enabled)
         self.grid_switch = customtkinter.CTkSwitch(self, text="Grid Switcher",
                                                    variable=self.grid_switch_var, onvalue=True, offvalue=False)
-        self.grid_switch.grid(row=3, column=0, pady=10, padx=20)
+        self.grid_switch.grid(row=3, column=0, pady=10, padx=(40, 20), sticky='w')
+
+        self.label_switch_var = customtkinter.BooleanVar()
+        self.label_switch_var.set(self.config.is_label_enabled)
+        self.label_switch = customtkinter.CTkSwitch(self, text="Show Vertex Labels",
+                                                    variable=self.label_switch_var, onvalue=True, offvalue=False)
+        self.label_switch.grid(row=4, column=0, pady=10, padx=(40, 20), sticky='w')
 
         save_button = customtkinter.CTkButton(self, text="Save Settings", command=self._on_save_button)
         save_button.grid(row=6, column=0, padx=20, pady=(20, 10))
@@ -47,4 +53,5 @@ class SettingsFrame(customtkinter.CTkFrame):
     def _on_save_button(self):
         self.config.change_grid_enabled(self.grid_switch_var.get())
         self.config.change_edge_width(self.edge_width)
+        self.config.change_label_enabled(self.label_switch_var.get())
         self.close_modal()

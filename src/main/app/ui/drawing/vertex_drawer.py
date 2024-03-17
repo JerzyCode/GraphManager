@@ -23,15 +23,20 @@ def change_vertex_appearance_mode(new_appearance_mode: str):
 
 
 class VertexDrawer:
-    def __init__(self, canvas):
+    def __init__(self, canvas, config):
+        self.config = config
         self.canvas = canvas
 
     def draw_vertex(self, vertex: Vertex):
         self.canvas.create_oval(vertex.x - RADIUS, vertex.y - RADIUS, vertex.x + RADIUS, vertex.y + RADIUS, fill=vertex_bg_color,
                                 outline=VERTEX_FG_COLOR_DARK,
                                 width=2, tags=f"vertex_{vertex.label}")
-        self.canvas.create_text(vertex.x, vertex.y, text=vertex.label, font=("Arial", VERTEX_FONT_SIZE), fill=vertex_fg_color,
-                                tags=f"text_{vertex.label}")
+        print('draw_vertex')
+        print(self.config.is_label_enabled)
+        if self.config.is_label_enabled:
+            print('drawing labels')
+            self.canvas.create_text(vertex.x, vertex.y, text=vertex.label, font=("Arial", VERTEX_FONT_SIZE), fill=vertex_fg_color,
+                                    tags=f"text_{vertex.label}")
 
     def erase_vertex(self, vertex: Vertex):
         self.canvas.delete(f"vertex_{vertex.label}")
@@ -65,6 +70,11 @@ class VertexDrawer:
     def _change_vertex_color(self, vertex: Vertex, bg_color, fg_color):
         self.canvas.itemconfig(f"vertex_{vertex.label}", fill=bg_color)
         self.canvas.itemconfig(f"text_{vertex.label}", fill=fg_color)
+
+    def refresh_all_vertexes(self, vertexes):
+        print('refresh_all_vertexes')
+        self.erase_all_vertexes(vertexes)
+        self.draw_all_vertexes(vertexes)
 
     def raise_all_vertexes(self, vertexes):
         for vertex in vertexes:

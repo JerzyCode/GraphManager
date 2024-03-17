@@ -17,8 +17,7 @@ class TestBfs(unittest.TestCase):
         self.config_mock = Mock(spec=Config)
         self.config_mock.edge_width = 1.25
         self.edge_drawer_mock = EdgeDrawer(self.canvas_mock, self.config_mock)
-
-        self.vertex_drawer_mock = VertexDrawer(self.canvas_mock)
+        self.vertex_drawer_mock = VertexDrawer(self.canvas_mock, self.config_mock)
         self.drawer_mock = Mock(spec=Drawer(self.canvas_mock, edge_drawer=self, vertex_drawer=self))
 
     def test_bfs_empty_graph(self):
