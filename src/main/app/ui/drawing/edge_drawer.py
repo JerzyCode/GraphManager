@@ -1,27 +1,7 @@
 import tkinter
 
 from src.main.app.graph.digraph import Digraph
-from src.main.app.utils.constants import EDGE_COLOR_LIGHT, EDGE_COLOR_CHANGE_LIGHT, WEIGHT_COLOR_LIGHT, WEIGHT_COLOR_CHANGE_LIGHT, EDGE_COLOR_DARK, \
-    EDGE_COLOR_CHANGE_DARK, WEIGHT_COLOR_DARK, WEIGHT_COLOR_CHANGE_DARK, APEX_DISTANCE, WEIGHT_FONT_SIZE
-
-global edge_color, edge_color_changed, weight_color, weight_color_changed
-
-
-def change_edge_appearance_mode(new_appearance_mode: str):
-    global edge_color, edge_color_changed, weight_color, weight_color_changed
-    if new_appearance_mode == "Light":
-        edge_color = EDGE_COLOR_LIGHT
-        edge_color_changed = EDGE_COLOR_CHANGE_LIGHT
-
-        weight_color = WEIGHT_COLOR_LIGHT
-        weight_color_changed = WEIGHT_COLOR_CHANGE_LIGHT
-
-    elif new_appearance_mode == "Dark":
-        edge_color = EDGE_COLOR_DARK
-        edge_color_changed = EDGE_COLOR_CHANGE_DARK
-
-        weight_color = WEIGHT_COLOR_DARK
-        weight_color_changed = WEIGHT_COLOR_CHANGE_DARK
+from src.main.app.utils.constants import APEX_DISTANCE, WEIGHT_FONT_SIZE
 
 
 def middle_point(vertex1, vertex2):
@@ -66,7 +46,7 @@ class EdgeDrawer:
         vertex1 = edge.vertex1
         vertex2 = edge.vertex2
         mid_point = middle_point(vertex1, vertex2)
-        self.canvas.create_text(mid_point[0], mid_point[1], fill=weight_color, font=("Arial", WEIGHT_FONT_SIZE, "bold"),
+        self.canvas.create_text(mid_point[0], mid_point[1], fill=self.config.weight_color, font=("Arial", WEIGHT_FONT_SIZE, "bold"),
                                 text=edge.weight, anchor="center", tags=f'weight_{edge.weight}_{edge.label}')
 
     def _draw_graph_edge(self, edge):
@@ -76,7 +56,7 @@ class EdgeDrawer:
             params['vertex1_y'] + params['start_line_points'][1],
             params['vertex2_x'] + params['end_line_points'][0],
             params['vertex2_y'] + params['end_line_points'][1],
-            fill=edge_color, width=self.config.edge_width,
+            fill=self.config.edge_color, width=self.config.edge_width,
             tags=f"edge_{params['label']}", smooth=True)
         if edge.weight is not None:
             self._draw_weight(edge)
@@ -92,7 +72,7 @@ class EdgeDrawer:
             params['apex'][0], params['apex'][1],
             params['vertex2_x'] + params['end_line_points'][0],
             params['vertex2_y'] + params['end_line_points'][1],
-            fill=edge_color, width=self.config.edge_width,
+            fill=self.config.edge_color, width=self.config.edge_width,
             tags=f"edge_{params['label']}", smooth=True)
         if edge.weight is not None:
             self._draw_weight(edge)
@@ -102,13 +82,14 @@ class EdgeDrawer:
 
     def highlight_edge_color(self, edge):
         if edge is not None:
-            self.change_edge_params(edge, edge_color_changed, self.config.edge_width, weight_color_changed)
+            self.change_edge_params(edge, self.config.edge_color_changed,
+                                    self.config.edge_width, self.config.edge_color_changed)
 
     def refresh_edge_color(self, edge):
         if edge is not None:
-            self.canvas.itemconfig(f"edge_{edge.label}", fill=edge_color, width=self.config.edge_width)
+            self.canvas.itemconfig(f"edge_{edge.label}", fill=self.config.edge_color, width=self.config.edge_width)
             if edge.weight is not None:
-                self.canvas.itemconfig(f'weight_{edge.weight}_{edge.label}', fill=weight_color)
+                self.canvas.itemconfig(f'weight_{edge.weight}_{edge.label}', fill=self.config.weight_color)
                 edge.is_highlighted_by_algorithm = False
 
     def erase_edge(self, edge):

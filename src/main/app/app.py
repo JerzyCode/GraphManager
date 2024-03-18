@@ -6,7 +6,7 @@ import src.main.app.data.database as db
 from src.main.app.graph.digraph import Digraph
 from src.main.app.graph.directed_graph import DirectedGraph
 from src.main.app.ui.drawing.canvas_handler import CanvasHandler
-from src.main.app.ui.drawing.drawer import Drawer, change_appearance_mode
+from src.main.app.ui.drawing.drawer import Drawer
 from src.main.app.ui.drawing.edge_drawer import EdgeDrawer
 from src.main.app.ui.drawing.vertex_drawer import VertexDrawer
 from src.main.app.ui.frames.add_graph_frame import AddGraphFrame
@@ -14,24 +14,14 @@ from src.main.app.ui.frames.algorithms_frame import AlgorithmsFrame
 from src.main.app.ui.frames.generate_graph_frame import GenerateGraphFrame
 from src.main.app.ui.frames.save_load_graph_frame import SaveLoadGraphFrame
 from src.main.app.ui.frames.settings_frame import SettingsFrame
-from src.main.app.ui.windows.set_weight_window import change_set_weight_window_appearance_mode
 from src.main.app.utils.config import Config
-from src.main.app.utils.constants import WINDOW_WIDTH, WINDOW_HEIGHT, LEFT_FRAME_WIDTH, GRAPH_BG_COLOR_DARK, GRAPH_BG_COLOR_LIGHT
+from src.main.app.utils.constants import WINDOW_WIDTH, WINDOW_HEIGHT, LEFT_FRAME_WIDTH, GRAPH_BG_COLOR_DARK
 from src.main.app.utils.logger import setup_logger
 
 logger = setup_logger("App")
 
 customtkinter.set_appearance_mode("Dark")
 customtkinter.set_default_color_theme("blue")
-
-
-def change_scaling_event(new_scaling: str):
-    new_scaling_float = int(new_scaling.replace("%", "")) / 100
-    customtkinter.set_widget_scaling(new_scaling_float)
-
-
-def change_appearance_mode_event(new_appearance_mode: str):
-    customtkinter.set_appearance_mode(new_appearance_mode)
 
 
 def open_frame(frame):
@@ -52,7 +42,6 @@ class App(customtkinter.CTk):
         self._create_sidebar_frame()
         self._create_graph_display_frame()
         self.bind("<Configure>", lambda event: self.config.change_window_size(event))
-        # self.draw_grid()
 
     def _configure_window(self):
         logger.debug("Configuring Window...")
@@ -103,7 +92,7 @@ class App(customtkinter.CTk):
         self.appearance_mode_label.grid(row=10, column=0, padx=20, pady=(10, 0))
         self.appearance_mode_option_menu = customtkinter.CTkOptionMenu(self.sidebar_frame,
                                                                        values=["Light", "Dark"],
-                                                                       command=self._change_appearance_mode)
+                                                                       command=self.config.change_appearance_mode)
         self.appearance_mode_option_menu.set("Dark")
         self.appearance_mode_option_menu.grid(row=11, column=0, padx=20, pady=(10, 20))
 
@@ -167,19 +156,6 @@ class App(customtkinter.CTk):
         if self.canvas_handler is not None:
             self.canvas_handler.enabled = False
             self.canvas_handler.unbind()
-
-    def _change_appearance_mode(self, new_appearance_mode: str):
-        logger.debug("Changing appearance mode to: " + new_appearance_mode)
-        change_appearance_mode_event(new_appearance_mode)
-        if new_appearance_mode == "Light":
-            self.canvas.configure(bg=GRAPH_BG_COLOR_LIGHT)
-            change_appearance_mode("Light")
-            change_set_weight_window_appearance_mode("Light")
-        elif new_appearance_mode == "Dark":
-            self.canvas.configure(bg=GRAPH_BG_COLOR_DARK)
-            change_appearance_mode("Dark")
-            change_set_weight_window_appearance_mode("Dark")
-        self.drawer.refresh_all(self.graph)
 
     def _on_save_graph_btn(self):
         self.frame = SaveLoadGraphFrame(self, 'save')

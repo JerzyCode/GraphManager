@@ -38,6 +38,7 @@ class CanvasHandler:
         self.vertex_to_delete = None
         self.edge_to_delete = None
         self.root = root
+        self.dialog = None
         self.is_directed = is_directed
         self.is_weighted = is_weighted
         self.is_digraph = is_digraph
@@ -199,8 +200,8 @@ class CanvasHandler:
         self.drawer.vertex_drawer.raise_all_vertexes(self.graph.V)
 
     def _ask_weight(self):
-        dialog = AskWeightDialog(self.root)
-        return dialog.weight
+        self.dialog = AskWeightDialog(self.root)
+        return self.dialog.weight
 
     def _on_enter_vertex(self, vertex):
         self.drawer.vertex_drawer.highlight_vertex_color(vertex)

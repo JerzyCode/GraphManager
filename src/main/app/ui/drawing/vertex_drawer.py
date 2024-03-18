@@ -1,25 +1,7 @@
 import sys
 
 from src.main.app.graph.vertex import Vertex
-from src.main.app.utils.constants import VERTEX_BG_COLOR_LIGHT, VERTEX_FG_COLOR_LIGHT, VERTEX_COLOR_CHANGE_BG_LIGHT, VERTEX_COLOR_CHANGE_FG_LIGHT, \
-    VERTEX_BG_COLOR_DARK, VERTEX_FG_COLOR_DARK, VERTEX_COLOR_CHANGE_BG_DARK, VERTEX_COLOR_CHANGE_FG_DARK, WEIGHT_FONT_SIZE
-
-global vertex_bg_color, vertex_fg_color, vertex_bg_color_changed, vertex_fg_color_changed
-
-
-def change_vertex_appearance_mode(new_appearance_mode: str):
-    global vertex_bg_color, vertex_fg_color, vertex_bg_color_changed, vertex_fg_color_changed
-    if new_appearance_mode == "Light":
-        vertex_bg_color = VERTEX_BG_COLOR_LIGHT
-        vertex_fg_color = VERTEX_FG_COLOR_LIGHT
-        vertex_bg_color_changed = VERTEX_COLOR_CHANGE_BG_LIGHT
-        vertex_fg_color_changed = VERTEX_COLOR_CHANGE_FG_LIGHT
-
-    elif new_appearance_mode == "Dark":
-        vertex_bg_color = VERTEX_BG_COLOR_DARK
-        vertex_fg_color = VERTEX_FG_COLOR_DARK
-        vertex_bg_color_changed = VERTEX_COLOR_CHANGE_BG_DARK
-        vertex_fg_color_changed = VERTEX_COLOR_CHANGE_FG_DARK
+from src.main.app.utils.constants import VERTEX_FG_COLOR_DARK, WEIGHT_FONT_SIZE
 
 
 class VertexDrawer:
@@ -29,6 +11,8 @@ class VertexDrawer:
 
     def draw_vertex(self, vertex: Vertex):
         radius = self.config.vertex_radius
+        vertex_bg_color = self.config.vertex_bg_color
+        vertex_fg_color = self.config.vertex_fg_color
         self.canvas.create_oval(vertex.x - radius, vertex.y - radius, vertex.x + radius, vertex.y + radius, fill=vertex_bg_color,
                                 outline=VERTEX_FG_COLOR_DARK,
                                 width=2, tags=f"vertex_{vertex.label}")
@@ -46,11 +30,15 @@ class VertexDrawer:
 
     def highlight_vertex_color(self, vertex: Vertex):
         if vertex is not None:
-            self._change_vertex_color(vertex, vertex_bg_color_changed, vertex_fg_color_changed)
+            self._change_vertex_color(vertex,
+                                      self.config.vertex_bg_color_changed,
+                                      self.config.vertex_fg_color_changed)
 
     def refresh_vertex_color(self, vertex: Vertex):
         if vertex is not None:
-            self._change_vertex_color(vertex, vertex_bg_color, vertex_fg_color)
+            self._change_vertex_color(vertex,
+                                      self.config.vertex_bg_color,
+                                      self.config.vertex_fg_color)
 
     def draw_current_distance(self, vertex, distance):
         self.erase_current_distance(vertex)
