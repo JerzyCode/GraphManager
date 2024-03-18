@@ -5,7 +5,6 @@ from src.main.app.graph.directed_graph import DirectedGraph
 from src.main.app.graph.undirected_graph import UndirectedGraph
 from src.main.app.graph.vertex import Vertex
 from src.main.app.ui.windows.set_weight_window import AskWeightDialog
-from src.main.app.utils.constants import RADIUS
 from src.main.app.utils.logger import setup_logger
 
 logger = setup_logger("CanvasHandler")
@@ -35,14 +34,15 @@ class CanvasHandler:
         self.graph = None
         self.canvas = root.canvas
         self.drawer = root.drawer
+        self.config = root.config
         self.vertex_to_delete = None
         self.edge_to_delete = None
         self.root = root
+        self.dialog = None
         self.is_directed = is_directed
         self.is_weighted = is_weighted
         self.is_digraph = is_digraph
         self.enabled = True
-        self.attract_to_grid = True
         self._create_graph(graph)
         self.selected_vertexes = []
         self.canvas.bind("<Shift-Button-1>", self._on_shift_button_1)
@@ -121,7 +121,8 @@ class CanvasHandler:
         self.canvas.tag_bind(f"edge_{edge.label}", BUTTON_PRESS_3, lambda event, e=edge: self._on_edge_right_click(e))
 
     def _on_vertex_click(self, event, vertex):
-        if (vertex.x - RADIUS < event.x < vertex.x + RADIUS and vertex.y - RADIUS < event.y < vertex.y + RADIUS
+        radius = self.config.vertex_radius
+        if (vertex.x - radius < event.x < vertex.x + radius and vertex.y - radius < event.y < vertex.y + radius
                 and len(self.selected_vertexes) < 2 and vertex not in self.selected_vertexes):
             self.selected_vertexes.append(vertex)
             self.drawer.vertex_drawer.highlight_vertex_color(vertex)
@@ -152,8 +153,8 @@ class CanvasHandler:
         self.edge_to_delete = None
 
     def _on_vertex_right_click(self, event, vertex):
-        print('_on_vertex_right_click')
-        if vertex.x - RADIUS < event.x < vertex.x + RADIUS and vertex.y - RADIUS < event.y < vertex.y + RADIUS:
+        radius = self.config.vertex_radius
+        if vertex.x - radius < event.x < vertex.x + radius and vertex.y - radius < event.y < vertex.y + radius:
             self.vertex_to_delete = vertex
             x = self.canvas.winfo_rootx() + vertex.x - 110
             y = self.canvas.winfo_rooty() + vertex.y
@@ -166,17 +167,19 @@ class CanvasHandler:
         self.vertex_to_delete = None
 
     def _start_move_vertex(self, event):
-        if (event.x <= RADIUS or event.x >= self.canvas.winfo_width() - RADIUS
-                or event.y <= RADIUS or event.y >= self.canvas.winfo_height() - RADIUS):
+        radius = self.config.vertex_radius
+        if (event.x <= radius or event.x >= self.canvas.winfo_width() - radius
+                or event.y <= radius or event.y >= self.canvas.winfo_height() - radius):
             return
 
     def _move_vertex(self, event, vertex):
-        if (event.x <= RADIUS or event.x >= self.canvas.winfo_width() - RADIUS
-                or event.y <= RADIUS or event.y >= self.canvas.winfo_height() - RADIUS):
+        radius = self.config.vertex_radius
+        if (event.x <= radius or event.x >= self.canvas.winfo_width() - radius
+                or event.y <= radius or event.y >= self.canvas.winfo_height() - radius):
             return
         delta_x = 0
         delta_y = 0
-        if not self.attract_to_grid:
+        if not self.config.is_grid_enabled:
             delta_x = event.x - vertex.x
             delta_y = event.y - vertex.y
             vertex.x = event.x
@@ -197,8 +200,8 @@ class CanvasHandler:
         self.drawer.vertex_drawer.raise_all_vertexes(self.graph.V)
 
     def _ask_weight(self):
-        dialog = AskWeightDialog(self.root)
-        return dialog.weight
+        self.dialog = AskWeightDialog(self.root)
+        return self.dialog.weight
 
     def _on_enter_vertex(self, vertex):
         self.drawer.vertex_drawer.highlight_vertex_color(vertex)

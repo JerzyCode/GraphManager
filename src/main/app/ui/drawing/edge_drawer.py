@@ -1,51 +1,7 @@
 import tkinter
 
 from src.main.app.graph.digraph import Digraph
-from src.main.app.utils.constants import EDGE_COLOR_LIGHT, EDGE_COLOR_CHANGE_LIGHT, WEIGHT_COLOR_LIGHT, WEIGHT_COLOR_CHANGE_LIGHT, EDGE_COLOR_DARK, \
-    EDGE_COLOR_CHANGE_DARK, WEIGHT_COLOR_DARK, WEIGHT_COLOR_CHANGE_DARK, RADIUS, APEX_DISTANCE, EDGE_WIDTH, WEIGHT_FONT_SIZE, EDGE_WIDTH_WIDER
-
-global edge_color, edge_color_changed, weight_color, weight_color_changed
-
-
-def change_edge_appearance_mode(new_appearance_mode: str):
-    global edge_color, edge_color_changed, weight_color, weight_color_changed
-    if new_appearance_mode == "Light":
-        edge_color = EDGE_COLOR_LIGHT
-        edge_color_changed = EDGE_COLOR_CHANGE_LIGHT
-
-        weight_color = WEIGHT_COLOR_LIGHT
-        weight_color_changed = WEIGHT_COLOR_CHANGE_LIGHT
-
-    elif new_appearance_mode == "Dark":
-        edge_color = EDGE_COLOR_DARK
-        edge_color_changed = EDGE_COLOR_CHANGE_DARK
-
-        weight_color = WEIGHT_COLOR_DARK
-        weight_color_changed = WEIGHT_COLOR_CHANGE_DARK
-
-
-def end_line_point(vertex1, vertex2):
-    import math
-    delta_x = 0
-    delta_y = 0
-    if vertex1.x == vertex2.x:
-        delta_x = 0
-        delta_y = RADIUS
-    if vertex1.y == vertex2.y:
-        delta_x = RADIUS
-        delta_y = 0
-    if vertex1.x != vertex2.x and vertex2.y != vertex1.y:
-        a = (vertex2.y - vertex1.y) / (vertex2.x - vertex1.x)
-        angle = math.atan(a)
-        delta_y = RADIUS * math.sin(angle)
-        delta_x = RADIUS * math.cos(angle)
-    if vertex2.x - vertex1.x > 0:
-        delta_x = -delta_x
-        delta_y = -delta_y
-    if vertex2.y - vertex1.y > 0 and vertex2.x == vertex1.x:
-        delta_y = -delta_y
-
-    return delta_x, delta_y, -delta_x, -delta_y
+from src.main.app.utils.constants import APEX_DISTANCE, WEIGHT_FONT_SIZE
 
 
 def middle_point(vertex1, vertex2):
@@ -71,30 +27,10 @@ def apex_point(vertex1, vertex2):
     return apex_x, apex_y
 
 
-def _prepare_draw_edge(edge, is_digraph):
-    params = {}
-    vertex1 = edge.vertex1
-    vertex2 = edge.vertex2
-    label = vertex1.label + '_' + vertex2.label
-    delta_points = end_line_point(vertex1, vertex2)
-    start_line_points = (delta_points[2], delta_points[3])
-    end_line_points = (delta_points[0], delta_points[1])
-    params['vertex1_x'] = edge.vertex1.x
-    params['vertex1_y'] = edge.vertex1.y
-    params['vertex2_x'] = edge.vertex2.x
-    params['vertex2_y'] = edge.vertex2.y
-    params['label'] = label
-    params['end_line_points'] = end_line_points
-    params['start_line_points'] = start_line_points
-    if is_digraph:
-        apex = apex_point(vertex1, vertex2)
-        params['apex'] = apex
-    return params
-
-
 class EdgeDrawer:
-    def __init__(self, canvas):
+    def __init__(self, canvas, config):
         self.canvas = canvas
+        self.config = config
 
     def draw_edge_params(self, edge, graph, color, width, previous_weight_color):
         self.draw_edge(edge, graph)
@@ -110,17 +46,17 @@ class EdgeDrawer:
         vertex1 = edge.vertex1
         vertex2 = edge.vertex2
         mid_point = middle_point(vertex1, vertex2)
-        self.canvas.create_text(mid_point[0], mid_point[1], fill=weight_color, font=("Arial", WEIGHT_FONT_SIZE, "bold"),
+        self.canvas.create_text(mid_point[0], mid_point[1], fill=self.config.weight_color, font=("Arial", WEIGHT_FONT_SIZE, "bold"),
                                 text=edge.weight, anchor="center", tags=f'weight_{edge.weight}_{edge.label}')
 
     def _draw_graph_edge(self, edge):
-        params = _prepare_draw_edge(edge, is_digraph=False)
+        params = self._prepare_draw_edge(edge, is_digraph=False)
         line = self.canvas.create_line(
             params['vertex1_x'] + params['start_line_points'][0],
             params['vertex1_y'] + params['start_line_points'][1],
             params['vertex2_x'] + params['end_line_points'][0],
             params['vertex2_y'] + params['end_line_points'][1],
-            fill=edge_color, width=EDGE_WIDTH,
+            fill=self.config.edge_color, width=self.config.edge_width,
             tags=f"edge_{params['label']}", smooth=True)
         if edge.weight is not None:
             self._draw_weight(edge)
@@ -129,14 +65,14 @@ class EdgeDrawer:
             self.canvas.itemconfig(line, arrow=tkinter.LAST, arrowshape=arrow_shape)
 
     def _draw_digraph_edge(self, edge):
-        params = _prepare_draw_edge(edge, is_digraph=True)
+        params = self._prepare_draw_edge(edge, is_digraph=True)
         line = self.canvas.create_line(
             params['vertex1_x'] + params['start_line_points'][0],
             params['vertex1_y'] + params['start_line_points'][1],
             params['apex'][0], params['apex'][1],
             params['vertex2_x'] + params['end_line_points'][0],
             params['vertex2_y'] + params['end_line_points'][1],
-            fill=edge_color, width=EDGE_WIDTH,
+            fill=self.config.edge_color, width=self.config.edge_width,
             tags=f"edge_{params['label']}", smooth=True)
         if edge.weight is not None:
             self._draw_weight(edge)
@@ -146,13 +82,14 @@ class EdgeDrawer:
 
     def highlight_edge_color(self, edge):
         if edge is not None:
-            self.change_edge_params(edge, edge_color_changed, EDGE_WIDTH_WIDER, weight_color_changed)
+            self.change_edge_params(edge, self.config.edge_color_changed,
+                                    self.config.edge_width, self.config.edge_color_changed)
 
     def refresh_edge_color(self, edge):
         if edge is not None:
-            self.canvas.itemconfig(f"edge_{edge.label}", fill=edge_color, width=EDGE_WIDTH)
+            self.canvas.itemconfig(f"edge_{edge.label}", fill=self.config.edge_color, width=self.config.edge_width)
             if edge.weight is not None:
-                self.canvas.itemconfig(f'weight_{edge.weight}_{edge.label}', fill=weight_color)
+                self.canvas.itemconfig(f'weight_{edge.weight}_{edge.label}', fill=self.config.weight_color)
                 edge.is_highlighted_by_algorithm = False
 
     def erase_edge(self, edge):
@@ -202,3 +139,47 @@ class EdgeDrawer:
     def erase_all_edges(self, edges):
         for edge in edges:
             self.erase_edge(edge)
+
+    def end_line_point(self, vertex1, vertex2):
+        import math
+        radius = self.config.vertex_radius
+        delta_x = 0
+        delta_y = 0
+        if vertex1.x == vertex2.x:
+            delta_x = 0
+            delta_y = radius
+        if vertex1.y == vertex2.y:
+            delta_x = radius
+            delta_y = 0
+        if vertex1.x != vertex2.x and vertex2.y != vertex1.y:
+            a = (vertex2.y - vertex1.y) / (vertex2.x - vertex1.x)
+            angle = math.atan(a)
+            delta_y = radius * math.sin(angle)
+            delta_x = radius * math.cos(angle)
+        if vertex2.x - vertex1.x > 0:
+            delta_x = -delta_x
+            delta_y = -delta_y
+        if vertex2.y - vertex1.y > 0 and vertex2.x == vertex1.x:
+            delta_y = -delta_y
+
+        return delta_x, delta_y, -delta_x, -delta_y
+
+    def _prepare_draw_edge(self, edge, is_digraph):
+        params = {}
+        vertex1 = edge.vertex1
+        vertex2 = edge.vertex2
+        label = vertex1.label + '_' + vertex2.label
+        delta_points = self.end_line_point(vertex1, vertex2)
+        start_line_points = (delta_points[2], delta_points[3])
+        end_line_points = (delta_points[0], delta_points[1])
+        params['vertex1_x'] = edge.vertex1.x
+        params['vertex1_y'] = edge.vertex1.y
+        params['vertex2_x'] = edge.vertex2.x
+        params['vertex2_y'] = edge.vertex2.y
+        params['label'] = label
+        params['end_line_points'] = end_line_points
+        params['start_line_points'] = start_line_points
+        if is_digraph:
+            apex = apex_point(vertex1, vertex2)
+            params['apex'] = apex
+        return params

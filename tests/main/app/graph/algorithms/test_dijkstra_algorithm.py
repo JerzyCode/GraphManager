@@ -7,14 +7,17 @@ import tests.main.app.graph.graph_factory as factory
 from src.main.app.ui.drawing.drawer import Drawer
 from src.main.app.ui.drawing.edge_drawer import EdgeDrawer
 from src.main.app.ui.drawing.vertex_drawer import VertexDrawer
+from src.main.app.utils.config import Config
 
 
 class TestDijkstra(TestCase):
 
     def setUp(self):
         self.canvas_mock = Mock(spec=tkinter.Canvas)
-        self.edge_drawer_mock = EdgeDrawer(self.canvas_mock)
-        self.vertex_drawer_mock = VertexDrawer(self.canvas_mock)
+        self.config_mock = Mock(spec=Config)
+        self.config_mock.edge_width = 1.25
+        self.edge_drawer_mock = EdgeDrawer(self.canvas_mock, self.config_mock)
+        self.vertex_drawer_mock = VertexDrawer(self.canvas_mock, self.config_mock)
         self.drawer_mock = Mock(spec=Drawer(self.canvas_mock, edge_drawer=self, vertex_drawer=self))
 
     def test_dijkstra_empty_graph(self):

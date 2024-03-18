@@ -1,27 +1,9 @@
 from src.main.app.graph.edge import Edge
 from src.main.app.graph.vertex import Vertex
 
-from src.main.app.ui.drawing.edge_drawer import change_edge_appearance_mode
-from src.main.app.ui.drawing.vertex_drawer import change_vertex_appearance_mode
 from src.main.app.utils.logger import setup_logger
 
 logger = setup_logger("Drawer")
-
-global vertex_bg_color, vertex_fg_color, vertex_bg_color_changed, vertex_fg_color_changed, edge_color_changed, weight_color_changed
-
-
-def change_appearance_mode(new_appearance_mode: str):
-    global vertex_bg_color, vertex_fg_color, vertex_bg_color_changed, vertex_fg_color_changed, edge_color_changed, weight_color_changed
-    if new_appearance_mode == "Light":
-        change_vertex_appearance_mode("Light")
-        change_edge_appearance_mode("Light")
-
-    elif new_appearance_mode == "Dark":
-        change_edge_appearance_mode("Dark")
-        change_vertex_appearance_mode("Dark")
-
-
-change_appearance_mode("Dark")
 
 
 class Drawer:
